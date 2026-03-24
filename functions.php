@@ -369,6 +369,11 @@ add_filter( 'the_content', 'knt_generate_toc', 1 );
 require_once KNT_DIR . '/inc/customizer.php';
 
 /**
+ * Include Custom Gutenberg Blocks
+ */
+require_once KNT_DIR . '/inc/blocks.php';
+
+/**
  * Lazy load images - add loading attribute
  */
 function knt_lazy_load_images( $attr, $attachment, $size ) {
