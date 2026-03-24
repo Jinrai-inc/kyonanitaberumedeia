@@ -50,7 +50,7 @@ if ( get_theme_mod( 'knt_hero_show', true ) ) :
         </div>
         <h2 class="hero__title"><?php the_title(); ?></h2>
         <div class="hero__meta">
-            <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
+            <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'Y.m.d' ) ); ?></time>
         </div>
     </div>
     <a href="<?php the_permalink(); ?>" class="hero__link" aria-label="<?php the_title_attribute(); ?>"></a>

@@ -14,6 +14,36 @@ get_header();
 
 <div class="container">
 
+    <!-- Search Bar -->
+    <div class="archive-search">
+        <form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="archive-search__form">
+            <input type="search" class="archive-search__input" name="s" placeholder="キーワードで記事を検索..." value="<?php echo esc_attr( get_search_query() ); ?>" />
+        </form>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="cat-filter">
+        <?php
+        $current_cat_id = is_category() ? get_queried_object_id() : 0;
+        $all_active = ! is_category() ? ' cat-filter__tab--active' : '';
+        $blog_url = get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' );
+        ?>
+        <a href="<?php echo esc_url( $blog_url ); ?>" class="cat-filter__tab<?php echo $all_active; ?>">すべて</a>
+        <?php
+        $categories = get_categories( array(
+            'orderby'    => 'count',
+            'order'      => 'DESC',
+            'hide_empty' => true,
+        ) );
+        foreach ( $categories as $cat ) :
+            $is_active = ( $current_cat_id === $cat->term_id ) ? ' cat-filter__tab--active' : '';
+        ?>
+            <a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="cat-filter__tab<?php echo $is_active; ?>">
+                <?php echo esc_html( $cat->name ); ?><span class="cat-filter__count"><?php echo esc_html( $cat->count ); ?></span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+
     <header class="archive-header">
         <?php if ( is_category() ) : ?>
             <p class="archive-header__label">カテゴリ</p>

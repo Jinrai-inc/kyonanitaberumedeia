@@ -11,6 +11,8 @@
     <?php else : ?>
         <div class="card__image-placeholder">&#127858;</div>
     <?php endif; ?>
+    <div class="card__image-overlay"></div>
+    <h3 class="card__image-title"><?php the_title(); ?></h3>
 </div>
 <div class="card__body">
     <div class="card__cat">
@@ -23,11 +25,10 @@
             </a>
         <?php endif; ?>
     </div>
+    <div class="card__meta">
+        <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'Y.m.d' ) ); ?></time>
+    </div>
     <h3 class="card__title">
         <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
     </h3>
-    <p class="card__excerpt"><?php echo esc_html( get_the_excerpt() ); ?></p>
-    <div class="card__meta">
-        <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date() ); ?></time>
-    </div>
 </div>
