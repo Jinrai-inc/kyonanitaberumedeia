@@ -99,6 +99,15 @@ endif;
 
     <?php
     // ========================================
+    // Japan Map - Area Search
+    // ========================================
+    if ( get_theme_mod( 'knt_japan_map_show', true ) ) :
+        get_template_part( 'template-parts/japan-map' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
     // Category Sections
     // ========================================
     if ( get_theme_mod( 'knt_category_sections_show', true ) ) :

@@ -122,6 +122,37 @@ function knt_customize_register( $wp_customize ) {
         'type'        => 'number',
     ) );
 
+    // --- 日本地図エリア検索 ---
+    $wp_customize->add_section( 'knt_japan_map', array(
+        'title' => '日本地図エリア検索',
+        'panel' => 'knt_frontpage_panel',
+    ) );
+
+    $wp_customize->add_setting( 'knt_japan_map_show', array(
+        'default'           => true,
+        'sanitize_callback' => 'knt_sanitize_checkbox',
+    ) );
+    $wp_customize->add_control( 'knt_japan_map_show', array(
+        'label'   => '日本地図エリア検索を表示する',
+        'section' => 'knt_japan_map',
+        'type'    => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'knt_area_url_pattern', array(
+        'default'           => 'search',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_area_url_pattern', array(
+        'label'       => 'エリアリンクの形式',
+        'description' => 'search: 検索結果ページ / taxonomy: カスタムタクソノミー',
+        'section'     => 'knt_japan_map',
+        'type'        => 'select',
+        'choices'     => array(
+            'search'   => '検索形式（/?s=エリア名+グルメ）',
+            'taxonomy' => 'タクソノミー形式（/area/都道府県/）',
+        ),
+    ) );
+
     // --- 新着記事 ---
     $wp_customize->add_section( 'knt_latest', array(
         'title' => '新着記事セクション',
