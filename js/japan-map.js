@@ -320,6 +320,7 @@
   }
   function selectPref(code) {
     code = code ? normalizeCode(code) : null;
+    console.log('[KNT Map] selectPref:', code, '→', getPrefName(code));
     state.selectedPref = code;
     state.selectedCity = null;
     syncPrefSelect(code);
@@ -353,9 +354,23 @@
       }
     });
     wrapper.addEventListener('click', function (e) {
+      console.log('[KNT Map] click target:', e.target.tagName, e.target.className);
       var prefNode = e.target.closest('[data-code]');
+      if (!prefNode) {
+        // SVG要素ではclosestが動かない場合のフォールバック
+        var el = e.target;
+        while (el && el !== wrapper) {
+          if (el.getAttribute && el.getAttribute('data-code')) {
+            prefNode = el;
+            break;
+          }
+          el = el.parentNode;
+        }
+      }
       if (prefNode && wrapper.contains(prefNode)) {
-        selectPref(prefNode.getAttribute('data-code'));
+        var code = prefNode.getAttribute('data-code');
+        console.log('[KNT Map] prefecture clicked:', code);
+        selectPref(code);
         return;
       }
       var cityTag = e.target.closest('.japan-map-city-tag');
