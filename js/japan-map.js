@@ -1,14 +1,14 @@
 /**
- * KNT Media - Interactive Japan Map
- * 47都道府県のSVGマップ + ドロップダウンセレクター
+ * KNT Media - Interactive Japan Map (realistic SVG + full municipalities)
  */
 (function () {
   'use strict';
 
   /* ========================================
-     Prefecture Data (47都道府県 + 主要市区町村)
+     Major City Data (renamed from JAPAN_DATA)
+     主要市区町村チップ表示 + フォールバック用
      ======================================== */
-  var JAPAN_DATA = {
+  var MAJOR_CITY_DATA = {
     '01': { name: '北海道', cities: ['札幌市','函館市','旭川市','小樽市','帯広市','釧路市','北見市','苫小牧市','江別市','千歳市'] },
     '02': { name: '青森県', cities: ['青森市','弘前市','八戸市','十和田市','むつ市','五所川原市'] },
     '03': { name: '岩手県', cities: ['盛岡市','一関市','奥州市','花巻市','北上市','宮古市'] },
@@ -59,158 +59,223 @@
   };
 
   /* ========================================
-     SVG Path Data (simplified prefecture outlines)
-     viewBox = "0 0 560 760"
-     ======================================== */
-  var PREF_PATHS = {
-    '01': 'M310,10 L380,15 410,40 430,80 420,120 390,135 370,115 340,130 300,110 280,80 270,50 285,25Z',
-    '02': 'M340,145 L370,140 385,155 380,180 355,190 330,180 325,160Z',
-    '03': 'M345,190 L380,185 395,200 385,230 360,240 335,225 330,200Z',
-    '04': 'M345,240 L375,235 385,250 375,270 350,275 335,260 340,245Z',
-    '05': 'M310,170 L335,165 340,185 330,205 310,210 295,195 300,175Z',
-    '06': 'M310,215 L335,210 340,230 330,250 310,255 295,240 300,220Z',
-    '07': 'M315,260 L350,255 365,270 355,295 330,300 310,290 305,270Z',
-    '08': 'M320,340 L345,335 360,350 355,370 335,380 315,370 310,350Z',
-    '09': 'M300,320 L330,315 340,330 330,350 310,355 295,340 298,325Z',
-    '10': 'M275,315 L300,310 310,325 300,345 280,350 268,335 270,320Z',
-    '11': 'M285,350 L315,345 325,360 315,375 295,380 280,370 282,355Z',
-    '12': 'M325,370 L355,365 370,380 365,400 340,405 320,395 318,378Z',
-    '13': 'M295,380 L320,375 330,390 325,405 305,410 290,400 288,385Z',
-    '14': 'M290,410 L320,405 335,415 330,435 305,440 285,430 283,415Z',
-    '15': 'M255,245 L280,235 295,250 290,280 275,300 255,295 248,270Z',
-    '16': 'M230,290 L255,285 265,300 258,315 240,318 228,305Z',
-    '17': 'M215,305 L240,298 250,315 245,335 225,340 210,325Z',
-    '18': 'M220,340 L242,335 252,350 245,370 228,372 215,358Z',
-    '19': 'M265,380 L285,375 295,390 288,405 270,408 260,395Z',
-    '20': 'M248,330 L272,325 280,345 275,370 258,378 240,365 242,340Z',
-    '21': 'M230,370 L255,365 265,380 258,400 238,405 225,392Z',
-    '22': 'M255,410 L285,405 300,418 295,440 270,448 250,435 248,418Z',
-    '23': 'M225,405 L255,400 268,415 260,435 240,442 220,430 218,412Z',
-    '24': 'M210,435 L238,430 248,445 242,465 222,470 208,455Z',
-    '25': 'M195,400 L218,395 228,410 222,428 205,432 190,418Z',
-    '26': 'M180,380 L205,375 215,392 210,412 192,418 175,405Z',
-    '27': 'M185,425 L210,420 222,435 218,455 200,462 182,448Z',
-    '28': 'M155,405 L182,398 195,415 190,438 170,445 148,432Z',
-    '29': 'M195,445 L218,440 228,455 222,472 205,478 190,465Z',
-    '30': 'M175,465 L200,458 212,475 205,495 185,500 168,488Z',
-    '31': 'M148,395 L168,390 175,402 170,415 155,418 145,408Z',
-    '32': 'M120,400 L148,395 158,410 152,428 132,432 115,420Z',
-    '33': 'M135,435 L160,428 172,442 168,460 148,465 130,455Z',
-    '34': 'M100,430 L130,425 142,440 138,460 118,468 95,455Z',
-    '35': 'M75,445 L100,440 112,455 105,475 85,480 70,465Z',
-    '36': 'M165,480 L185,475 195,490 188,505 170,508 160,498Z',
-    '37': 'M150,470 L170,465 178,478 172,492 155,495 145,485Z',
-    '38': 'M130,480 L155,475 165,492 158,510 138,515 125,500Z',
-    '39': 'M145,510 L170,505 182,518 175,540 155,545 140,530Z',
-    '40': 'M75,490 L105,485 118,500 112,520 90,525 72,510Z',
-    '41': 'M58,505 L80,500 90,512 85,528 68,532 55,520Z',
-    '42': 'M35,510 L60,505 72,520 65,540 45,545 30,530Z',
-    '43': 'M65,530 L92,525 105,540 98,565 78,570 60,555Z',
-    '44': 'M95,510 L120,505 130,518 125,535 105,540 90,528Z',
-    '45': 'M82,570 L105,565 115,580 110,605 90,610 78,595Z',
-    '46': 'M68,610 L95,605 108,620 100,650 80,655 62,640Z',
-    '47': 'M25,660 L55,655 65,670 60,690 40,695 20,680Z'
-  };
-
-  /* ========================================
      State
      ======================================== */
   var state = {
     selectedPref: null,
-    selectedCity: null
+    selectedCity: null,
+    municipalityData: null,
+    mediaQuery: null
   };
 
   /* ========================================
-     Init
+     Region Colors & Mapping
      ======================================== */
-  function init() {
-    var mapWrapper = document.getElementById('japan-map');
-    if (!mapWrapper) return;
+  var REGION_COLORS = {
+    hokkaido: '#9ad17b',
+    tohoku: '#86d6a8',
+    kanto: '#f0b34a',
+    chubu: '#f3c766',
+    kinki: '#ef9c56',
+    chugoku: '#f08b67',
+    shikoku: '#e97970',
+    kyushu: '#d96e78',
+    okinawa: '#72c9c3'
+  };
 
-    renderSVG(mapWrapper);
-    populatePrefSelect();
-    bindEvents();
+  var PREF_REGION_MAP = {
+    '01': 'hokkaido',
+    '02': 'tohoku', '03': 'tohoku', '04': 'tohoku', '05': 'tohoku', '06': 'tohoku', '07': 'tohoku',
+    '08': 'kanto', '09': 'kanto', '10': 'kanto', '11': 'kanto', '12': 'kanto', '13': 'kanto', '14': 'kanto',
+    '15': 'chubu', '16': 'chubu', '17': 'chubu', '18': 'chubu', '19': 'chubu', '20': 'chubu', '21': 'chubu', '22': 'chubu', '23': 'chubu',
+    '24': 'kinki', '25': 'kinki', '26': 'kinki', '27': 'kinki', '28': 'kinki', '29': 'kinki', '30': 'kinki',
+    '31': 'chugoku', '32': 'chugoku', '33': 'chugoku', '34': 'chugoku', '35': 'chugoku',
+    '36': 'shikoku', '37': 'shikoku', '38': 'shikoku', '39': 'shikoku',
+    '40': 'kyushu', '41': 'kyushu', '42': 'kyushu', '43': 'kyushu', '44': 'kyushu', '45': 'kyushu', '46': 'kyushu',
+    '47': 'okinawa'
+  };
+
+  /* ========================================
+     Utilities
+     ======================================== */
+  function normalizeCode(value) {
+    return String(value || '').trim().padStart(2, '0').slice(-2);
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getThemeBasePath() {
+    var current = document.currentScript;
+    if (current && current.src) {
+      return current.src.replace(/\/js\/japan-map\.js(?:\?.*)?$/, '');
+    }
+    var scripts = document.querySelectorAll('script[src]');
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].getAttribute('src') || '';
+      if (/\/js\/japan-map\.js(?:\?.*)?$/.test(src)) {
+        return src.replace(/\/js\/japan-map\.js(?:\?.*)?$/, '');
+      }
+    }
+    return '';
   }
 
   /* ========================================
-     Render SVG Map
+     Data Access
      ======================================== */
-  function renderSVG(container) {
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('viewBox', '0 0 560 760');
-    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-    svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', '日本地図');
+  function getMunicipalityData(prefCode) {
+    prefCode = normalizeCode(prefCode);
+    if (state.municipalityData && state.municipalityData[prefCode]) {
+      return state.municipalityData[prefCode];
+    }
+    if (MAJOR_CITY_DATA[prefCode]) {
+      return {
+        name: MAJOR_CITY_DATA[prefCode].name,
+        majorCities: MAJOR_CITY_DATA[prefCode].cities.slice(),
+        municipalities: MAJOR_CITY_DATA[prefCode].cities.slice()
+      };
+    }
+    return null;
+  }
 
-    // Draw prefecture paths
-    Object.keys(PREF_PATHS).forEach(function (code) {
-      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('d', PREF_PATHS[code]);
-      path.setAttribute('class', 'pref-path');
-      path.setAttribute('data-code', code);
-      path.setAttribute('data-name', JAPAN_DATA[code].name);
-      svg.appendChild(path);
-    });
+  function getPrefName(prefCode) {
+    var data = getMunicipalityData(prefCode);
+    return data ? data.name : '';
+  }
 
-    // Region labels
-    var regions = [
-      { text: '北海道', x: 370, y: 75 },
-      { text: '東北', x: 360, y: 220 },
-      { text: '関東', x: 340, y: 370 },
-      { text: '中部', x: 260, y: 340 },
-      { text: '近畿', x: 190, y: 440 },
-      { text: '中国', x: 120, y: 448 },
-      { text: '四国', x: 160, y: 510 },
-      { text: '九州', x: 70, y: 550 },
-      { text: '沖縄', x: 40, y: 680 }
-    ];
-
-    regions.forEach(function (r) {
-      var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      text.setAttribute('x', r.x);
-      text.setAttribute('y', r.y);
-      text.setAttribute('class', 'region-label');
-      text.setAttribute('text-anchor', 'middle');
-      text.textContent = r.text;
-      svg.appendChild(text);
-    });
-
-    container.appendChild(svg);
-
-    // Tooltip element
+  /* ========================================
+     SVG Map
+     ======================================== */
+  function createTooltip(wrapper) {
+    var old = wrapper.querySelector('#map-tooltip');
+    if (old) old.remove();
     var tooltip = document.createElement('div');
     tooltip.className = 'japan-map-tooltip';
     tooltip.id = 'map-tooltip';
-    container.appendChild(tooltip);
+    wrapper.appendChild(tooltip);
+    return tooltip;
+  }
+
+  function getMapPath() {
+    var base = getThemeBasePath();
+    var isMobile = window.matchMedia('(max-width: 767px)').matches;
+    return base + '/svg/' + (isMobile ? 'map-mobile.svg' : 'map-full.svg');
+  }
+
+  function setNodeColor(prefNode, code) {
+    var region = PREF_REGION_MAP[code] || 'chubu';
+    var color = REGION_COLORS[region] || '#f0b34a';
+    prefNode.setAttribute('data-code', code);
+    prefNode.setAttribute('data-region', region);
+    prefNode.classList.add('prefecture-node');
+
+    var shapes = prefNode.querySelectorAll('path, polygon, rect, circle, ellipse, polyline');
+    if (!shapes.length && prefNode.matches && prefNode.matches('path, polygon, rect, circle, ellipse, polyline')) {
+      shapes = [prefNode];
+    }
+    Array.prototype.forEach.call(shapes, function (shape) {
+      shape.classList.add('prefecture-shape');
+      shape.style.fill = color;
+      shape.style.opacity = '1';
+      shape.setAttribute('vector-effect', 'non-scaling-stroke');
+      shape.setAttribute('draggable', 'false');
+    });
+  }
+
+  function normalizeSvg(svg) {
+    svg.classList.add('knt-japan-map-svg');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', '日本地図');
+    svg.setAttribute('draggable', 'false');
+    svg.style.background = 'transparent';
+
+    // Color all prefecture groups
+    var prefNodes = svg.querySelectorAll('[data-code]');
+    Array.prototype.forEach.call(prefNodes, function (node) {
+      var code = normalizeCode(node.getAttribute('data-code'));
+      setNodeColor(node, code);
+    });
+  }
+
+  async function renderMap() {
+    var wrapper = document.getElementById('japan-map');
+    if (!wrapper) return;
+    wrapper.innerHTML = '';
+
+    try {
+      var response = await fetch(getMapPath(), { credentials: 'same-origin', cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('SVG: ' + response.status);
+      }
+      var text = await response.text();
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(text, 'image/svg+xml');
+      var svg = doc.documentElement;
+      normalizeSvg(svg);
+      wrapper.appendChild(svg);
+    } catch (err) {
+      console.error('SVG地図の読み込みに失敗しました:', err);
+    }
+
+    createTooltip(wrapper);
+
+    if (state.selectedPref) {
+      highlightPref(state.selectedPref);
+    }
   }
 
   /* ========================================
-     Populate Prefecture Select
+     Municipality JSON
+     ======================================== */
+  async function loadMunicipalityJson() {
+    var base = getThemeBasePath();
+    var url = base + '/data/municipalities-full.json';
+    try {
+      var response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('municipalities-full.json: ' + response.status);
+      }
+      state.municipalityData = await response.json();
+    } catch (err) {
+      console.error('municipalities-full.json の読み込みに失敗しました:', err);
+      // MAJOR_CITY_DATA をフォールバックとして使用
+    }
+  }
+
+  /* ========================================
+     UI: Prefecture Select
      ======================================== */
   function populatePrefSelect() {
     var select = document.getElementById('pref-select');
     if (!select) return;
+    select.innerHTML = '<option value="">タップして選んでね</option>';
 
-    Object.keys(JAPAN_DATA).forEach(function (code) {
+    var source = state.municipalityData || MAJOR_CITY_DATA;
+    Object.keys(source).sort().forEach(function (code) {
       var option = document.createElement('option');
       option.value = code;
-      option.textContent = JAPAN_DATA[code].name;
+      option.textContent = source[code].name;
       select.appendChild(option);
     });
   }
 
   /* ========================================
-     Update City Select
+     UI: City Select (full municipalities)
      ======================================== */
   function updateCitySelect(prefCode) {
     var select = document.getElementById('city-select');
     if (!select) return;
-
-    // Clear existing options
     select.innerHTML = '';
 
-    if (!prefCode || !JAPAN_DATA[prefCode]) {
-      select.innerHTML = '<option value="">先に都道府県を選択してください</option>';
+    var data = getMunicipalityData(prefCode);
+    if (!prefCode || !data) {
+      select.innerHTML = '<option value="">まず都道府県を選んでね</option>';
       select.disabled = true;
       return;
     }
@@ -221,32 +286,42 @@
     defaultOpt.textContent = '市区町村を選択';
     select.appendChild(defaultOpt);
 
-    JAPAN_DATA[prefCode].cities.forEach(function (city) {
+    var municipalities = data.municipalities || data.majorCities || [];
+    municipalities.forEach(function (name) {
       var option = document.createElement('option');
-      option.value = city;
-      option.textContent = city;
+      option.value = name;
+      option.textContent = name;
       select.appendChild(option);
     });
+
+    if (state.selectedCity) {
+      select.value = state.selectedCity;
+    }
   }
 
   /* ========================================
-     Update City Panel (tag buttons)
+     UI: City Panel (major city chips)
      ======================================== */
   function updateCityPanel(prefCode) {
     var panel = document.getElementById('city-panel');
     if (!panel) return;
 
-    if (!prefCode || !JAPAN_DATA[prefCode]) {
+    var data = getMunicipalityData(prefCode);
+    if (!prefCode || !data) {
       panel.innerHTML = '';
       panel.classList.remove('has-cities');
       return;
     }
 
-    var data = JAPAN_DATA[prefCode];
-    var html = '<p class="japan-map-city-panel-title">' + data.name + ' の主要エリア</p>';
+    var majorCities = Array.isArray(data.majorCities) && data.majorCities.length
+      ? data.majorCities
+      : (Array.isArray(data.municipalities) ? data.municipalities.slice(0, 12) : []);
+
+    var html = '<p class="japan-map-city-panel-title">' + escapeHtml(data.name) + ' の主要エリア</p>';
     html += '<div class="japan-map-city-tags">';
-    data.cities.forEach(function (city) {
-      html += '<button type="button" class="japan-map-city-tag" data-city="' + city + '">' + city + '</button>';
+    majorCities.forEach(function (city) {
+      var selectedClass = state.selectedCity === city ? ' is-selected' : '';
+      html += '<button type="button" class="japan-map-city-tag' + selectedClass + '" data-city="' + escapeHtml(city) + '">' + escapeHtml(city) + '</button>';
     });
     html += '</div>';
 
@@ -255,7 +330,7 @@
   }
 
   /* ========================================
-     Update Search Button
+     UI: Search Button
      ======================================== */
   function updateButton() {
     var btn = document.getElementById('area-search-btn');
@@ -268,10 +343,9 @@
     }
 
     btn.classList.remove('is-disabled');
-
     var section = document.querySelector('.japan-map-section');
     var urlPattern = section ? section.getAttribute('data-area-url') : 'search';
-    var prefName = JAPAN_DATA[state.selectedPref].name;
+    var prefName = getPrefName(state.selectedPref);
     var query = state.selectedCity || prefName;
 
     if (urlPattern === 'taxonomy') {
@@ -284,116 +358,129 @@
   }
 
   /* ========================================
-     Highlight map prefecture
+     Highlight
      ======================================== */
   function highlightPref(code) {
-    // Remove all active
-    document.querySelectorAll('.pref-path.is-active').forEach(function (el) {
+    var activeNodes = document.querySelectorAll('#japan-map [data-code].is-active, #japan-map .prefecture-shape.is-active');
+    Array.prototype.forEach.call(activeNodes, function (el) {
       el.classList.remove('is-active');
     });
 
-    if (code) {
-      var path = document.querySelector('.pref-path[data-code="' + code + '"]');
-      if (path) {
-        path.classList.add('is-active');
-      }
+    if (!code) return;
+
+    var node = document.querySelector('#japan-map [data-code="' + normalizeCode(code) + '"]');
+    if (!node) return;
+
+    node.classList.add('is-active');
+    var shapes = node.querySelectorAll('.prefecture-shape');
+    if (!shapes.length && node.classList.contains('prefecture-shape')) {
+      shapes = [node];
     }
+    Array.prototype.forEach.call(shapes, function (shape) {
+      shape.classList.add('is-active');
+    });
   }
 
   /* ========================================
-     Select a prefecture (from any source)
+     Selection Logic
      ======================================== */
+  function syncPrefSelect(code) {
+    var select = document.getElementById('pref-select');
+    if (select) select.value = code || '';
+  }
+
+  function syncCitySelect(city) {
+    var select = document.getElementById('city-select');
+    if (select) select.value = city || '';
+  }
+
   function selectPref(code) {
+    code = code ? normalizeCode(code) : null;
     state.selectedPref = code;
     state.selectedCity = null;
-
+    syncPrefSelect(code);
     highlightPref(code);
     updateCitySelect(code);
     updateCityPanel(code);
+    syncCitySelect(null);
     updateButton();
-
-    // Sync dropdown
-    var select = document.getElementById('pref-select');
-    if (select && select.value !== code) {
-      select.value = code || '';
-    }
-
-    // Reset city dropdown
-    var citySelect = document.getElementById('city-select');
-    if (citySelect) {
-      citySelect.value = '';
-    }
   }
 
-  /* ========================================
-     Select a city
-     ======================================== */
   function selectCity(city) {
-    state.selectedCity = city;
-
-    // Highlight city tag
-    document.querySelectorAll('.japan-map-city-tag').forEach(function (el) {
-      el.classList.toggle('is-selected', el.getAttribute('data-city') === city);
+    state.selectedCity = city || null;
+    var tags = document.querySelectorAll('.japan-map-city-tag');
+    Array.prototype.forEach.call(tags, function (tag) {
+      tag.classList.toggle('is-selected', tag.getAttribute('data-city') === state.selectedCity);
     });
-
-    // Sync dropdown
-    var citySelect = document.getElementById('city-select');
-    if (citySelect && citySelect.value !== city) {
-      citySelect.value = city || '';
-    }
-
+    syncCitySelect(state.selectedCity);
     updateButton();
   }
 
   /* ========================================
-     Bind Events
+     Events
      ======================================== */
   function bindEvents() {
-    // Map path clicks
-    document.addEventListener('click', function (e) {
-      var path = e.target.closest('.pref-path');
-      if (path) {
-        selectPref(path.getAttribute('data-code'));
+    var wrapper = document.getElementById('japan-map');
+    if (!wrapper) return;
+
+    // Drag prevention
+    wrapper.addEventListener('dragstart', function (e) {
+      e.preventDefault();
+    });
+    wrapper.addEventListener('selectstart', function (e) {
+      e.preventDefault();
+    });
+    wrapper.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('[data-code]')) {
+        e.preventDefault();
+      }
+    });
+
+    // Click: prefecture or city tag
+    wrapper.addEventListener('click', function (e) {
+      var prefNode = e.target.closest('[data-code]');
+      if (prefNode && wrapper.contains(prefNode)) {
+        selectPref(prefNode.getAttribute('data-code'));
         return;
       }
+    });
 
-      // City tag clicks
+    // City tag clicks (delegated from city-panel)
+    document.addEventListener('click', function (e) {
       var cityTag = e.target.closest('.japan-map-city-tag');
       if (cityTag) {
         selectCity(cityTag.getAttribute('data-city'));
-        return;
       }
     });
 
-    // Map hover tooltip
-    var tooltip = document.getElementById('map-tooltip');
-    if (tooltip) {
-      document.addEventListener('mouseover', function (e) {
-        var path = e.target.closest('.pref-path');
-        if (path) {
-          tooltip.textContent = path.getAttribute('data-name');
-          tooltip.classList.add('is-visible');
-        }
-      });
+    // Tooltip
+    var tooltip = function () {
+      return document.getElementById('map-tooltip');
+    };
 
-      document.addEventListener('mouseout', function (e) {
-        var path = e.target.closest('.pref-path');
-        if (path) {
-          tooltip.classList.remove('is-visible');
-        }
-      });
+    wrapper.addEventListener('mouseover', function (e) {
+      var prefNode = e.target.closest('[data-code]');
+      var tip = tooltip();
+      if (!prefNode || !tip) return;
+      var code = normalizeCode(prefNode.getAttribute('data-code'));
+      tip.textContent = getPrefName(code);
+      tip.classList.add('is-visible');
+    });
 
-      document.addEventListener('mousemove', function (e) {
-        if (tooltip.classList.contains('is-visible')) {
-          var wrapper = document.querySelector('.japan-map-svg-wrapper');
-          if (wrapper) {
-            var rect = wrapper.getBoundingClientRect();
-            tooltip.style.left = (e.clientX - rect.left) + 'px';
-            tooltip.style.top = (e.clientY - rect.top) + 'px';
-          }
-        }
-      });
-    }
+    wrapper.addEventListener('mouseout', function (e) {
+      var prefNode = e.target.closest('[data-code]');
+      var tip = tooltip();
+      if (!prefNode || !tip) return;
+      tip.classList.remove('is-visible');
+    });
+
+    wrapper.addEventListener('mousemove', function (e) {
+      var tip = tooltip();
+      if (!tip || !tip.classList.contains('is-visible')) return;
+      var rect = wrapper.getBoundingClientRect();
+      tip.style.left = (e.clientX - rect.left) + 'px';
+      tip.style.top = (e.clientY - rect.top) + 'px';
+    });
 
     // Prefecture dropdown
     var prefSelect = document.getElementById('pref-select');
@@ -420,14 +507,35 @@
         }
       });
     }
+
+    // Responsive: re-render map on breakpoint change
+    state.mediaQuery = window.matchMedia('(max-width: 767px)');
+    state.mediaQuery.addEventListener('change', function () {
+      renderMap().catch(function (err) { console.error(err); });
+    });
   }
 
   /* ========================================
-     DOM Ready
+     Init
      ======================================== */
+  async function init() {
+    var wrapper = document.getElementById('japan-map');
+    if (!wrapper) return;
+
+    await loadMunicipalityJson();
+    populatePrefSelect();
+    updateCitySelect(null);
+    updateCityPanel(null);
+    updateButton();
+    await renderMap();
+    bindEvents();
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function () {
+      init().catch(function (err) { console.error(err); });
+    });
   } else {
-    init();
+    init().catch(function (err) { console.error(err); });
   }
 })();
