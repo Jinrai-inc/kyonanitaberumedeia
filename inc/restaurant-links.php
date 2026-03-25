@@ -1,9 +1,11 @@
 <?php
 /**
- * Restaurant Links - Custom Meta Box
+ * Restaurant Links - Multi-shop Meta Box
  *
- * 記事に紐づく店舗の各種予約・口コミサイトURLを管理し、
- * 記事内に自動でリンクカードを表示する仕組み。
+ * 1記事に複数店舗を登録可能。
+ * 記事本文中の店舗名（見出し or 段落）の直後にリンクカードを自動挿入。
+ * 該当箇所がなければ記事末尾にまとめて表示。
+ * ショートコード [knt_shop name="店舗名"] での手動配置も可能。
  *
  * @package KNT_Media
  */
@@ -12,100 +14,34 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-/**
- * サポートするグルメサイト定義
- * key => [ label, icon_svg, color, placeholder, domain_pattern ]
- */
+/* ========================================
+   Service Definitions
+   ======================================== */
 function knt_restaurant_link_services() {
     return array(
-        'tabelog' => array(
-            'label'   => '食べログ',
-            'color'   => '#F09000',
-            'domain'  => 'tabelog.com',
-            'placeholder' => 'https://tabelog.com/tokyo/A1301/...',
-        ),
-        'hotpepper' => array(
-            'label'   => 'ホットペッパー',
-            'color'   => '#E60012',
-            'domain'  => 'hotpepper.jp',
-            'placeholder' => 'https://www.hotpepper.jp/strJ00...',
-        ),
-        'gurunavi' => array(
-            'label'   => 'ぐるなび',
-            'color'   => '#E4002B',
-            'domain'  => 'gnavi.co.jp',
-            'placeholder' => 'https://r.gnavi.co.jp/...',
-        ),
-        'ikkyuu' => array(
-            'label'   => '一休.comレストラン',
-            'color'   => '#B8860B',
-            'domain'  => 'ikyu.com',
-            'placeholder' => 'https://restaurant.ikyu.com/...',
-        ),
-        'retty' => array(
-            'label'   => 'Retty',
-            'color'   => '#FF6E40',
-            'domain'  => 'retty.me',
-            'placeholder' => 'https://retty.me/area/.../...',
-        ),
-        'hitosara' => array(
-            'label'   => 'ヒトサラ',
-            'color'   => '#1A1A1A',
-            'domain'  => 'hitosara.com',
-            'placeholder' => 'https://hitosara.com/...',
-        ),
-        'tablecheck' => array(
-            'label'   => 'TableCheck',
-            'color'   => '#2563EB',
-            'domain'  => 'tablecheck.com',
-            'placeholder' => 'https://www.tablecheck.com/shops/...',
-        ),
-        'toreta' => array(
-            'label'   => 'トレタ予約',
-            'color'   => '#00B894',
-            'domain'  => 'toreta.in',
-            'placeholder' => 'https://toreta.in/...',
-        ),
-        'yelp' => array(
-            'label'   => 'Yelp',
-            'color'   => '#D32323',
-            'domain'  => 'yelp.co.jp',
-            'placeholder' => 'https://www.yelp.co.jp/biz/...',
-        ),
-        'google_maps' => array(
-            'label'   => 'Google マップ',
-            'color'   => '#4285F4',
-            'domain'  => 'google.com/maps',
-            'placeholder' => 'https://maps.google.com/?cid=... or goo.gl/maps/...',
-        ),
-        'instagram' => array(
-            'label'   => 'Instagram',
-            'color'   => '#E4405F',
-            'domain'  => 'instagram.com',
-            'placeholder' => 'https://www.instagram.com/shopname/',
-        ),
-        'official' => array(
-            'label'   => '公式サイト',
-            'color'   => '#2A2622',
-            'domain'  => '',
-            'placeholder' => 'https://example.com/',
-        ),
-        'reservation' => array(
-            'label'   => '予約ページ',
-            'color'   => '#C9553E',
-            'domain'  => '',
-            'placeholder' => 'https://example.com/reserve',
-        ),
+        'tabelog'     => array( 'label' => '食べログ',           'color' => '#F09000', 'placeholder' => 'https://tabelog.com/tokyo/A1301/...' ),
+        'hotpepper'   => array( 'label' => 'ホットペッパー',     'color' => '#E60012', 'placeholder' => 'https://www.hotpepper.jp/strJ00...' ),
+        'gurunavi'    => array( 'label' => 'ぐるなび',           'color' => '#E4002B', 'placeholder' => 'https://r.gnavi.co.jp/...' ),
+        'ikkyuu'      => array( 'label' => '一休.comレストラン', 'color' => '#B8860B', 'placeholder' => 'https://restaurant.ikyu.com/...' ),
+        'retty'       => array( 'label' => 'Retty',              'color' => '#FF6E40', 'placeholder' => 'https://retty.me/area/.../...' ),
+        'hitosara'    => array( 'label' => 'ヒトサラ',           'color' => '#1A1A1A', 'placeholder' => 'https://hitosara.com/...' ),
+        'tablecheck'  => array( 'label' => 'TableCheck',         'color' => '#2563EB', 'placeholder' => 'https://www.tablecheck.com/shops/...' ),
+        'toreta'      => array( 'label' => 'トレタ予約',         'color' => '#00B894', 'placeholder' => 'https://toreta.in/...' ),
+        'yelp'        => array( 'label' => 'Yelp',               'color' => '#D32323', 'placeholder' => 'https://www.yelp.co.jp/biz/...' ),
+        'google_maps' => array( 'label' => 'Google マップ',      'color' => '#4285F4', 'placeholder' => 'https://maps.google.com/?cid=...' ),
+        'instagram'   => array( 'label' => 'Instagram',          'color' => '#E4405F', 'placeholder' => 'https://www.instagram.com/shopname/' ),
+        'official'    => array( 'label' => '公式サイト',          'color' => '#2A2622', 'placeholder' => 'https://example.com/' ),
+        'reservation' => array( 'label' => '予約ページ',          'color' => '#C9553E', 'placeholder' => 'https://example.com/reserve' ),
     );
 }
 
-/**
- * Meta box 登録
- */
+/* ========================================
+   Meta Box Registration
+   ======================================== */
 function knt_add_restaurant_meta_box() {
     add_meta_box(
         'knt_restaurant_links',
-        '🍽️ 店舗リンク（自動表示）',
+        '🍽️ 店舗リンク（複数店舗対応・自動表示）',
         'knt_restaurant_links_meta_box_html',
         'post',
         'normal',
@@ -114,169 +50,338 @@ function knt_add_restaurant_meta_box() {
 }
 add_action( 'add_meta_boxes', 'knt_add_restaurant_meta_box' );
 
-/**
- * Meta box HTML
- */
+/* ========================================
+   Meta Box HTML
+   ======================================== */
 function knt_restaurant_links_meta_box_html( $post ) {
     wp_nonce_field( 'knt_restaurant_links_nonce', 'knt_restaurant_links_nonce_field' );
 
-    $services = knt_restaurant_link_services();
-    $saved    = get_post_meta( $post->ID, '_knt_restaurant_links', true );
-    if ( ! is_array( $saved ) ) {
-        $saved = array();
+    $shops = get_post_meta( $post->ID, '_knt_shops', true );
+    if ( ! is_array( $shops ) || empty( $shops ) ) {
+        $shops = array( knt_empty_shop() );
     }
 
-    // 店舗名
-    $shop_name = get_post_meta( $post->ID, '_knt_shop_name', true );
-    // 店舗ジャンル
-    $shop_genre = get_post_meta( $post->ID, '_knt_shop_genre', true );
-    // 店舗エリア
-    $shop_area = get_post_meta( $post->ID, '_knt_shop_area', true );
-    // 予算
-    $shop_budget = get_post_meta( $post->ID, '_knt_shop_budget', true );
-    // 営業時間
-    $shop_hours = get_post_meta( $post->ID, '_knt_shop_hours', true );
-    // 定休日
-    $shop_holiday = get_post_meta( $post->ID, '_knt_shop_holiday', true );
-    // 住所
-    $shop_address = get_post_meta( $post->ID, '_knt_shop_address', true );
-    // 電話番号
-    $shop_tel = get_post_meta( $post->ID, '_knt_shop_tel', true );
+    $services = knt_restaurant_link_services();
 
+    // ---- Admin CSS ----
     echo '<style>
-        .knt-rl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .knt-rl-field { display: flex; flex-direction: column; gap: 4px; }
-        .knt-rl-field label { font-weight: 600; font-size: 13px; color: #1d2327; }
-        .knt-rl-field input, .knt-rl-field textarea { width: 100%; padding: 6px 10px; border: 1px solid #8c8f94; border-radius: 4px; font-size: 13px; }
-        .knt-rl-divider { border-top: 1px solid #dcdcde; margin: 16px 0; padding-top: 12px; }
-        .knt-rl-divider-title { font-weight: 700; font-size: 13px; color: #1d2327; margin-bottom: 12px; }
-        .knt-rl-link-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .knt-rl-link-row .knt-rl-badge { display: inline-block; min-width: 110px; padding: 3px 8px; border-radius: 4px; color: #fff; font-size: 11px; font-weight: 700; text-align: center; flex-shrink: 0; }
-        .knt-rl-link-row input { flex: 1; padding: 6px 10px; border: 1px solid #8c8f94; border-radius: 4px; font-size: 13px; }
-        .knt-rl-link-row .knt-rl-status { width: 20px; flex-shrink: 0; text-align: center; font-size: 14px; }
-        .knt-rl-help { font-size: 12px; color: #646970; margin-top: 8px; }
+        .knt-shops-wrap { }
+        .knt-shop-panel { border: 1px solid #dcdcde; border-radius: 6px; padding: 16px; margin-bottom: 16px; background: #f9f9f9; position: relative; }
+        .knt-shop-panel.is-collapsed .knt-shop-body { display: none; }
+        .knt-shop-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+        .knt-shop-toggle-arrow { transition: transform 0.15s ease; font-size: 12px; }
+        .knt-shop-panel.is-collapsed .knt-shop-toggle-arrow { transform: rotate(-90deg); }
+        .knt-shop-toggle-title { font-weight: 700; font-size: 14px; color: #1d2327; }
+        .knt-shop-toggle-badge { font-size: 11px; color: #646970; margin-left: auto; }
+        .knt-shop-remove { position: absolute; top: 12px; right: 12px; background: #d63638; color: #fff; border: none; border-radius: 4px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
+        .knt-rl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+        .knt-rl-field { display: flex; flex-direction: column; gap: 3px; }
+        .knt-rl-field label { font-weight: 600; font-size: 12px; color: #1d2327; }
+        .knt-rl-field input { width: 100%; padding: 5px 8px; border: 1px solid #8c8f94; border-radius: 4px; font-size: 13px; }
+        .knt-rl-links-title { font-weight: 700; font-size: 12px; color: #1d2327; margin: 14px 0 8px; padding-top: 10px; border-top: 1px solid #dcdcde; }
+        .knt-rl-link-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .knt-rl-badge { display: inline-block; min-width: 100px; padding: 2px 6px; border-radius: 3px; color: #fff; font-size: 10px; font-weight: 700; text-align: center; flex-shrink: 0; }
+        .knt-rl-link-row input { flex: 1; padding: 4px 8px; border: 1px solid #8c8f94; border-radius: 4px; font-size: 12px; }
+        .knt-add-shop { margin-top: 8px; }
+        .knt-rl-help { font-size: 12px; color: #646970; margin-top: 12px; line-height: 1.6; }
     </style>';
 
-    // 店舗基本情報
-    echo '<div class="knt-rl-grid">';
-    echo '<div class="knt-rl-field"><label>店舗名</label><input type="text" name="knt_shop_name" value="' . esc_attr( $shop_name ) . '" placeholder="例: 鮨 さいとう"></div>';
-    echo '<div class="knt-rl-field"><label>ジャンル</label><input type="text" name="knt_shop_genre" value="' . esc_attr( $shop_genre ) . '" placeholder="例: 寿司、イタリアン、焼肉"></div>';
-    echo '<div class="knt-rl-field"><label>エリア</label><input type="text" name="knt_shop_area" value="' . esc_attr( $shop_area ) . '" placeholder="例: 東京・六本木"></div>';
-    echo '<div class="knt-rl-field"><label>予算</label><input type="text" name="knt_shop_budget" value="' . esc_attr( $shop_budget ) . '" placeholder="例: ランチ ¥1,500〜 / ディナー ¥5,000〜"></div>';
-    echo '<div class="knt-rl-field"><label>営業時間</label><input type="text" name="knt_shop_hours" value="' . esc_attr( $shop_hours ) . '" placeholder="例: 11:30〜14:00 / 17:00〜22:00"></div>';
-    echo '<div class="knt-rl-field"><label>定休日</label><input type="text" name="knt_shop_holiday" value="' . esc_attr( $shop_holiday ) . '" placeholder="例: 毎週月曜日"></div>';
-    echo '<div class="knt-rl-field" style="grid-column: 1 / -1;"><label>住所</label><input type="text" name="knt_shop_address" value="' . esc_attr( $shop_address ) . '" placeholder="例: 東京都港区六本木1-2-3 ○○ビル 2F"></div>';
-    echo '<div class="knt-rl-field"><label>電話番号</label><input type="text" name="knt_shop_tel" value="' . esc_attr( $shop_tel ) . '" placeholder="例: 03-1234-5678"></div>';
-    echo '</div>';
+    echo '<div class="knt-shops-wrap" id="knt-shops-wrap">';
 
-    // リンク入力
-    echo '<div class="knt-rl-divider"><div class="knt-rl-divider-title">各サイトURL（入力されたもののみ自動表示）</div></div>';
-
-    foreach ( $services as $key => $service ) {
-        $value = isset( $saved[ $key ] ) ? $saved[ $key ] : '';
-        $status = $value ? '✅' : '—';
-        echo '<div class="knt-rl-link-row">';
-        echo '<span class="knt-rl-badge" style="background:' . esc_attr( $service['color'] ) . ';">' . esc_html( $service['label'] ) . '</span>';
-        echo '<input type="url" name="knt_restaurant_links[' . esc_attr( $key ) . ']" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $service['placeholder'] ) . '">';
-        echo '<span class="knt-rl-status">' . $status . '</span>';
-        echo '</div>';
+    foreach ( $shops as $idx => $shop ) {
+        knt_render_shop_panel( $idx, $shop, $services );
     }
 
-    echo '<p class="knt-rl-help">💡 URLを入力すると記事本文の下に自動でリンクカードが表示されます。空欄のサービスは非表示になります。</p>';
+    echo '</div>';
+
+    echo '<button type="button" class="button knt-add-shop" id="knt-add-shop">+ 店舗を追加</button>';
+
+    echo '<p class="knt-rl-help">';
+    echo '<strong>自動配置:</strong> 記事本文中に店舗名が含まれていると、その直後にカードが自動挿入されます。<br>';
+    echo '<strong>手動配置:</strong> <code>[knt_shop name="店舗名"]</code> をエディタ内に書くと好きな位置に表示できます。<br>';
+    echo '<strong>フォールバック:</strong> 本文中に店舗名もショートコードもなければ、記事末尾にまとめて表示されます。';
+    echo '</p>';
+
+    // ---- Admin JS ----
+    echo '<script>
+    (function(){
+        var wrap = document.getElementById("knt-shops-wrap");
+        var addBtn = document.getElementById("knt-add-shop");
+        var idx = ' . count( $shops ) . ';
+
+        // Toggle collapse
+        wrap.addEventListener("click", function(e) {
+            var toggle = e.target.closest(".knt-shop-toggle");
+            if (toggle) {
+                toggle.closest(".knt-shop-panel").classList.toggle("is-collapsed");
+                return;
+            }
+            var removeBtn = e.target.closest(".knt-shop-remove");
+            if (removeBtn) {
+                var panel = removeBtn.closest(".knt-shop-panel");
+                if (wrap.querySelectorAll(".knt-shop-panel").length > 1) {
+                    panel.remove();
+                } else {
+                    alert("最低1つの店舗パネルが必要です");
+                }
+            }
+        });
+
+        // Update panel title when shop name changes
+        wrap.addEventListener("input", function(e) {
+            if (e.target.name && e.target.name.indexOf("[name]") > -1) {
+                var panel = e.target.closest(".knt-shop-panel");
+                var titleEl = panel.querySelector(".knt-shop-toggle-title");
+                titleEl.textContent = e.target.value || "（店舗名未入力）";
+            }
+        });
+
+        // Add shop
+        addBtn.addEventListener("click", function() {
+            var template = wrap.querySelector(".knt-shop-panel").cloneNode(true);
+            // Clear all inputs
+            template.querySelectorAll("input").forEach(function(input) {
+                input.value = "";
+                input.name = input.name.replace(/knt_shops\[\d+\]/, "knt_shops[" + idx + "]");
+            });
+            template.querySelector(".knt-shop-toggle-title").textContent = "（店舗名未入力）";
+            template.classList.remove("is-collapsed");
+            // Update badge
+            var badge = template.querySelector(".knt-shop-toggle-badge");
+            if (badge) badge.textContent = "店舗 " + (idx + 1);
+            wrap.appendChild(template);
+            idx++;
+        });
+    })();
+    </script>';
 }
 
 /**
- * Meta box 保存
+ * Empty shop template
  */
-function knt_save_restaurant_links( $post_id ) {
-    if ( ! isset( $_POST['knt_restaurant_links_nonce_field'] ) ) {
-        return;
-    }
-    if ( ! wp_verify_nonce( $_POST['knt_restaurant_links_nonce_field'], 'knt_restaurant_links_nonce' ) ) {
-        return;
-    }
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-        return;
-    }
-    if ( ! current_user_can( 'edit_post', $post_id ) ) {
-        return;
-    }
-
-    // 店舗基本情報
-    $text_fields = array(
-        'knt_shop_name', 'knt_shop_genre', 'knt_shop_area',
-        'knt_shop_budget', 'knt_shop_hours', 'knt_shop_holiday',
-        'knt_shop_address', 'knt_shop_tel',
+function knt_empty_shop() {
+    return array(
+        'name'     => '',
+        'genre'    => '',
+        'area'     => '',
+        'budget'   => '',
+        'hours'    => '',
+        'holiday'  => '',
+        'address'  => '',
+        'tel'      => '',
+        'links'    => array(),
     );
-    foreach ( $text_fields as $field ) {
-        if ( isset( $_POST[ $field ] ) ) {
-            update_post_meta( $post_id, '_' . $field, sanitize_text_field( $_POST[ $field ] ) );
-        }
+}
+
+/**
+ * Render single shop panel in admin
+ */
+function knt_render_shop_panel( $idx, $shop, $services ) {
+    $name = isset( $shop['name'] ) ? $shop['name'] : '';
+    $prefix = 'knt_shops[' . $idx . ']';
+    $link_count = 0;
+    if ( isset( $shop['links'] ) && is_array( $shop['links'] ) ) {
+        $link_count = count( array_filter( $shop['links'] ) );
+    }
+    ?>
+    <div class="knt-shop-panel">
+        <button type="button" class="knt-shop-remove" title="この店舗を削除">&times;</button>
+        <div class="knt-shop-toggle">
+            <span class="knt-shop-toggle-arrow">▼</span>
+            <span class="knt-shop-toggle-title"><?php echo esc_html( $name ?: '（店舗名未入力）' ); ?></span>
+            <span class="knt-shop-toggle-badge">店舗 <?php echo $idx + 1; ?><?php if ( $link_count ) echo " ({$link_count}リンク)"; ?></span>
+        </div>
+        <div class="knt-shop-body">
+            <div class="knt-rl-grid">
+                <div class="knt-rl-field"><label>店舗名 *</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[name]" value="<?php echo esc_attr( $name ); ?>" placeholder="例: 鮨 さいとう"></div>
+                <div class="knt-rl-field"><label>ジャンル</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[genre]" value="<?php echo esc_attr( $shop['genre'] ?? '' ); ?>" placeholder="寿司、イタリアン"></div>
+                <div class="knt-rl-field"><label>エリア</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[area]" value="<?php echo esc_attr( $shop['area'] ?? '' ); ?>" placeholder="東京・六本木"></div>
+                <div class="knt-rl-field"><label>予算</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[budget]" value="<?php echo esc_attr( $shop['budget'] ?? '' ); ?>" placeholder="ランチ ¥1,500〜 / ディナー ¥5,000〜"></div>
+                <div class="knt-rl-field"><label>営業時間</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[hours]" value="<?php echo esc_attr( $shop['hours'] ?? '' ); ?>" placeholder="11:30〜14:00 / 17:00〜22:00"></div>
+                <div class="knt-rl-field"><label>定休日</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[holiday]" value="<?php echo esc_attr( $shop['holiday'] ?? '' ); ?>" placeholder="毎週月曜日"></div>
+                <div class="knt-rl-field" style="grid-column:1/-1;"><label>住所</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[address]" value="<?php echo esc_attr( $shop['address'] ?? '' ); ?>" placeholder="東京都港区六本木1-2-3"></div>
+                <div class="knt-rl-field"><label>電話番号</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[tel]" value="<?php echo esc_attr( $shop['tel'] ?? '' ); ?>" placeholder="03-1234-5678"></div>
+            </div>
+            <div class="knt-rl-links-title">各サイトURL（入力されたもののみ表示）</div>
+            <?php foreach ( $services as $key => $svc ) :
+                $url = $shop['links'][ $key ] ?? '';
+            ?>
+            <div class="knt-rl-link-row">
+                <span class="knt-rl-badge" style="background:<?php echo esc_attr( $svc['color'] ); ?>;"><?php echo esc_html( $svc['label'] ); ?></span>
+                <input type="url" name="<?php echo esc_attr( $prefix ); ?>[links][<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" placeholder="<?php echo esc_attr( $svc['placeholder'] ); ?>">
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php
+}
+
+/* ========================================
+   Save Meta
+   ======================================== */
+function knt_save_restaurant_links( $post_id ) {
+    if ( ! isset( $_POST['knt_restaurant_links_nonce_field'] ) ) return;
+    if ( ! wp_verify_nonce( $_POST['knt_restaurant_links_nonce_field'], 'knt_restaurant_links_nonce' ) ) return;
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+    // Legacy single-shop fields cleanup
+    delete_post_meta( $post_id, '_knt_shop_name' );
+    delete_post_meta( $post_id, '_knt_shop_genre' );
+    delete_post_meta( $post_id, '_knt_shop_area' );
+    delete_post_meta( $post_id, '_knt_shop_budget' );
+    delete_post_meta( $post_id, '_knt_shop_hours' );
+    delete_post_meta( $post_id, '_knt_shop_holiday' );
+    delete_post_meta( $post_id, '_knt_shop_address' );
+    delete_post_meta( $post_id, '_knt_shop_tel' );
+    delete_post_meta( $post_id, '_knt_restaurant_links' );
+
+    if ( ! isset( $_POST['knt_shops'] ) || ! is_array( $_POST['knt_shops'] ) ) {
+        delete_post_meta( $post_id, '_knt_shops' );
+        return;
     }
 
-    // リンク
-    if ( isset( $_POST['knt_restaurant_links'] ) && is_array( $_POST['knt_restaurant_links'] ) ) {
+    $shops = array();
+    foreach ( $_POST['knt_shops'] as $raw ) {
+        $shop_name = isset( $raw['name'] ) ? sanitize_text_field( $raw['name'] ) : '';
+        // Skip completely empty panels
         $links = array();
-        foreach ( $_POST['knt_restaurant_links'] as $key => $url ) {
-            $url = esc_url_raw( trim( $url ) );
-            if ( $url ) {
-                $links[ sanitize_key( $key ) ] = $url;
+        if ( isset( $raw['links'] ) && is_array( $raw['links'] ) ) {
+            foreach ( $raw['links'] as $k => $v ) {
+                $v = esc_url_raw( trim( $v ) );
+                if ( $v ) {
+                    $links[ sanitize_key( $k ) ] = $v;
+                }
             }
         }
-        update_post_meta( $post_id, '_knt_restaurant_links', $links );
+        if ( ! $shop_name && empty( $links ) ) {
+            continue;
+        }
+        $shops[] = array(
+            'name'    => $shop_name,
+            'genre'   => sanitize_text_field( $raw['genre'] ?? '' ),
+            'area'    => sanitize_text_field( $raw['area'] ?? '' ),
+            'budget'  => sanitize_text_field( $raw['budget'] ?? '' ),
+            'hours'   => sanitize_text_field( $raw['hours'] ?? '' ),
+            'holiday' => sanitize_text_field( $raw['holiday'] ?? '' ),
+            'address' => sanitize_text_field( $raw['address'] ?? '' ),
+            'tel'     => sanitize_text_field( $raw['tel'] ?? '' ),
+            'links'   => $links,
+        );
+    }
+
+    if ( $shops ) {
+        update_post_meta( $post_id, '_knt_shops', $shops );
     } else {
-        delete_post_meta( $post_id, '_knt_restaurant_links' );
+        delete_post_meta( $post_id, '_knt_shops' );
     }
 }
 add_action( 'save_post', 'knt_save_restaurant_links' );
 
-/**
- * 記事本文末尾に店舗情報を自動挿入（the_content フィルター）
- */
-function knt_auto_insert_restaurant_card( $content ) {
+/* ========================================
+   Shortcode: [knt_shop name="店舗名"]
+   ======================================== */
+function knt_shop_shortcode( $atts ) {
+    $atts = shortcode_atts( array( 'name' => '' ), $atts, 'knt_shop' );
+    if ( ! $atts['name'] ) return '';
+
+    $shops = get_post_meta( get_the_ID(), '_knt_shops', true );
+    if ( ! is_array( $shops ) ) return '';
+
+    foreach ( $shops as $shop ) {
+        if ( $shop['name'] === $atts['name'] ) {
+            ob_start();
+            knt_render_restaurant_card_from_data( $shop );
+            return ob_get_clean();
+        }
+    }
+    return '';
+}
+add_shortcode( 'knt_shop', 'knt_shop_shortcode' );
+
+/* ========================================
+   Auto-insert: 店舗名で本文内の位置を検出
+   ======================================== */
+function knt_auto_insert_restaurant_cards( $content ) {
     if ( ! is_singular( 'post' ) || ! is_main_query() ) {
         return $content;
     }
 
     $post_id = get_the_ID();
-    $links   = get_post_meta( $post_id, '_knt_restaurant_links', true );
-    $name    = get_post_meta( $post_id, '_knt_shop_name', true );
+    $shops   = get_post_meta( $post_id, '_knt_shops', true );
 
-    // 店舗名もリンクもなければ何も出さない
-    if ( ! $name && ( ! is_array( $links ) || empty( $links ) ) ) {
+    if ( ! is_array( $shops ) || empty( $shops ) ) {
         return $content;
     }
 
-    ob_start();
-    knt_render_restaurant_card( $post_id );
-    $card = ob_get_clean();
+    $remaining = array();
 
-    return $content . $card;
+    foreach ( $shops as $shop ) {
+        $name = $shop['name'];
+        if ( ! $name ) continue;
+
+        // ショートコードで既に手動配置されていればスキップ
+        if ( has_shortcode( $content, 'knt_shop' ) && strpos( $content, 'name="' . $name . '"' ) !== false ) {
+            continue;
+        }
+
+        // 本文中に店舗名が含まれているか検索
+        // 見出し (h2, h3, h4) または段落の中に店舗名があれば、その要素の直後に挿入
+        $escaped_name = preg_quote( $name, '/' );
+        $pattern = '/(<(?:h[2-4]|p)[^>]*>(?:(?!<\/(?:h[2-4]|p)>).)*' . $escaped_name . '.*?<\/(?:h[2-4]|p)>)/is';
+
+        if ( preg_match( $pattern, $content, $matches, PREG_OFFSET_CAPTURE ) ) {
+            $match_str = $matches[0][0];
+            $match_pos = $matches[0][1];
+            $insert_pos = $match_pos + strlen( $match_str );
+
+            ob_start();
+            knt_render_restaurant_card_from_data( $shop );
+            $card_html = ob_get_clean();
+
+            // 挿入（後ろから挿入するため位置がズレないよう一旦マーカーを使う）
+            $marker = '<!--knt_shop_' . md5( $name ) . '-->';
+            $content = substr_replace( $content, $match_str . $marker, $match_pos, strlen( $match_str ) );
+            $content = str_replace( $marker, $card_html, $content );
+        } else {
+            // 本文に名前がなかった → 末尾にまとめる
+            $remaining[] = $shop;
+        }
+    }
+
+    // 末尾フォールバック
+    if ( ! empty( $remaining ) ) {
+        ob_start();
+        foreach ( $remaining as $shop ) {
+            knt_render_restaurant_card_from_data( $shop );
+        }
+        $content .= ob_get_clean();
+    }
+
+    return $content;
 }
-add_filter( 'the_content', 'knt_auto_insert_restaurant_card', 20 );
+add_filter( 'the_content', 'knt_auto_insert_restaurant_cards', 20 );
 
-/**
- * 店舗情報カードのレンダリング
- */
-function knt_render_restaurant_card( $post_id ) {
-    $name     = get_post_meta( $post_id, '_knt_shop_name', true );
-    $genre    = get_post_meta( $post_id, '_knt_shop_genre', true );
-    $area     = get_post_meta( $post_id, '_knt_shop_area', true );
-    $budget   = get_post_meta( $post_id, '_knt_shop_budget', true );
-    $hours    = get_post_meta( $post_id, '_knt_shop_hours', true );
-    $holiday  = get_post_meta( $post_id, '_knt_shop_holiday', true );
-    $address  = get_post_meta( $post_id, '_knt_shop_address', true );
-    $tel      = get_post_meta( $post_id, '_knt_shop_tel', true );
-    $links    = get_post_meta( $post_id, '_knt_restaurant_links', true );
+/* ========================================
+   Render Card from Data Array
+   ======================================== */
+function knt_render_restaurant_card_from_data( $shop ) {
+    $name     = $shop['name'] ?? '';
+    $genre    = $shop['genre'] ?? '';
+    $area     = $shop['area'] ?? '';
+    $budget   = $shop['budget'] ?? '';
+    $hours    = $shop['hours'] ?? '';
+    $holiday  = $shop['holiday'] ?? '';
+    $address  = $shop['address'] ?? '';
+    $tel      = $shop['tel'] ?? '';
+    $links    = $shop['links'] ?? array();
     $services = knt_restaurant_link_services();
 
-    if ( ! is_array( $links ) ) {
-        $links = array();
-    }
+    if ( ! is_array( $links ) ) $links = array();
     ?>
-    <div class="restaurant-card">
+    <div class="restaurant-card" data-shop="<?php echo esc_attr( $name ); ?>">
         <div class="restaurant-card__header">
-            <h3 class="restaurant-card__name"><?php echo esc_html( $name ?: get_the_title( $post_id ) ); ?></h3>
+            <h3 class="restaurant-card__name"><?php echo esc_html( $name ?: '店舗情報' ); ?></h3>
             <?php if ( $genre ) : ?>
                 <span class="restaurant-card__genre"><?php echo esc_html( $genre ); ?></span>
             <?php endif; ?>
@@ -334,8 +439,7 @@ function knt_render_restaurant_card( $post_id ) {
                     <a href="<?php echo esc_url( $url ); ?>"
                        class="restaurant-card__link"
                        style="--link-color: <?php echo esc_attr( $svc['color'] ); ?>;"
-                       target="_blank"
-                       rel="noopener noreferrer sponsored">
+                       target="_blank" rel="noopener noreferrer sponsored">
                         <span class="restaurant-card__link-dot" style="background: <?php echo esc_attr( $svc['color'] ); ?>;"></span>
                         <span class="restaurant-card__link-label"><?php echo esc_html( $svc['label'] ); ?></span>
                         <svg class="restaurant-card__link-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -348,53 +452,36 @@ function knt_render_restaurant_card( $post_id ) {
     <?php
 }
 
-/**
- * 店舗情報の構造化データ (JSON-LD Restaurant)
- */
+/* ========================================
+   Structured Data (JSON-LD) for all shops
+   ======================================== */
 function knt_restaurant_structured_data() {
-    if ( ! is_singular( 'post' ) ) {
-        return;
-    }
+    if ( ! is_singular( 'post' ) ) return;
 
-    $post_id = get_the_ID();
-    $name    = get_post_meta( $post_id, '_knt_shop_name', true );
-    if ( ! $name ) {
-        return;
-    }
+    $shops = get_post_meta( get_the_ID(), '_knt_shops', true );
+    if ( ! is_array( $shops ) ) return;
 
-    $address = get_post_meta( $post_id, '_knt_shop_address', true );
-    $tel     = get_post_meta( $post_id, '_knt_shop_tel', true );
-    $genre   = get_post_meta( $post_id, '_knt_shop_genre', true );
-    $hours   = get_post_meta( $post_id, '_knt_shop_hours', true );
-    $image   = get_the_post_thumbnail_url( $post_id, 'full' );
+    $image = get_the_post_thumbnail_url( get_the_ID(), 'full' );
 
-    $data = array(
-        '@context' => 'https://schema.org',
-        '@type'    => 'Restaurant',
-        'name'     => $name,
-        'url'      => get_permalink( $post_id ),
-    );
+    foreach ( $shops as $shop ) {
+        $name = $shop['name'] ?? '';
+        if ( ! $name ) continue;
 
-    if ( $address ) {
-        $data['address'] = array(
-            '@type'          => 'PostalAddress',
-            'addressCountry' => 'JP',
-            'streetAddress'  => $address,
+        $data = array(
+            '@context' => 'https://schema.org',
+            '@type'    => 'Restaurant',
+            'name'     => $name,
+            'url'      => get_permalink(),
         );
-    }
-    if ( $tel ) {
-        $data['telephone'] = $tel;
-    }
-    if ( $genre ) {
-        $data['servesCuisine'] = $genre;
-    }
-    if ( $hours ) {
-        $data['openingHours'] = $hours;
-    }
-    if ( $image ) {
-        $data['image'] = $image;
-    }
+        if ( ! empty( $shop['address'] ) ) {
+            $data['address'] = array( '@type' => 'PostalAddress', 'addressCountry' => 'JP', 'streetAddress' => $shop['address'] );
+        }
+        if ( ! empty( $shop['tel'] ) )   $data['telephone']     = $shop['tel'];
+        if ( ! empty( $shop['genre'] ) ) $data['servesCuisine'] = $shop['genre'];
+        if ( ! empty( $shop['hours'] ) ) $data['openingHours']  = $shop['hours'];
+        if ( $image )                     $data['image']         = $image;
 
-    echo '<script type="application/ld+json">' . wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>';
+        echo '<script type="application/ld+json">' . wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
+    }
 }
 add_action( 'wp_head', 'knt_restaurant_structured_data' );
