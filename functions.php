@@ -92,6 +92,9 @@ function knt_enqueue_assets() {
     if ( is_front_page() && get_theme_mod( 'knt_japan_map_show', true ) ) {
         wp_enqueue_style( 'knt-japan-map', KNT_URI . '/css/japan-map.css', array(), KNT_VERSION );
         wp_enqueue_script( 'knt-japan-map', KNT_URI . '/js/japan-map.js', array(), KNT_VERSION, true );
+        wp_localize_script( 'knt-japan-map', 'kntMapData', array(
+            'themeUrl' => KNT_URI,
+        ) );
     }
 }
 add_action( 'wp_enqueue_scripts', 'knt_enqueue_assets' );

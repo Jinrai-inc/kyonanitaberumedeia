@@ -97,6 +97,11 @@
       .replace(/'/g, '&#39;');
   }
   function getThemeBasePath() {
+    // wp_localize_script から取得（最も確実）
+    if (typeof kntMapData !== 'undefined' && kntMapData.themeUrl) {
+      return kntMapData.themeUrl.replace(/\/$/, '');
+    }
+    // フォールバック: script src から推測
     var current = document.currentScript;
     if (current && current.src) {
       return current.src.replace(/\/js\/japan-map\.js(?:\?.*)?$/, '');
