@@ -83,6 +83,9 @@ function knt_restaurant_links_meta_box_html( $post ) {
         .knt-rl-badge { display: inline-block; min-width: 100px; padding: 2px 6px; border-radius: 3px; color: #fff; font-size: 10px; font-weight: 700; text-align: center; flex-shrink: 0; }
         .knt-rl-link-row input { flex: 1; padding: 4px 8px; border: 1px solid #8c8f94; border-radius: 4px; font-size: 12px; }
         .knt-add-shop { margin-top: 8px; }
+        .knt-autofill-btn { margin-bottom: 10px !important; font-size: 12px !important; }
+        .knt-rl-open { color: #2271b1; text-decoration: none; }
+        .knt-rl-open:hover { text-decoration: underline; }
         .knt-rl-help { font-size: 12px; color: #646970; margin-top: 12px; line-height: 1.6; }
     </style>';
 
@@ -134,6 +137,74 @@ function knt_restaurant_links_meta_box_html( $post ) {
                 var titleEl = panel.querySelector(".knt-shop-toggle-title");
                 titleEl.textContent = e.target.value || "（店舗名未入力）";
             }
+        });
+
+        // Search URL templates: {q} = encoded shop name, {qa} = encoded "name area"
+        var SEARCH_URLS = {
+            tabelog:     "https://tabelog.com/rstLst/?vs=1&sa=&sk={qa}&lid=hdr_navi_search&vac_net=&svd=&svt=&svps=2&hfc=1&Cat=&LstCat=&LstCatD=&LstCatSD=&LstCosT=&LstCosS=&LstRange=",
+            hotpepper:   "https://www.hotpepper.jp/CSP/psh/svcSA/gSA/?keyword={qa}",
+            gurunavi:    "https://r.gnavi.co.jp/search/?keyword={qa}",
+            ikkyuu:      "https://restaurant.ikyu.com/search/?keyword={q}",
+            retty:       "https://retty.me/search/?keyword={qa}",
+            hitosara:    "https://hitosara.com/search/?word={qa}",
+            tablecheck:  "https://www.tablecheck.com/ja/japan/search?q={q}",
+            toreta:      "",
+            yelp:        "https://www.yelp.co.jp/search?find_desc={qa}",
+            google_maps: "https://www.google.com/maps/search/{qa}",
+            instagram:   "https://www.instagram.com/explore/tags/{q}/",
+            official:    "https://www.google.com/search?q={qa}+公式サイト",
+            reservation: "https://www.google.com/search?q={qa}+予約"
+        };
+
+        // Autofill: generate search URLs from shop name + area
+        wrap.addEventListener("click", function(e) {
+            var autofillBtn = e.target.closest(".knt-autofill-btn");
+            if (!autofillBtn) return;
+
+            var panel = autofillBtn.closest(".knt-shop-panel");
+            var nameInput = panel.querySelector("input[name$=\"[name]\"]");
+            var areaInput = panel.querySelector("input[name$=\"[area]\"]");
+            var shopName = (nameInput ? nameInput.value : "").trim();
+            var shopArea = (areaInput ? areaInput.value : "").trim();
+
+            if (!shopName) {
+                alert("先に店舗名を入力してください");
+                nameInput && nameInput.focus();
+                return;
+            }
+
+            var q = encodeURIComponent(shopName);
+            var qa = encodeURIComponent(shopName + (shopArea ? " " + shopArea : ""));
+            var filled = 0;
+
+            panel.querySelectorAll(".knt-rl-link-row").forEach(function(row) {
+                var service = row.getAttribute("data-service");
+                var input = row.querySelector("input[type=\"url\"]");
+                var openLink = row.querySelector(".knt-rl-open");
+                var tpl = SEARCH_URLS[service] || "";
+
+                if (!tpl || !input) return;
+
+                var searchUrl = tpl.replace(/\{qa\}/g, qa).replace(/\{q\}/g, q);
+
+                // Only fill empty fields
+                if (!input.value) {
+                    input.value = searchUrl;
+                    input.style.background = "#fef9e7";
+                    filled++;
+                }
+
+                // Show "open" link
+                if (openLink) {
+                    openLink.href = searchUrl;
+                    openLink.style.display = "inline";
+                }
+            });
+
+            var msg = filled + "件の検索URLを生成しました。";
+            msg += "\n\n各「開く↗」リンクからサービスを開き、正しい店舗ページのURLに差し替えてください。";
+            msg += "\n黄色のフィールドが自動生成されたURLです。";
+            alert(msg);
         });
 
         // Add shop
@@ -203,12 +274,14 @@ function knt_render_shop_panel( $idx, $shop, $services ) {
                 <div class="knt-rl-field"><label>電話番号</label><input type="text" name="<?php echo esc_attr( $prefix ); ?>[tel]" value="<?php echo esc_attr( $shop['tel'] ?? '' ); ?>" placeholder="03-1234-5678"></div>
             </div>
             <div class="knt-rl-links-title">各サイトURL（入力されたもののみ表示）</div>
+            <button type="button" class="button knt-autofill-btn" title="店舗名で各サービスの検索URLを一括生成">🔍 店舗名で一括検索URL生成</button>
             <?php foreach ( $services as $key => $svc ) :
                 $url = $shop['links'][ $key ] ?? '';
             ?>
-            <div class="knt-rl-link-row">
+            <div class="knt-rl-link-row" data-service="<?php echo esc_attr( $key ); ?>">
                 <span class="knt-rl-badge" style="background:<?php echo esc_attr( $svc['color'] ); ?>;"><?php echo esc_html( $svc['label'] ); ?></span>
                 <input type="url" name="<?php echo esc_attr( $prefix ); ?>[links][<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $url ); ?>" placeholder="<?php echo esc_attr( $svc['placeholder'] ); ?>">
+                <a href="#" class="knt-rl-open" target="_blank" rel="noopener" title="検索して確認" style="display:none;font-size:12px;white-space:nowrap;">開く↗</a>
             </div>
             <?php endforeach; ?>
         </div>
