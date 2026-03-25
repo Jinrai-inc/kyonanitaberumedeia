@@ -92,8 +92,20 @@ function knt_enqueue_assets() {
     if ( is_front_page() && get_theme_mod( 'knt_japan_map_show', true ) ) {
         wp_enqueue_style( 'knt-japan-map', KNT_URI . '/css/japan-map.css', array(), KNT_VERSION );
         wp_enqueue_script( 'knt-japan-map', KNT_URI . '/js/japan-map.js', array(), KNT_VERSION, true );
+        // municipalities JSON をインラインで渡す（CORS回避）
+        $json_path = KNT_DIR . '/data/municipalities-full.json';
+        $municipalities = array();
+        if ( file_exists( $json_path ) ) {
+            $raw = file_get_contents( $json_path );
+            $municipalities = json_decode( $raw, true );
+            if ( ! is_array( $municipalities ) ) {
+                $municipalities = array();
+            }
+        }
         wp_localize_script( 'knt-japan-map', 'kntMapData', array(
-            'themeUrl' => KNT_URI,
+            'themeUrl'       => KNT_URI,
+            'municipalities' => $municipalities,
+            'svgInline'      => true,
         ) );
     }
 }

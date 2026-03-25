@@ -22,7 +22,17 @@ $fv_subtitle = get_theme_mod( 'knt_japan_map_subtitle', '地図をタップ or �
     </div>
     <div class="japan-map-container">
       <div class="japan-map-visual">
-        <div id="japan-map" class="japan-map-svg-wrapper"></div>
+        <div id="japan-map" class="japan-map-svg-wrapper">
+          <?php
+          // SVGをインライン埋め込み（CORS回避）
+          $is_mobile = wp_is_mobile();
+          $svg_file  = $is_mobile ? 'map-mobile.svg' : 'map-full.svg';
+          $svg_path  = KNT_DIR . '/svg/' . $svg_file;
+          if ( file_exists( $svg_path ) ) {
+              echo file_get_contents( $svg_path );
+          }
+          ?>
+        </div>
       </div>
       <div class="japan-map-controls">
         <div class="japan-map-controls-card">

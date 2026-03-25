@@ -144,23 +144,13 @@
     wrapper.appendChild(tooltip);
     return tooltip;
   }
-  function getMapPath() {
-    var base = getThemeBasePath();
-    var isMobile = window.matchMedia('(max-width: 767px)').matches;
-    return base + '/svg/' + (isMobile ? 'map-mobile.svg' : 'map-full.svg');
-  }
-  async function loadMunicipalityJson() {
-    var base = getThemeBasePath();
-    var url = base + '/data/municipalities-full.json';
-    try {
-      var response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error('municipalities-full.json: ' + response.status);
-      }
-      state.municipalityData = await response.json();
-    } catch (err) {
-      console.error('municipalities-full.json の読み込みに失敗しました:', err);
-      // MAJOR_CITY_DATA をフォールバックとして使用
+  function loadMunicipalityData() {
+    // wp_localize_script 経由でインライン渡し（CORS回避）
+    if (typeof kntMapData !== 'undefined' && kntMapData.municipalities && Object.keys(kntMapData.municipalities).length > 0) {
+      state.municipalityData = kntMapData.municipalities;
+      console.log('[KNT Map] municipalities loaded inline:', Object.keys(state.municipalityData).length, 'prefectures');
+    } else {
+      console.log('[KNT Map] municipalities not available, using MAJOR_CITY_DATA fallback');
     }
   }
   function setNodeColor(prefNode, code) {
@@ -199,26 +189,19 @@
       setNodeColor(shape, code);
     });
   }
-  async function renderMap() {
+  function initMap() {
     var wrapper = document.getElementById('japan-map');
     if (!wrapper) return;
-    wrapper.innerHTML = '';
-    try {
-      var mapUrl = getMapPath();
-      console.log('[KNT Map] Fetching SVG:', mapUrl);
-      var response = await fetch(mapUrl, { credentials: 'same-origin', cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error('SVG: ' + response.status);
-      }
-      var text = await response.text();
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(text, 'image/svg+xml');
-      var svg = doc.documentElement;
+
+    // PHPでインライン埋め込み済みのSVGを検出
+    var svg = wrapper.querySelector('svg');
+    if (svg) {
+      console.log('[KNT Map] Inline SVG found, normalizing');
       normalizeSvg(svg);
-      wrapper.appendChild(svg);
-    } catch (err) {
-      console.error('SVG地図の読み込みに失敗しました:', err);
+    } else {
+      console.error('[KNT Map] SVG not found in #japan-map');
     }
+
     createTooltip(wrapper);
     if (state.selectedPref) {
       highlightPref(state.selectedPref);
@@ -426,37 +409,32 @@
     }
     state.mediaQuery = window.matchMedia('(max-width: 767px)');
     state.mediaQuery.addEventListener('change', function () {
-      renderMap().catch(console.error);
+      // SVGはPHPインライン埋め込みのためレスポンシブ切替は不要
+      // （wp_is_mobile でPC/モバイル判定済み）
     });
   }
-  async function init() {
+  function init() {
     var wrapper = document.getElementById('japan-map');
     if (!wrapper) return;
 
-    // 1. まずMAJOR_CITY_DATAでドロップダウンを即表示
+    // 1. インラインJSONを読み込み
+    loadMunicipalityData();
+
+    // 2. ドロップダウンを描画
     populatePrefSelect();
     updateCitySelect(null);
     updateCityPanel(null);
     updateButton();
 
-    // 2. 地図SVGを描画（並行してJSONも読む）
-    var mapPromise = renderMap();
-    var jsonPromise = loadMunicipalityJson().then(function () {
-      // JSON読み込み成功したらドロップダウンを更新
-      populatePrefSelect();
-    });
+    // 3. インラインSVGを初期化（色付け等）
+    initMap();
 
-    await mapPromise;
-    await jsonPromise;
-
-    // 3. イベントバインド
+    // 4. イベントバインド
     bindEvents();
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      init().catch(console.error);
-    });
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    init().catch(console.error);
+    init();
   }
 })();
