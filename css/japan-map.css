@@ -86,23 +86,18 @@
   grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
   gap: 28px;
   align-items: start;
-  max-width: var(--wide-width, 1080px);
-  margin: 0 auto;
 }
-
 .japan-map-visual,
 .japan-map-svg-wrapper,
 .japan-map-svg-wrapper svg {
   background: transparent !important;
 }
-
 .japan-map-visual {
   position: relative;
   border-radius: 24px;
   padding: 12px;
   min-height: 520px;
 }
-
 .japan-map-svg-wrapper {
   position: relative;
   width: 100%;
@@ -114,13 +109,11 @@
   touch-action: manipulation;
   overscroll-behavior: contain;
 }
-
 .japan-map-svg-wrapper * {
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
 }
-
 .japan-map-svg-wrapper svg {
   display: block;
   width: 100%;
@@ -128,12 +121,9 @@
   max-width: 100%;
   overflow: visible;
 }
-
-/* Controls */
 .japan-map-controls {
   position: relative;
 }
-
 .japan-map-controls-card {
   position: sticky;
   top: 20px;
@@ -142,132 +132,69 @@
   background: #fffdfa;
   border: 1px solid rgba(201, 85, 62, 0.12);
   box-shadow: 0 14px 40px rgba(42, 38, 34, 0.08);
-  overflow: hidden;
 }
-
-.japan-map-controls-card::before {
-  content: '';
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  font-size: 40px;
-  opacity: 0.08;
-  transform: rotate(15deg);
-  pointer-events: none;
-}
-
 .japan-map-controls-card-title {
   margin: 0 0 18px;
-  font-family: var(--font-heading, 'Klee One', sans-serif);
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-text-main, #2A2622);
-  text-align: center;
-  line-height: 1.5;
+  color: var(--color-text-main);
 }
-
-/* Dropdown */
 .japan-map-dropdown-group + .japan-map-dropdown-group {
   margin-top: 14px;
 }
-
 .japan-map-dropdown-group label {
   display: block;
   margin-bottom: 8px;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
   font-size: 0.94rem;
   font-weight: 700;
-  color: var(--color-text-main, #2A2622);
+  color: var(--color-text-main);
 }
-
 .japan-map-dropdown {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   width: 100%;
   min-height: 48px;
   border-radius: 14px;
   border: 1px solid rgba(42, 38, 34, 0.14);
   background: #fff;
-  padding: 0 48px 0 14px;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
+  padding: 0 14px;
   font-size: 0.96rem;
-  color: var(--color-text-main, #2A2622);
-  cursor: pointer;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F5A623' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 18px;
+  color: var(--color-text-main);
+  appearance: none;
 }
-
-.japan-map-dropdown:hover {
-  border-color: #F5A623;
-  background-color: #FFF9F0;
-}
-
-.japan-map-dropdown:focus {
-  outline: none;
-  border-color: var(--color-accent, #C9553E);
-  box-shadow: 0 0 0 4px rgba(201,85,62,0.1);
-  background-color: #fff;
-}
-
 .japan-map-dropdown:disabled {
   background: #f7f3ee;
   color: rgba(42, 38, 34, 0.45);
-  cursor: not-allowed;
 }
-
-/* City panel */
 .japan-map-city-panel {
   margin-top: 16px;
-  min-height: 0;
-  transition: min-height 0.3s ease;
 }
-
-.japan-map-city-panel.has-cities {
-  min-height: 60px;
-}
-
 .japan-map-city-panel-title {
   margin: 0 0 10px;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
   font-size: 0.92rem;
   font-weight: 700;
-  color: var(--color-text-main, #2A2622);
+  color: var(--color-text-main);
 }
-
 .japan-map-city-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-
 .japan-map-city-tag {
-  display: inline-flex;
-  align-items: center;
   border: 0;
   border-radius: 999px;
   background: rgba(201, 85, 62, 0.10);
   color: #8d412f;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
   font-size: 0.86rem;
   font-weight: 700;
   padding: 9px 12px;
   cursor: pointer;
   transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
-  text-decoration: none;
 }
-
 .japan-map-city-tag:hover,
 .japan-map-city-tag.is-selected {
   background: rgba(201, 85, 62, 0.16);
   color: #7a3727;
   box-shadow: 0 6px 16px rgba(201, 85, 62, 0.18);
 }
-
-/* Search button */
 .japan-map-btn {
   display: inline-flex;
   align-items: center;
@@ -278,27 +205,19 @@
   border-radius: 999px;
   padding: 0 18px;
   text-decoration: none;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
   font-weight: 700;
   background: linear-gradient(135deg, #c9553e 0%, #f0b34a 100%);
   color: #fff;
   box-shadow: 0 10px 20px rgba(201, 85, 62, 0.22);
   transition: filter 0.18s ease, opacity 0.18s ease;
-  border: none;
-  cursor: pointer;
-  letter-spacing: 0.03em;
 }
-
 .japan-map-btn:hover {
   filter: brightness(1.04);
-  color: #fff;
 }
-
 .japan-map-btn.is-disabled {
   opacity: 0.45;
   pointer-events: none;
 }
-
 /* Tooltip */
 .japan-map-tooltip {
   position: absolute;
@@ -311,26 +230,20 @@
   color: #fff;
   font-size: 0.82rem;
   font-weight: 700;
-  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
   line-height: 1.2;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.14s ease, visibility 0.14s ease;
 }
-
 .japan-map-tooltip.is-visible {
   opacity: 1;
   visibility: visible;
 }
-
-/* ========================================
-   SVG Map States
-   ======================================== */
+/* SVG state */
 .knt-japan-map-svg [data-code] {
   cursor: pointer;
 }
-
 .knt-japan-map-svg .prefecture-shape {
   transition:
     fill 0.18s ease,
@@ -344,88 +257,46 @@
   transform-box: fill-box;
   transform-origin: center center;
 }
-
 .knt-japan-map-svg [data-code]:hover .prefecture-shape,
 .knt-japan-map-svg [data-code].is-active .prefecture-shape,
 .knt-japan-map-svg .prefecture-shape.is-active {
   filter: brightness(1.04) drop-shadow(0 6px 10px rgba(42, 38, 34, 0.14));
   stroke: rgba(255, 255, 255, 0.98);
 }
-
 .knt-japan-map-svg [data-code].is-active .prefecture-shape,
 .knt-japan-map-svg .prefecture-shape.is-active {
   stroke-width: 2;
 }
-
-/* Ensure hokkaido/tohoku have full opacity */
 .knt-japan-map-svg [data-code][data-region="hokkaido"] .prefecture-shape,
 .knt-japan-map-svg [data-code][data-region="tohoku"] .prefecture-shape {
   opacity: 1 !important;
 }
-
-/* No transform on click */
+/* クリック時に動かさない */
 .knt-japan-map-svg [data-code]:active,
 .knt-japan-map-svg .prefecture-shape:active {
   transform: none !important;
 }
-
-/* Hide title elements inside SVG to prevent browser tooltips */
-.knt-japan-map-svg title {
-  display: none;
-}
-
-/* Hide boundary lines */
-.knt-japan-map-svg .boundary-line {
-  display: none;
-}
-
-/* ========================================
-   Responsive
-   ======================================== */
+/* モバイル: 地図が上、UIが下 */
 @media (max-width: 767px) {
-  .japan-map-section {
-    padding: 32px 0 40px;
-  }
-
-  .japan-map-section .section__title {
-    font-size: 1.25rem;
-  }
-
   .japan-map-container {
     grid-template-columns: 1fr;
     gap: 18px;
-    padding: 0 16px;
   }
-
   .japan-map-visual {
     order: 1;
     min-height: 0;
     padding: 0;
   }
-
   .japan-map-controls {
     order: 2;
   }
-
   .japan-map-controls-card {
     position: static;
     top: auto;
     padding: 18px 16px;
     border-radius: 20px;
   }
-
   .japan-map-svg-wrapper {
     max-width: 100%;
-  }
-
-  .japan-map-dropdown {
-    border-radius: 14px;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1024px) {
-  .japan-map-container {
-    gap: 24px;
-    padding: 0 20px;
   }
 }
