@@ -30,7 +30,7 @@ $fv_subtitle = get_theme_mod( 'knt_japan_map_subtitle', '地図をタップ or �
           $svg_path  = KNT_DIR . '/svg/' . $svg_file;
           if ( file_exists( $svg_path ) ) {
               $svg_content = file_get_contents( $svg_path );
-              // <?xml ...?> 宣言を除去（PHPのshort_open_tag対策）
+              // XML宣言を除去（short_open_tag対策）
               $svg_content = preg_replace( '/<\?xml[^?]*\?>/', '', $svg_content );
               echo $svg_content;
           }
