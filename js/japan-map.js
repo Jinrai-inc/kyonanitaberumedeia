@@ -99,8 +99,10 @@
   function getThemeBasePath() {
     // wp_localize_script から取得（最も確実）
     if (typeof kntMapData !== 'undefined' && kntMapData.themeUrl) {
+      console.log('[KNT Map] themeUrl:', kntMapData.themeUrl);
       return kntMapData.themeUrl.replace(/\/$/, '');
     }
+    console.warn('[KNT Map] kntMapData not found, falling back to script src detection');
     // フォールバック: script src から推測
     var current = document.currentScript;
     if (current && current.src) {
@@ -202,7 +204,9 @@
     if (!wrapper) return;
     wrapper.innerHTML = '';
     try {
-      var response = await fetch(getMapPath(), { credentials: 'same-origin', cache: 'no-store' });
+      var mapUrl = getMapPath();
+      console.log('[KNT Map] Fetching SVG:', mapUrl);
+      var response = await fetch(mapUrl, { credentials: 'same-origin', cache: 'no-store' });
       if (!response.ok) {
         throw new Error('SVG: ' + response.status);
       }
@@ -428,12 +432,24 @@
   async function init() {
     var wrapper = document.getElementById('japan-map');
     if (!wrapper) return;
-    await loadMunicipalityJson();
+
+    // 1. まずMAJOR_CITY_DATAでドロップダウンを即表示
     populatePrefSelect();
     updateCitySelect(null);
     updateCityPanel(null);
     updateButton();
-    await renderMap();
+
+    // 2. 地図SVGを描画（並行してJSONも読む）
+    var mapPromise = renderMap();
+    var jsonPromise = loadMunicipalityJson().then(function () {
+      // JSON読み込み成功したらドロップダウンを更新
+      populatePrefSelect();
+    });
+
+    await mapPromise;
+    await jsonPromise;
+
+    // 3. イベントバインド
     bindEvents();
   }
   if (document.readyState === 'loading') {
