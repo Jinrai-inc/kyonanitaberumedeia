@@ -377,6 +377,11 @@ require_once KNT_DIR . '/inc/customizer.php';
 require_once KNT_DIR . '/inc/blocks.php';
 
 /**
+ * Include Restaurant Links meta box & auto-display
+ */
+require_once KNT_DIR . '/inc/restaurant-links.php';
+
+/**
  * Lazy load images - add loading attribute
  */
 function knt_lazy_load_images( $attr, $attachment, $size ) {
