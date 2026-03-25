@@ -145,11 +145,16 @@
   async function loadMunicipalityJson() {
     var base = getThemeBasePath();
     var url = base + '/data/municipalities-full.json';
-    var response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
-    if (!response.ok) {
-      throw new Error('municipalities-full.json の読み込みに失敗しました: ' + response.status);
+    try {
+      var response = await fetch(url, { credentials: 'same-origin', cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('municipalities-full.json: ' + response.status);
+      }
+      state.municipalityData = await response.json();
+    } catch (err) {
+      console.error('municipalities-full.json の読み込みに失敗しました:', err);
+      // MAJOR_CITY_DATA をフォールバックとして使用
     }
-    state.municipalityData = await response.json();
   }
   function setNodeColor(prefNode, code) {
     var region = PREF_REGION_MAP[code] || 'chubu';
@@ -191,16 +196,20 @@
     var wrapper = document.getElementById('japan-map');
     if (!wrapper) return;
     wrapper.innerHTML = '';
-    var response = await fetch(getMapPath(), { credentials: 'same-origin', cache: 'no-store' });
-    if (!response.ok) {
-      throw new Error('SVG地図の読み込みに失敗しました: ' + response.status);
+    try {
+      var response = await fetch(getMapPath(), { credentials: 'same-origin', cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('SVG: ' + response.status);
+      }
+      var text = await response.text();
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(text, 'image/svg+xml');
+      var svg = doc.documentElement;
+      normalizeSvg(svg);
+      wrapper.appendChild(svg);
+    } catch (err) {
+      console.error('SVG地図の読み込みに失敗しました:', err);
     }
-    var text = await response.text();
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(text, 'image/svg+xml');
-    var svg = doc.documentElement;
-    normalizeSvg(svg);
-    wrapper.appendChild(svg);
     createTooltip(wrapper);
     if (state.selectedPref) {
       highlightPref(state.selectedPref);
@@ -210,11 +219,13 @@
     var select = document.getElementById('pref-select');
     if (!select) return;
     select.innerHTML = '<option value="">タップして選んでね</option>';
-    var source = state.municipalityData || {};
+    var source = state.municipalityData || MAJOR_CITY_DATA;
     Object.keys(source).sort().forEach(function (code) {
+      var entry = source[code];
+      var name = entry.name || '';
       var option = document.createElement('option');
       option.value = code;
-      option.textContent = source[code].name;
+      option.textContent = name;
       select.appendChild(option);
     });
   }
