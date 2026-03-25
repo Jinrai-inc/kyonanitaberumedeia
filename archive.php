@@ -65,6 +65,24 @@ get_header();
         <?php endif; ?>
     </header>
 
+    <?php // Genre/Tag Filter Chips ?>
+    <?php
+    $popular_tags = get_tags( array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 12 ) );
+    if ( $popular_tags ) :
+    ?>
+    <div class="archive-filters">
+        <?php foreach ( $popular_tags as $ptag ) : ?>
+            <a href="<?php echo esc_url( get_tag_link( $ptag->term_id ) ); ?>" class="archive-filters__chip<?php echo is_tag( $ptag->slug ) ? ' is-active' : ''; ?>">
+                #<?php echo esc_html( $ptag->name ); ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ( is_category() ) : ?>
+        <meta name="knt-category-id" content="<?php echo esc_attr( get_queried_object_id() ); ?>">
+    <?php endif; ?>
+
     <?php if ( have_posts() ) : ?>
         <div class="grid grid--3">
             <?php while ( have_posts() ) : the_post(); ?>
@@ -74,6 +92,16 @@ get_header();
             <?php endwhile; ?>
         </div>
 
+        <?php
+        global $wp_query;
+        if ( $wp_query->max_num_pages > 1 ) :
+        ?>
+        <div class="load-more-wrap">
+            <button class="load-more-btn" id="load-more-btn">もっと見る</button>
+        </div>
+        <?php endif; ?>
+
+        <noscript>
         <div class="pagination">
             <?php
             the_posts_pagination( array(
@@ -83,6 +111,7 @@ get_header();
             ) );
             ?>
         </div>
+        </noscript>
     <?php else : ?>
         <div class="text-center" style="padding: 80px 0;">
             <p style="color: var(--color-text-light); font-size: 18px;">記事が見つかりませんでした。</p>

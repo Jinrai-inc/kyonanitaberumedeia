@@ -171,9 +171,9 @@ function knt_customizer_css() {
 add_action( 'wp_head', 'knt_customizer_css' );
 
 /**
- * REST API CORS for app
+ * REST API CORS for app (additive – keeps WordPress default CORS intact)
  */
-function knt_rest_cors() {
+function knt_rest_cors_headers( $value ) {
     $allowed_origins = array(
         'https://kyou-nani-taberu.app',
         'https://www.kyou-nani-taberu.app',
@@ -182,17 +182,14 @@ function knt_rest_cors() {
     $origin = get_http_origin();
     if ( $origin && in_array( $origin, $allowed_origins, true ) ) {
         header( 'Access-Control-Allow-Origin: ' . $origin );
-        header( 'Access-Control-Allow-Methods: GET, OPTIONS' );
+        header( 'Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS' );
         header( 'Access-Control-Allow-Headers: Content-Type, Authorization' );
+        header( 'Access-Control-Allow-Credentials: true' );
     }
+
+    return $value;
 }
-add_action( 'rest_api_init', function() {
-    remove_filter( 'rest_pre_serve_request', 'rest_send_cors_headers' );
-    add_filter( 'rest_pre_serve_request', function( $value ) {
-        knt_rest_cors();
-        return $value;
-    } );
-} );
+add_filter( 'rest_pre_serve_request', 'knt_rest_cors_headers' );
 
 /**
  * Add structured data (JSON-LD)
@@ -387,6 +384,54 @@ function knt_lazy_load_images( $attr, $attachment, $size ) {
     return $attr;
 }
 add_filter( 'wp_get_attachment_image_attributes', 'knt_lazy_load_images', 10, 3 );
+
+/**
+ * AJAX Load More posts
+ */
+function knt_load_more_posts() {
+    check_ajax_referer( 'knt_nonce', 'nonce' );
+
+    $paged    = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+    $per_page = isset( $_POST['per_page'] ) ? absint( $_POST['per_page'] ) : 9;
+    $cat      = isset( $_POST['category'] ) ? absint( $_POST['category'] ) : 0;
+    $search   = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+
+    $args = array(
+        'post_type'      => 'post',
+        'post_status'    => 'publish',
+        'posts_per_page' => $per_page,
+        'paged'          => $paged,
+    );
+
+    if ( $cat ) {
+        $args['cat'] = $cat;
+    }
+    if ( $search ) {
+        $args['s'] = $search;
+    }
+
+    $query = new WP_Query( $args );
+    $html  = '';
+
+    if ( $query->have_posts() ) {
+        ob_start();
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            echo '<article class="card fadeup is-visible">';
+            get_template_part( 'template-parts/card' );
+            echo '</article>';
+        }
+        $html = ob_get_clean();
+        wp_reset_postdata();
+    }
+
+    wp_send_json_success( array(
+        'html'     => $html,
+        'has_more' => $paged < $query->max_num_pages,
+    ) );
+}
+add_action( 'wp_ajax_knt_load_more', 'knt_load_more_posts' );
+add_action( 'wp_ajax_nopriv_knt_load_more', 'knt_load_more_posts' );
 
 /**
  * Limit post revisions for performance

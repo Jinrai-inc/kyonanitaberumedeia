@@ -77,15 +77,20 @@ get_header();
     $tags = get_the_tags();
     if ( $tags ) :
     ?>
-    <div style="margin-top: 32px; display: flex; flex-wrap: wrap; gap: 8px;">
+    <div class="article-tags">
         <?php foreach ( $tags as $tag ) : ?>
-            <a href="<?php echo esc_url( get_tag_link( $tag->term_id ) ); ?>"
-               style="font-size: 12px; color: var(--color-text-light); border: 1px solid var(--color-border); border-radius: 20px; padding: 4px 12px;">
+            <a href="<?php echo esc_url( get_tag_link( $tag->term_id ) ); ?>" class="article-tags__item">
                 #<?php echo esc_html( $tag->name ); ?>
             </a>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
+
+    <?php // SNS Share Buttons ?>
+    <?php get_template_part( 'template-parts/share-buttons' ); ?>
+
+    <?php // Author Box ?>
+    <?php get_template_part( 'template-parts/author-box' ); ?>
 
     <?php
     // App CTA in article
@@ -137,7 +142,7 @@ get_header();
     ?>
     <div class="related-posts">
         <h2 class="section__title" style="margin-bottom: 24px;">関連記事</h2>
-        <div class="grid grid--3">
+        <div class="hscroll">
             <?php while ( $related_query->have_posts() ) : $related_query->the_post(); ?>
                 <article class="card fadeup">
                     <?php get_template_part( 'template-parts/card' ); ?>
