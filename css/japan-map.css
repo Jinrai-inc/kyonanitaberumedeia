@@ -120,6 +120,16 @@
   height: auto;
   max-width: 100%;
   overflow: visible;
+  aspect-ratio: 1 / 1;
+}
+.japan-map-svg-wrapper svg [data-code] {
+  pointer-events: all;
+  cursor: pointer;
+}
+.japan-map-svg-wrapper svg [data-code] polygon,
+.japan-map-svg-wrapper svg [data-code] path,
+.japan-map-svg-wrapper svg [data-code] polyline {
+  pointer-events: all;
 }
 .japan-map-controls {
   position: relative;

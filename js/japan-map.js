@@ -168,6 +168,7 @@
       shape.classList.add('prefecture-shape');
       shape.style.fill = color;
       shape.style.opacity = '1';
+      shape.style.pointerEvents = 'all';
       shape.setAttribute('vector-effect', 'non-scaling-stroke');
       shape.setAttribute('draggable', 'false');
     });
@@ -177,10 +178,24 @@
     svg.setAttribute('role', 'img');
     svg.setAttribute('aria-label', '日本地図');
     svg.setAttribute('draggable', 'false');
+
+    // SVGにサイズ属性を明示（高さ0問題対策）
+    if (!svg.getAttribute('width')) {
+      svg.setAttribute('width', '100%');
+    }
+    if (!svg.getAttribute('height')) {
+      svg.setAttribute('height', '100%');
+    }
+    svg.style.pointerEvents = 'auto';
+
     var prefNodes = svg.querySelectorAll('[data-code]');
+    console.log('[KNT Map] Found', prefNodes.length, 'prefecture nodes');
     Array.prototype.forEach.call(prefNodes, function (node) {
       var code = normalizeCode(node.getAttribute('data-code'));
       setNodeColor(node, code);
+      // pointer-events を明示
+      node.style.pointerEvents = 'auto';
+      node.style.cursor = 'pointer';
     });
     // 念のため data-code が直接 shape 側にあるケースも拾う
     var orphanShapes = svg.querySelectorAll('path[data-code], polygon[data-code], rect[data-code], circle[data-code], ellipse[data-code], polyline[data-code]');
