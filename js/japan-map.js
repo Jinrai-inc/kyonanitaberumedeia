@@ -485,7 +485,96 @@
 
     // 4. イベントバインド
     bindEvents();
+
+    // 5. 現在地ボタン
+    initGeolocation();
   }
+
+  // ========================================
+  // 現在地で探す
+  // ========================================
+  // 主要都市の緯度経度 → 都道府県コードのマッピング
+  var PREF_COORDS = [
+    { code: '01', name: '北海道', lat: 43.06, lng: 141.35 },
+    { code: '04', name: '宮城県', lat: 38.26, lng: 140.88 },
+    { code: '11', name: '埼玉県', lat: 35.86, lng: 139.65 },
+    { code: '12', name: '千葉県', lat: 35.61, lng: 140.11 },
+    { code: '13', name: '東京都', lat: 35.68, lng: 139.77 },
+    { code: '14', name: '神奈川県', lat: 35.47, lng: 139.62 },
+    { code: '23', name: '愛知県', lat: 35.17, lng: 136.88 },
+    { code: '26', name: '京都府', lat: 34.99, lng: 135.76 },
+    { code: '27', name: '大阪府', lat: 34.69, lng: 135.50 },
+    { code: '28', name: '兵庫県', lat: 34.69, lng: 135.20 },
+    { code: '34', name: '広島県', lat: 34.40, lng: 132.48 },
+    { code: '40', name: '福岡県', lat: 33.59, lng: 130.42 },
+  ];
+
+  function findNearestPref(lat, lng) {
+    var nearest = null;
+    var minDist = Infinity;
+    PREF_COORDS.forEach(function(p) {
+      var d = Math.sqrt(Math.pow(p.lat - lat, 2) + Math.pow(p.lng - lng, 2));
+      if (d < minDist) { minDist = d; nearest = p; }
+    });
+    return nearest;
+  }
+
+  function initGeolocation() {
+    var geoBtn = document.getElementById('geolocate-btn');
+    var geoStatus = document.getElementById('geo-status');
+    if (!geoBtn) return;
+
+    if (!navigator.geolocation) {
+      geoBtn.style.display = 'none';
+      return;
+    }
+
+    geoBtn.addEventListener('click', function() {
+      geoBtn.classList.add('is-loading');
+      geoBtn.textContent = '取得中...';
+      geoStatus.textContent = '';
+
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          var lat = pos.coords.latitude;
+          var lng = pos.coords.longitude;
+          var pref = findNearestPref(lat, lng);
+
+          geoBtn.classList.remove('is-loading');
+          geoBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> 現在地で探す';
+
+          if (pref) {
+            geoStatus.textContent = pref.name + ' 周辺のお店を表示します';
+            // 都道府県を自動選択
+            selectPref(pref.code);
+
+            // 少し待ってからボタンURLを検索に変更
+            setTimeout(function() {
+              var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
+              var searchBtn = document.getElementById('area-search-btn');
+              if (searchBtn) {
+                searchBtn.classList.remove('is-disabled');
+                searchBtn.href = base + '/?category_name=area-' + pref.code;
+              }
+            }, 300);
+          } else {
+            geoStatus.textContent = '近くのエリアが見つかりませんでした';
+          }
+        },
+        function(err) {
+          geoBtn.classList.remove('is-loading');
+          geoBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> 現在地で探す';
+          if (err.code === 1) {
+            geoStatus.textContent = '位置情報の許可が必要です';
+          } else {
+            geoStatus.textContent = '位置情報を取得できませんでした';
+          }
+        },
+        { timeout: 10000, maximumAge: 60000 }
+      );
+    });
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

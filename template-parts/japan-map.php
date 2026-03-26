@@ -55,6 +55,14 @@ $fv_subtitle = get_theme_mod( 'knt_japan_map_subtitle', '地図をタップ or �
             </select>
           </div>
 
+          <div class="japan-map-geo-wrap">
+            <button type="button" id="geolocate-btn" class="japan-map-geo-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+              現在地で探す
+            </button>
+            <p id="geo-status" class="japan-map-geo-status"></p>
+          </div>
+
           <div class="japan-map-city-panel" id="city-panel"></div>
 
           <a href="#" id="area-search-btn" class="japan-map-btn is-disabled">このエリアの記事を見る →</a>
