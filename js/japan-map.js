@@ -354,6 +354,21 @@
     syncCitySelect(state.selectedCity);
     updateButton();
   }
+  // elementsFromPoint でSVG内の [data-code] を検出
+  function findPrefNodeAt(x, y, wrapper) {
+    var elements = document.elementsFromPoint(x, y);
+    for (var i = 0; i < elements.length; i++) {
+      var el = elements[i];
+      if (el.getAttribute && el.getAttribute('data-code')) return el;
+      var parent = el.parentNode;
+      while (parent && parent !== wrapper) {
+        if (parent.getAttribute && parent.getAttribute('data-code')) return parent;
+        parent = parent.parentNode;
+      }
+    }
+    return null;
+  }
+
   function bindEvents() {
     var wrapper = document.getElementById('japan-map');
     if (!wrapper) return;
@@ -369,18 +384,25 @@
       }
     });
     wrapper.addEventListener('click', function (e) {
-      console.log('[KNT Map] click target:', e.target.tagName, e.target.className);
-      var prefNode = e.target.closest('[data-code]');
-      if (!prefNode) {
-        // SVG要素ではclosestが動かない場合のフォールバック
-        var el = e.target;
-        while (el && el !== wrapper) {
-          if (el.getAttribute && el.getAttribute('data-code')) {
-            prefNode = el;
+      // elementsFromPoint で直下の要素を正確に検出（SVG要素でclosest/target問題を回避）
+      var prefNode = null;
+      var elements = document.elementsFromPoint(e.clientX, e.clientY);
+      for (var i = 0; i < elements.length; i++) {
+        var el = elements[i];
+        if (el.getAttribute && el.getAttribute('data-code')) {
+          prefNode = el;
+          break;
+        }
+        // 親をたどる（polygon → g[data-code]）
+        var parent = el.parentNode;
+        while (parent && parent !== wrapper) {
+          if (parent.getAttribute && parent.getAttribute('data-code')) {
+            prefNode = parent;
             break;
           }
-          el = el.parentNode;
+          parent = parent.parentNode;
         }
+        if (prefNode) break;
       }
       if (prefNode && wrapper.contains(prefNode)) {
         var code = prefNode.getAttribute('data-code');
@@ -397,18 +419,17 @@
       return document.getElementById('map-tooltip');
     };
     wrapper.addEventListener('mouseover', function (e) {
-      var prefNode = e.target.closest('[data-code]');
       var tip = tooltip();
-      if (!prefNode || !tip) return;
+      if (!tip) return;
+      var prefNode = findPrefNodeAt(e.clientX, e.clientY, wrapper);
+      if (!prefNode) { tip.classList.remove('is-visible'); return; }
       var code = normalizeCode(prefNode.getAttribute('data-code'));
       tip.textContent = getPrefName(code);
       tip.classList.add('is-visible');
     });
     wrapper.addEventListener('mouseout', function (e) {
-      var prefNode = e.target.closest('[data-code]');
       var tip = tooltip();
-      if (!prefNode || !tip) return;
-      tip.classList.remove('is-visible');
+      if (tip) tip.classList.remove('is-visible');
     });
     wrapper.addEventListener('mousemove', function (e) {
       var tip = tooltip();
