@@ -59,19 +59,16 @@ function knt_render_generator_page() {
                     <th><label for="knt-area-pref">エリア</label></th>
                     <td>
                         <?php
-                        // area- プレフィックスの都道府県カテゴリを取得
-                        $area_cats = get_categories( array(
-                            'hide_empty' => false,
-                            'parent'     => 0,
-                            'slug'       => 'area-*',
-                        ) );
-                        // area- で始まるカテゴリのみフィルタ
+                        // area-XX（2桁コード）の都道府県カテゴリを取得し、slug順にソート
                         $pref_cats = array();
                         foreach ( get_categories( array( 'hide_empty' => false, 'parent' => 0 ) ) as $c ) {
-                            if ( strpos( $c->slug, 'area-' ) === 0 && strlen( $c->slug ) <= 7 ) {
+                            if ( preg_match( '/^area-\d{2}$/', $c->slug ) ) {
                                 $pref_cats[] = $c;
                             }
                         }
+                        usort( $pref_cats, function( $a, $b ) {
+                            return strcmp( $a->slug, $b->slug );
+                        } );
                         ?>
                         <select id="knt-area-pref" name="area_pref" class="regular-text" style="max-width:300px;">
                             <option value="">-- 都道府県を選択 --</option>
