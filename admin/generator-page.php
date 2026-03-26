@@ -56,12 +56,82 @@ function knt_render_generator_page() {
 
             <table class="form-table">
                 <tr>
-                    <th><label for="knt-area">エリア名</label></th>
+                    <th><label for="knt-area-pref">エリア</label></th>
                     <td>
-                        <input type="text" id="knt-area" name="area"
-                               placeholder="渋谷、新宿、横浜 等" required
-                               class="regular-text">
-                        <p class="description">検索キーワードとして使用されます</p>
+                        <?php
+                        // area- プレフィックスの都道府県カテゴリを取得
+                        $area_cats = get_categories( array(
+                            'hide_empty' => false,
+                            'parent'     => 0,
+                            'slug'       => 'area-*',
+                        ) );
+                        // area- で始まるカテゴリのみフィルタ
+                        $pref_cats = array();
+                        foreach ( get_categories( array( 'hide_empty' => false, 'parent' => 0 ) ) as $c ) {
+                            if ( strpos( $c->slug, 'area-' ) === 0 && strlen( $c->slug ) <= 7 ) {
+                                $pref_cats[] = $c;
+                            }
+                        }
+                        ?>
+                        <select id="knt-area-pref" name="area_pref" class="regular-text" style="max-width:300px;">
+                            <option value="">-- 都道府県を選択 --</option>
+                            <?php foreach ( $pref_cats as $pc ) : ?>
+                                <option value="<?php echo esc_attr( $pc->term_id ); ?>" data-name="<?php echo esc_attr( $pc->name ); ?>">
+                                    <?php echo esc_html( $pc->name ); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <br><br>
+                        <select id="knt-area-city" name="area_city" class="regular-text" style="max-width:300px;" disabled>
+                            <option value="">-- 市区町村を選択（都道府県を先に選択） --</option>
+                        </select>
+                        <input type="hidden" id="knt-area" name="area" value="">
+                        <p class="description">選択した市区町村名がAPIの検索キーワードに使用されます</p>
+
+                        <?php
+                        // 都道府県→市区町村のJSONデータを生成
+                        $city_data = array();
+                        foreach ( $pref_cats as $pc ) {
+                            $children = get_categories( array( 'hide_empty' => false, 'parent' => $pc->term_id ) );
+                            $cities = array();
+                            foreach ( $children as $ch ) {
+                                $cities[] = array( 'id' => $ch->term_id, 'name' => $ch->name );
+                            }
+                            $city_data[ $pc->term_id ] = $cities;
+                        }
+                        ?>
+                        <script>
+                        var kntAreaCities = <?php echo wp_json_encode( $city_data ); ?>;
+                        jQuery(function($) {
+                            $('#knt-area-pref').on('change', function() {
+                                var prefId = $(this).val();
+                                var prefName = $(this).find(':selected').data('name') || '';
+                                var $city = $('#knt-area-city');
+                                $city.html('<option value="">-- 市区町村を選択 --</option>');
+
+                                if (prefId && kntAreaCities[prefId]) {
+                                    kntAreaCities[prefId].forEach(function(c) {
+                                        $city.append('<option value="' + c.id + '" data-name="' + c.name + '">' + c.name + '</option>');
+                                    });
+                                    $city.prop('disabled', false);
+                                } else {
+                                    $city.prop('disabled', true);
+                                }
+                                // エリア名をhiddenに設定（都道府県名）
+                                $('#knt-area').val(prefName);
+                            });
+                            $('#knt-area-city').on('change', function() {
+                                var cityName = $(this).find(':selected').data('name') || '';
+                                if (cityName) {
+                                    $('#knt-area').val(cityName);
+                                } else {
+                                    // 市区町村未選択時は都道府県名
+                                    var prefName = $('#knt-area-pref').find(':selected').data('name') || '';
+                                    $('#knt-area').val(prefName);
+                                }
+                            });
+                        });
+                        </script>
                     </td>
                 </tr>
                 <tr>
@@ -136,30 +206,31 @@ function knt_render_generator_page() {
                     </td>
                 </tr>
                 <tr>
-                    <th><label for="knt-category-1">カテゴリ</label></th>
+                    <th>カテゴリ</th>
                     <td>
-                        <?php
-                        wp_dropdown_categories( array(
-                            'show_option_none'  => '-- カテゴリを選択 --',
-                            'option_none_value' => '',
-                            'hierarchical'      => true,
-                            'id'                => 'knt-category-1',
-                            'name'              => 'category_1',
-                            'class'             => 'regular-text',
-                        ) );
-                        ?>
-                        <br><br>
-                        <?php
-                        wp_dropdown_categories( array(
-                            'show_option_none'  => '-- サブカテゴリ（任意） --',
-                            'option_none_value' => '',
-                            'hierarchical'      => true,
-                            'id'                => 'knt-category-2',
-                            'name'              => 'category_2',
-                            'class'             => 'regular-text',
-                        ) );
-                        ?>
-                        <p class="description">例：「東京都」と「渋谷区」のように都道府県と市区町村を選択</p>
+                        <p class="description">上のエリア選択から自動設定されます</p>
+                        <input type="hidden" id="knt-category-1" name="category_1" value="">
+                        <input type="hidden" id="knt-category-2" name="category_2" value="">
+                        <span id="knt-category-preview" style="color: var(--color-text-sub); font-size: 13px;"></span>
+                        <script>
+                        jQuery(function($) {
+                            function updateCategoryPreview() {
+                                var prefId = $('#knt-area-pref').val();
+                                var cityId = $('#knt-area-city').val();
+                                var prefName = $('#knt-area-pref').find(':selected').data('name') || '';
+                                var cityName = $('#knt-area-city').find(':selected').data('name') || '';
+
+                                $('#knt-category-1').val(prefId || '');
+                                $('#knt-category-2').val(cityId || '');
+
+                                var preview = '';
+                                if (prefName) preview += prefName;
+                                if (cityName) preview += ' > ' + cityName;
+                                $('#knt-category-preview').text(preview ? preview : '未選択');
+                            }
+                            $('#knt-area-pref, #knt-area-city').on('change', updateCategoryPreview);
+                        });
+                        </script>
                     </td>
                 </tr>
             </table>
