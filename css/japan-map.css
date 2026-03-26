@@ -263,9 +263,6 @@
   stroke: rgba(255, 255, 255, 0.86);
   stroke-width: 1.4;
   vector-effect: non-scaling-stroke;
-  transform: none !important;
-  transform-box: fill-box;
-  transform-origin: center center;
 }
 .knt-japan-map-svg [data-code]:hover .prefecture-shape,
 .knt-japan-map-svg [data-code].is-active .prefecture-shape,
@@ -281,10 +278,9 @@
 .knt-japan-map-svg [data-code][data-region="tohoku"] .prefecture-shape {
   opacity: 1 !important;
 }
-/* クリック時に動かさない */
-.knt-japan-map-svg [data-code]:active,
+/* クリック時にshapeが動かないようにする（g要素のtranslateは維持） */
 .knt-japan-map-svg .prefecture-shape:active {
-  transform: none !important;
+  filter: brightness(1.08);
 }
 /* モバイル: 地図が上、UIが下 */
 @media (max-width: 767px) {
