@@ -18,6 +18,34 @@ class KNT_Article_Generator {
         $this->api = new KNT_HotPepper_API();
     }
 
+    /**
+     * スラッグまたはタイトルで重複チェック
+     */
+    private function check_duplicate( $slug, $title ) {
+        // スラッグで検索
+        $existing = get_page_by_path( $slug, OBJECT, 'post' );
+        if ( $existing ) {
+            return new WP_Error( 'duplicate_post',
+                sprintf( '同じスラッグの記事が既に存在します（ID: %d「%s」）。スキップしました。',
+                    $existing->ID, $existing->post_title )
+            );
+        }
+        // タイトルで検索（下書き含む）
+        $title_check = get_posts( array(
+            'post_type'   => 'post',
+            'post_status' => array( 'publish', 'draft', 'pending' ),
+            'title'       => $title,
+            'numberposts' => 1,
+        ) );
+        if ( ! empty( $title_check ) ) {
+            return new WP_Error( 'duplicate_post',
+                sprintf( '同じタイトルの記事が既に存在します（ID: %d）。スキップしました。',
+                    $title_check[0]->ID )
+            );
+        }
+        return true;
+    }
+
     public function generate( $area, $genre_name, $genre_code = '', $count = 5, $category_ids = array() ) {
         $search_args = array(
             'keyword' => $area . ' ' . $genre_name,
@@ -50,6 +78,10 @@ class KNT_Article_Generator {
             '%sで%sを食べるならここ！ホットペッパー掲載の人気店から厳選した%d店舗を紹介。写真・アクセス・予算・営業時間つき。予約リンクあり。',
             $area, $genre_name, count( $shops )
         );
+
+        // 重複チェック
+        $dup = $this->check_duplicate( $slug, $title );
+        if ( is_wp_error( $dup ) ) return $dup;
 
         $post_data = array(
             'post_title'   => $title,
@@ -667,6 +699,10 @@ class KNT_Article_Generator {
         $content = $this->build_scene_content( $shops, $area, $scene_key );
         $excerpt = sprintf( '%sで%sにぴったりのお店を厳選！%s 予約リンクあり。', $area, $scene['label'], $scene['description'] );
 
+        // 重複チェック
+        $dup = $this->check_duplicate( $slug, $title );
+        if ( is_wp_error( $dup ) ) return $dup;
+
         $post_data = array(
             'post_title' => $title, 'post_content' => $content, 'post_status' => 'draft',
             'post_type' => 'post', 'post_name' => $slug, 'post_excerpt' => $excerpt,
@@ -1016,6 +1052,10 @@ class KNT_Article_Generator {
         $excerpt = $station
             ? sprintf( '%s周辺で美味しい%sを厳選！%d店舗を写真・予算・営業時間付きで紹介。予約リンクあり。', $station, $genre_name, count( $shops ) )
             : sprintf( '%sで%sを食べるならここ！厳選%d店舗を紹介。予約リンクあり。', $area, $genre_name, count( $shops ) );
+
+        // 重複チェック
+        $dup = $this->check_duplicate( $slug, $title );
+        if ( is_wp_error( $dup ) ) return $dup;
 
         $post_data = array(
             'post_title' => $title, 'post_content' => $content, 'post_status' => 'draft',
