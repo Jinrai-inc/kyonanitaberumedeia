@@ -187,7 +187,22 @@ add_action( 'wp_head', 'knt_customizer_css' );
 
 /**
  * REST API CORS for app (additive – keeps WordPress default CORS intact)
+ * + REST API URLをWordPressアドレスに揃える（サブディレクトリ構成対応）
  */
+function knt_fix_rest_url_for_admin( $url ) {
+    // 管理画面からのREST APIリクエストがCORSエラーにならないよう
+    // REST API URLをWordPressアドレス（WP_SITEURL）ベースに変更
+    if ( is_admin() ) {
+        $site_url = site_url();  // WordPressアドレス = https://media.kyou-nani-taberu.app
+        $home_url = home_url();  // サイトアドレス = https://kyou-nani-taberu.app/media
+        if ( $site_url !== $home_url ) {
+            $url = str_replace( $home_url, $site_url, $url );
+        }
+    }
+    return $url;
+}
+add_filter( 'rest_url', 'knt_fix_rest_url_for_admin' );
+
 function knt_rest_cors_headers( $value ) {
     $allowed_origins = array(
         'https://kyou-nani-taberu.app',
