@@ -42,6 +42,9 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
             <div>
                 <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>運営会社</h4>
                 <ul class="footer__links">
+                    <li><a href="https://jinrai.co.jp" target="_blank" rel="noopener noreferrer"
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                    >株式会社仁頼（じんらい）</a></li>
                     <li><a href="<?php echo esc_url( get_theme_mod( 'knt_header_cta_url', 'https://kyou-nani-taberu.app' ) ); ?>"
                         <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                     >アプリを使う</a></li>
@@ -80,6 +83,9 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
                     <li><a href="https://jinrai.co.jp/legal/commerce" target="_blank" rel="noopener noreferrer"
                         <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                     >特定商取引法に基づく表記</a></li>
+                    <li><a href="https://jinrai.co.jp/company" target="_blank" rel="noopener noreferrer"
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                    >運営者情報</a></li>
                 </ul>
             </div>
         </div>

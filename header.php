@@ -88,18 +88,18 @@
                 // シーンリンクをデフォルトナビに
                 // シーン + ジャンル をタグページにリンク
                 $nav_items = array(
-                    'ラーメン' => 'ラーメン',
-                    'デート'   => 'デート',
-                    '飲み会'   => '飲み会・宴会',
-                    'ランチ'   => 'ランチ',
-                    '接待'     => '接待・ビジネス',
-                    '女子会'   => '女子会',
-                    '子連れ'   => '家族・子連れ',
+                    'ラーメン', 'デート', '飲み会', 'ランチ', '接待', '女子会', '子連れ',
                 );
-                foreach ( $nav_items as $display => $tag_name ) {
-                    $tag = get_term_by( 'name', $tag_name, 'post_tag' );
-                    if ( ! $tag ) $tag = get_term_by( 'name', $display, 'post_tag' );
-                    $url = $tag ? get_tag_link( $tag->term_id ) : home_url( '/?tag=' . urlencode( $display ) );
+                foreach ( $nav_items as $display ) {
+                    // タグが存在しなければ自動作成
+                    $tag = get_term_by( 'name', $display, 'post_tag' );
+                    if ( ! $tag ) {
+                        $result = wp_insert_term( $display, 'post_tag' );
+                        if ( ! is_wp_error( $result ) ) {
+                            $tag = get_term( $result['term_id'], 'post_tag' );
+                        }
+                    }
+                    $url = $tag ? get_tag_link( $tag->term_id ) : home_url( '/?s=' . urlencode( $display ) );
                     echo '<a href="' . esc_url( $url ) . '">' . esc_html( $display ) . '</a>';
                 }
             }

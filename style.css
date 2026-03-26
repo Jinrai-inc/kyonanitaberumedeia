@@ -2728,3 +2728,37 @@ h4 {
   h2 { font-size: 1.2rem; word-break: break-word; }
   h3 { font-size: 1.05rem; word-break: break-word; }
 }
+
+/* Footer Operator Info */
+.footer__operator {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.footer__operator-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 12px;
+}
+.footer__operator-table th {
+  width: 100px;
+  padding: 8px 12px;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer__operator-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.footer__operator-table tr:last-child th,
+.footer__operator-table tr:last-child td { border-bottom: none; }
+.site-footer--light .footer__operator { border-top-color: var(--color-border); }
+.site-footer--light .footer__operator-table th,
+.site-footer--light .footer__operator-table td { border-bottom-color: var(--color-border); }
+@media (max-width: 767px) {
+  .footer__operator-table th { width: 80px; font-size: 12px; }
+  .footer__operator-table td { font-size: 12px; }
+}

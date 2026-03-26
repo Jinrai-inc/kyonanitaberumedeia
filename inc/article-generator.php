@@ -497,9 +497,27 @@ class KNT_Article_Generator {
             $tags[] = $params['genre'];
         }
 
-        // シーン名タグ
+        // シーン名タグ + 連想ジャンルタグ
         if ( ! empty( $params['scene_key'] ) && isset( KNT_SCENES[ $params['scene_key'] ] ) ) {
-            $tags[] = KNT_SCENES[ $params['scene_key'] ]['label'];
+            $scene = KNT_SCENES[ $params['scene_key'] ];
+            $tags[] = $scene['label'];
+            // シーンに紐づくジャンル名もタグに追加（連想タグ）
+            $scene_genre_tags = array(
+                'date'        => array( 'デート', 'イタリアン', 'フレンチ', '個室' ),
+                'nomikai'     => array( '飲み会', '居酒屋', '飲み放題' ),
+                'settai'      => array( '接待', '和食', '個室', '高級' ),
+                'joshikai'    => array( '女子会', 'カフェ', 'おしゃれ' ),
+                'kinenbi'     => array( '記念日', '誕生日', 'サプライズ' ),
+                'hitorimeshi' => array( '一人飯', 'ラーメン', 'カレー' ),
+                'family'      => array( '子連れ', 'ファミリー', 'キッズ' ),
+                'goukon'      => array( '合コン', '個室', '飲み放題' ),
+                'lunch'       => array( 'ランチ', 'コスパ' ),
+                'shinya'      => array( '深夜', 'シメ', 'ラーメン' ),
+                'tabehodai'   => array( '食べ放題', '焼肉', 'ビュッフェ' ),
+            );
+            if ( isset( $scene_genre_tags[ $params['scene_key'] ] ) ) {
+                $tags = array_merge( $tags, $scene_genre_tags[ $params['scene_key'] ] );
+            }
         }
 
         // エリア名タグ
