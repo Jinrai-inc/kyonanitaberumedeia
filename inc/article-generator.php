@@ -136,29 +136,6 @@ class KNT_Article_Generator {
                 );
             }
 
-            // 食べログ（LinkSwitchで自動アフィリエイト変換）
-            $tabelog_url = sprintf(
-                'https://tabelog.com/rstLst/?vs=1&sa=%s&sk=%s',
-                urlencode( $area ), urlencode( $shop['name'] )
-            );
-            $blocks[] = $this->block_button(
-                '食べログで口コミを見る', $tabelog_url, 'secondary', 'medium', true, 'left'
-            );
-
-            // 一休.comレストラン（LinkSwitchで自動アフィリエイト変換）
-            $ikkyuu_url = sprintf(
-                'https://restaurant.ikyu.com/search/?keyword=%s',
-                urlencode( $shop['name'] )
-            );
-            $blocks[] = $this->block_button(
-                '一休.comで予約する', $ikkyuu_url, 'secondary', 'medium', true, 'left'
-            );
-
-            // Google Maps
-            $blocks[] = $this->block_button(
-                'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left'
-            );
-
             if ( $i < count( $shops ) - 1 ) {
                 $blocks[] = $this->block_separator();
             }
@@ -510,16 +487,11 @@ class KNT_Article_Generator {
                 $blocks[] = $this->block_paragraph( '<strong>' . implode( ' / ', $feats ) . '</strong>' );
             }
 
-            // 予約ボタン群
+            // 予約ボタン（ホットペッパーのみ）
             $blocks[] = $this->block_button( 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left' );
             if ( $shop['coupon_url'] ) {
                 $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
             }
-            $tabelog_url = sprintf( 'https://tabelog.com/rstLst/?vs=1&sa=%s&sk=%s', urlencode( $area ), urlencode( $shop['name'] ) );
-            $blocks[] = $this->block_button( '食べログで口コミを見る', $tabelog_url, 'secondary', 'medium', true, 'left' );
-            $ikkyuu_url = sprintf( 'https://restaurant.ikyu.com/search/?keyword=%s', urlencode( $shop['name'] ) );
-            $blocks[] = $this->block_button( '一休.comで予約する', $ikkyuu_url, 'secondary', 'medium', true, 'left' );
-            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
 
             if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
         }
@@ -732,15 +704,11 @@ class KNT_Article_Generator {
             if ( $shop['close'] )   $info[] = esc_html( $shop['close'] );
             $blocks[] = $this->block_paragraph( implode( '<br>', $info ) );
 
+            // 予約ボタン（ホットペッパーのみ）
             $blocks[] = $this->block_button( 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left' );
             if ( $shop['coupon_url'] ) {
                 $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
             }
-            $tabelog_url = sprintf( 'https://tabelog.com/rstLst/?vs=1&sa=%s&sk=%s', urlencode( $area ), urlencode( $shop['name'] ) );
-            $blocks[] = $this->block_button( '食べログで口コミを見る', $tabelog_url, 'secondary', 'medium', true, 'left' );
-            $ikkyuu_url = sprintf( 'https://restaurant.ikyu.com/search/?keyword=%s', urlencode( $shop['name'] ) );
-            $blocks[] = $this->block_button( '一休.comで予約する', $ikkyuu_url, 'secondary', 'medium', true, 'left' );
-            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
 
             if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
         }
