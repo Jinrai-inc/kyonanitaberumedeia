@@ -203,31 +203,67 @@ function knt_fix_rest_url_for_admin( $url ) {
 }
 add_filter( 'rest_url', 'knt_fix_rest_url_for_admin' );
 
-// JS側: Gutenbergが使う wpApiSettings.root を上書き
-function knt_fix_rest_url_js() {
+// wp-api-request のローカライズデータを直接上書き
+function knt_fix_wp_api_settings() {
     if ( ! is_admin() ) return;
-    $site_url = site_url();
-    $home_url = home_url();
+    $site_url = untrailingslashit( site_url() );
+    $home_url = untrailingslashit( home_url() );
     if ( $site_url === $home_url ) return;
 
-    $correct_root = esc_url_raw( trailingslashit( $site_url ) . rest_get_url_prefix() . '/' );
+    $root = $site_url . '/' . rest_get_url_prefix() . '/';
+    wp_add_inline_script( 'wp-api-request', 'wpApiSettings.root="' . esc_js( $root ) . '";', 'after' );
+}
+add_action( 'admin_enqueue_scripts', 'knt_fix_wp_api_settings', 999 );
+
+// JS側: wpApiSettings.root を完全上書き（複数箇所で強制）
+function knt_fix_rest_url_js_head() {
+    if ( ! is_admin() ) return;
+    $site_url = untrailingslashit( site_url() );
+    $home_url = untrailingslashit( home_url() );
+    if ( $site_url === $home_url ) return;
+    $root = $site_url . '/' . rest_get_url_prefix() . '/';
+    echo '<script>var kntCorrectRestRoot="' . esc_js( $root ) . '";</script>' . "\n";
+}
+add_action( 'admin_print_scripts', 'knt_fix_rest_url_js_head', 1 );
+
+function knt_fix_rest_url_js_footer() {
+    if ( ! is_admin() ) return;
+    $site_url = untrailingslashit( site_url() );
+    $home_url = untrailingslashit( home_url() );
+    if ( $site_url === $home_url ) return;
+    $root = $site_url . '/' . rest_get_url_prefix() . '/';
     ?>
     <script>
-    if (typeof wpApiSettings !== 'undefined') {
-        wpApiSettings.root = '<?php echo esc_js( $correct_root ); ?>';
-    }
-    window.addEventListener('load', function() {
-        if (typeof wpApiSettings !== 'undefined') {
-            wpApiSettings.root = '<?php echo esc_js( $correct_root ); ?>';
+    (function(){
+        var r = '<?php echo esc_js( $root ); ?>';
+        // 1. wpApiSettings上書き
+        if(typeof wpApiSettings!=='undefined'){wpApiSettings.root=r;}
+        // 2. wp.apiFetchのルート上書き
+        if(typeof wp!=='undefined'&&wp.apiFetch){
+            wp.apiFetch.use(function(options,next){
+                if(options.url){
+                    options.url=options.url.replace('<?php echo esc_js( $home_url ); ?>','<?php echo esc_js( $site_url ); ?>');
+                }
+                if(options.path&&!options.url){
+                    options.url=r+options.path.replace(/^\//,'');
+                    delete options.path;
+                }
+                return next(options);
+            });
         }
-        if (typeof wp !== 'undefined' && wp.apiFetch) {
-            wp.apiFetch.use(wp.apiFetch.createRootURLMiddleware('<?php echo esc_js( $correct_root ); ?>'));
-        }
-    });
+        // 3. MutationObserverで遅延ロードされたスクリプト対策
+        var obs=new MutationObserver(function(){
+            if(typeof wpApiSettings!=='undefined'&&wpApiSettings.root!==r){
+                wpApiSettings.root=r;
+            }
+        });
+        obs.observe(document.body,{childList:true,subtree:true});
+        setTimeout(function(){obs.disconnect();},10000);
+    })();
     </script>
     <?php
 }
-add_action( 'admin_head', 'knt_fix_rest_url_js', 1 );
+add_action( 'admin_print_footer_scripts', 'knt_fix_rest_url_js_footer', 999 );
 
 // OPTIONSプリフライトへの応答
 function knt_handle_preflight() {
