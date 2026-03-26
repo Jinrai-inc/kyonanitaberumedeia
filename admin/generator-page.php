@@ -39,6 +39,7 @@ function knt_generator_admin_assets( $hook ) {
     wp_localize_script( 'knt-generator', 'kntGenerator', array(
         'ajaxUrl' => admin_url( 'admin-ajax.php' ),
         'nonce'   => wp_create_nonce( 'knt_generate_article' ),
+        'scenes'  => knt_scenes_for_js(),
     ) );
 }
 add_action( 'admin_enqueue_scripts', 'knt_generator_admin_assets' );
@@ -64,6 +65,43 @@ function knt_render_generator_page() {
                     </td>
                 </tr>
                 <tr>
+                    <th><label for="knt-mode">記事タイプ</label></th>
+                    <td>
+                        <select id="knt-mode" name="mode">
+                            <option value="genre" selected>エリア × ジャンル（通常）</option>
+                            <option value="scene">エリア × シーン（利用シーン別）</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr id="knt-scene-row" style="display:none;">
+                    <th><label for="knt-scene">シーン</label></th>
+                    <td>
+                        <select id="knt-scene" name="scene">
+                            <option value="">-- シーンを選択 --</option>
+                            <option value="date">デート</option>
+                            <option value="nomikai">飲み会・宴会</option>
+                            <option value="settai">接待・ビジネス</option>
+                            <option value="joshikai">女子会</option>
+                            <option value="kinenbi">記念日・誕生日</option>
+                            <option value="hitorimeshi">一人飯・ソロ</option>
+                            <option value="family">家族・子連れ</option>
+                            <option value="goukon">合コン</option>
+                            <option value="lunch">ランチ</option>
+                            <option value="shinya">深夜メシ・シメ</option>
+                            <option value="tabehodai">食べ放題</option>
+                        </select>
+                        <p class="description" id="knt-scene-description"></p>
+                    </td>
+                </tr>
+                <tr id="knt-scene-info-row" style="display:none;">
+                    <th>自動設定される条件</th>
+                    <td>
+                        <p><strong>検索に含むジャンル：</strong><span id="knt-allowed-genres"></span></p>
+                        <p><strong>除外されるジャンル：</strong><span id="knt-excluded-genres"></span></p>
+                        <p><strong>設備フィルター：</strong><span id="knt-api-filters"></span></p>
+                    </td>
+                </tr>
+                <tr id="knt-genre-row">
                     <th><label for="knt-genre">ジャンル</label></th>
                     <td>
                         <select id="knt-genre" name="genre_code">
@@ -196,30 +234,37 @@ function knt_ajax_generate_article() {
         wp_send_json_error( '権限がありません。' );
     }
 
-    $area       = sanitize_text_field( $_POST['area'] ?? '' );
-    $genre_name = sanitize_text_field( $_POST['genre_name'] ?? '' );
-    $genre_code = sanitize_text_field( $_POST['genre_code'] ?? '' );
-    $count      = intval( $_POST['count'] ?? 5 );
+    $area  = sanitize_text_field( $_POST['area'] ?? '' );
+    $mode  = sanitize_text_field( $_POST['mode'] ?? 'genre' );
+    $count = intval( $_POST['count'] ?? 5 );
 
     $category_ids = array();
-    if ( ! empty( $_POST['category_1'] ) ) {
-        $category_ids[] = intval( $_POST['category_1'] );
-    }
-    if ( ! empty( $_POST['category_2'] ) ) {
-        $category_ids[] = intval( $_POST['category_2'] );
-    }
+    if ( ! empty( $_POST['category_1'] ) ) $category_ids[] = intval( $_POST['category_1'] );
+    if ( ! empty( $_POST['category_2'] ) ) $category_ids[] = intval( $_POST['category_2'] );
 
     if ( empty( $area ) ) {
         wp_send_json_error( 'エリア名を入力してください。' );
-    }
-    if ( empty( $genre_name ) ) {
-        wp_send_json_error( 'ジャンル名を入力してください。' );
     }
 
     require_once KNT_DIR . '/inc/article-generator.php';
     $generator = new KNT_Article_Generator();
 
-    $result = $generator->generate( $area, $genre_name, $genre_code, $count, $category_ids );
+    if ( $mode === 'scene' ) {
+        // シーン別記事生成
+        $scene_key = sanitize_text_field( $_POST['scene'] ?? '' );
+        if ( empty( $scene_key ) ) {
+            wp_send_json_error( 'シーンを選択してください。' );
+        }
+        $result = $generator->generate_by_scene( $area, $scene_key, $count, $category_ids );
+    } else {
+        // 通常のエリア×ジャンル記事生成
+        $genre_name = sanitize_text_field( $_POST['genre_name'] ?? '' );
+        $genre_code = sanitize_text_field( $_POST['genre_code'] ?? '' );
+        if ( empty( $genre_name ) ) {
+            wp_send_json_error( 'ジャンル名を入力してください。' );
+        }
+        $result = $generator->generate( $area, $genre_name, $genre_code, $count, $category_ids );
+    }
 
     if ( is_wp_error( $result ) ) {
         wp_send_json_error( $result->get_error_message() );

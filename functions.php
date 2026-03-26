@@ -403,6 +403,11 @@ require_once KNT_DIR . '/inc/customizer.php';
 require_once KNT_DIR . '/inc/blocks.php';
 
 /**
+ * Include Scene Definitions
+ */
+require_once KNT_DIR . '/inc/scenes.php';
+
+/**
  * Include Restaurant Links meta box & auto-display
  */
 require_once KNT_DIR . '/inc/restaurant-links.php';
