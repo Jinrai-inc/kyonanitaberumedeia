@@ -36,9 +36,31 @@ function knt_generator_admin_assets( $hook ) {
     }
     wp_enqueue_style( 'knt-generator', KNT_URI . '/admin/generator.css', array(), KNT_VERSION );
     wp_enqueue_script( 'knt-generator', KNT_URI . '/js/admin-generator.js', array( 'jquery' ), KNT_VERSION, true );
+    // 駅データをカテゴリIDキーに変換（slug + name の両方で検索）
+    $station_slug_data = knt_get_all_station_data();
+    $station_id_data = array();
+    foreach ( $station_slug_data as $slug => $stations ) {
+        // slugからprefコードと市区町村名を抽出（例: area-13-千代田区 → area-13, 千代田区）
+        if ( preg_match( '/^(area-\d{2})-(.+)$/', $slug, $m ) ) {
+            $pref_slug = $m[1];
+            $city_name = $m[2];
+            // 都道府県カテゴリを取得
+            $pref_term = get_term_by( 'slug', $pref_slug, 'category' );
+            if ( $pref_term ) {
+                // 子カテゴリから名前一致で検索
+                $children = get_categories( array( 'parent' => $pref_term->term_id, 'hide_empty' => false ) );
+                foreach ( $children as $child ) {
+                    if ( $child->name === $city_name ) {
+                        $station_id_data[ $child->term_id ] = $stations;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     wp_localize_script( 'knt-generator', 'kntGenerator', array(
         'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-        'stationData' => knt_get_all_station_data(),
+        'stationData' => $station_id_data,
         'nonce'   => wp_create_nonce( 'knt_generate_article' ),
         'scenes'  => knt_scenes_for_js(),
     ) );
