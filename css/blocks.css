@@ -1045,3 +1045,33 @@
 .knt-facility-badges strong {
     color: var(--color-accent, #C9553E);
 }
+
+/* Shop Photo (standalone) */
+.knt-shop-photo {
+    margin: 16px 0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.knt-shop-photo img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 400px;
+    object-fit: cover;
+}
+.knt-shop-photo figcaption {
+    font-size: 10px;
+    color: var(--color-text-light, #999);
+    text-align: right;
+    padding: 4px 8px;
+    background: var(--color-bg-main, #f4f0eb);
+}
+
+/* Restaurant Card (info only, no image) */
+.knt-restaurant-card--info {
+    flex-direction: column;
+    padding: 0;
+}
+.knt-restaurant-card--info .knt-restaurant-card__body {
+    padding: 16px 20px;
+}

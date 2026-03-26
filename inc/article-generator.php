@@ -95,6 +95,7 @@ class KNT_Article_Generator {
             $num = $i + 1;
 
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $num, $shop['name'] ) );
+            $blocks[] = $this->block_shop_image( $shop );
             $blocks[] = $this->block_restaurant_card( $shop );
             $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
@@ -189,24 +190,25 @@ class KNT_Article_Generator {
             . "<!-- /wp:html -->";
     }
 
-    private function block_restaurant_card( $shop ) {
-        $desc = $shop['catch'] ?: ( $shop['genre_catch'] ?: '' );
-        $genre = $shop['genre'] ?: $shop['sub_genre'];
-        $area  = $shop['station'] ? $shop['station'] . '駅' : '';
-        // 大きい画像を優先（mobile > l > m）
+    private function block_shop_image( $shop ) {
         $photo = $shop['photo_mobile'] ?: ( $shop['photo_l'] ?: $shop['photo_m'] );
-
-        $image_html = '';
-        if ( $photo ) {
-            $image_html = '<div class="knt-restaurant-card__image">'
-                . '<img src="' . esc_url( $photo ) . '" alt="' . esc_attr( $shop['name'] ) . '" loading="lazy">'
-                . '<small class="knt-restaurant-card__credit">画像提供：ホットペッパー グルメ</small>'
-                . '</div>';
-        }
+        if ( ! $photo ) return '';
 
         return "<!-- wp:html -->\n"
-            . '<div class="knt-restaurant-card knt-restaurant-card--vertical">'
-            . $image_html
+            . '<figure class="knt-shop-photo">'
+            . '<img src="' . esc_url( $photo ) . '" alt="' . esc_attr( $shop['name'] ) . '" loading="lazy">'
+            . '<figcaption>画像提供：ホットペッパー グルメ</figcaption>'
+            . '</figure>' . "\n"
+            . '<!-- /wp:html -->';
+    }
+
+    private function block_restaurant_card( $shop ) {
+        $desc  = $shop['catch'] ?: ( $shop['genre_catch'] ?: '' );
+        $genre = $shop['genre'] ?: $shop['sub_genre'];
+        $area  = $shop['station'] ? $shop['station'] . '駅' : '';
+
+        return "<!-- wp:html -->\n"
+            . '<div class="knt-restaurant-card knt-restaurant-card--info">'
             . '<div class="knt-restaurant-card__body">'
             . '<div class="knt-restaurant-card__tags">'
             . '<span class="cat-tag">' . esc_html( $genre ) . '</span>'
@@ -538,6 +540,7 @@ class KNT_Article_Generator {
         foreach ( $shops as $i => $shop ) {
             $num = $i + 1;
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $num, $shop['name'] ) );
+            $blocks[] = $this->block_shop_image( $shop );
             $blocks[] = $this->block_restaurant_card( $shop );
             $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
@@ -767,6 +770,7 @@ class KNT_Article_Generator {
         // 店舗ブロック
         foreach ( $shops as $i => $shop ) {
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $i + 1, $shop['name'] ) );
+            $blocks[] = $this->block_shop_image( $shop );
             $blocks[] = $this->block_restaurant_card( $shop );
             $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
