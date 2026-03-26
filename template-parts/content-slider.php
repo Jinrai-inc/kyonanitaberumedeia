@@ -10,23 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$slider_count = get_theme_mod( 'knt_slider_count', 8 );
+$slider_count = 10;
 $slider_query = new WP_Query( array(
     'posts_per_page' => $slider_count,
     'post_type'      => 'post',
     'post_status'    => 'publish',
-    'meta_key'       => 'knt_views',
-    'orderby'        => 'meta_value_num',
+    'orderby'        => 'date',
     'order'          => 'DESC',
 ) );
-
-if ( ! $slider_query->have_posts() ) {
-    $slider_query = new WP_Query( array(
-        'posts_per_page' => $slider_count,
-        'post_type'      => 'post',
-        'post_status'    => 'publish',
-    ) );
-}
 
 if ( ! $slider_query->have_posts() ) {
     return;

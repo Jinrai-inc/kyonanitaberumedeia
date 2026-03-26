@@ -2341,6 +2341,7 @@ h4 {
   position: relative;
   overflow: hidden;
   background: var(--color-text-main);
+  padding: 20px 0;
 }
 .content-slider__track {
   display: flex;
@@ -2356,12 +2357,14 @@ h4 {
 }
 .content-slider__slide {
   position: relative;
-  width: 360px;
+  width: 340px;
   flex-shrink: 0;
   aspect-ratio: 16 / 10;
   overflow: hidden;
   text-decoration: none;
   display: block;
+  border-radius: 12px;
+  margin: 0 6px;
 }
 .content-slider__img {
   width: 100%;
