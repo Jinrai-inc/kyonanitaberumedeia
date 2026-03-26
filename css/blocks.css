@@ -875,3 +875,147 @@
 [data-type^="knt/"] .components-placeholder {
     min-height: 80px;
 }
+
+/* ========================================
+   Generated Article Styles (wp:html blocks)
+   ======================================== */
+
+/* Buttons */
+.knt-btn-wrapper { margin: 10px 0; }
+.knt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+    line-height: 1.4;
+}
+.knt-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.knt-btn--primary {
+    background: linear-gradient(135deg, #C9553E 0%, #F0B34A 100%);
+    color: #fff;
+    border-color: transparent;
+}
+.knt-btn--primary:hover { color: #fff; filter: brightness(1.05); }
+.knt-btn--secondary {
+    background: #fff;
+    color: var(--color-accent, #C9553E);
+    border-color: var(--color-accent, #C9553E);
+}
+.knt-btn--secondary:hover { background: var(--color-accent-light, #faeae6); color: var(--color-accent, #C9553E); }
+.knt-btn--small { min-height: 36px; padding: 6px 18px; font-size: 0.82rem; }
+.knt-btn--medium { min-height: 44px; }
+.knt-btn--large { min-height: 52px; padding: 12px 32px; font-size: 1rem; }
+
+/* Restaurant Card */
+.knt-restaurant-card {
+    display: flex;
+    border: 1.5px solid var(--color-border, #eee);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: #fff;
+}
+.knt-restaurant-card__image {
+    width: 240px;
+    flex-shrink: 0;
+    position: relative;
+}
+.knt-restaurant-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.knt-restaurant-card__credit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 9px;
+    padding: 2px 6px;
+    text-align: right;
+}
+.knt-restaurant-card__body {
+    padding: 18px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.knt-restaurant-card__tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.knt-restaurant-card__area {
+    font-size: 0.75rem;
+    color: var(--color-text-light, #999);
+}
+.knt-restaurant-card__name {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+    margin-bottom: 6px;
+}
+.knt-rating__stars {
+    color: #F5A623;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+.knt-restaurant-card__desc {
+    font-size: 0.85rem;
+    color: var(--color-text-sub, #5c564e);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Callout */
+.knt-callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+}
+.knt-callout--note { background: #fef9e7; border-left: 4px solid #F5A623; }
+.knt-callout--info { background: #eaf4fd; border-left: 4px solid #3498db; }
+.knt-callout--tip { background: #eaf6ed; border-left: 4px solid #27ae60; }
+.knt-callout--warning { background: #fdedec; border-left: 4px solid #e74c3c; }
+.knt-callout__header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-weight: 700; }
+.knt-callout__icon { font-size: 1.1rem; }
+.knt-callout__content { font-size: 0.88rem; line-height: 1.6; color: var(--color-text-sub, #5c564e); }
+
+/* App CTA */
+.knt-app-cta {
+    background: linear-gradient(135deg, var(--color-accent, #C9553E) 0%, #D4795E 100%);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    color: #fff;
+    margin: 32px 0;
+}
+.knt-app-cta__title { font-family: var(--font-heading, sans-serif); font-size: 1.2rem; color: #fff; margin: 0 0 12px; }
+.knt-app-cta__desc { font-size: 0.88rem; opacity: 0.9; margin: 0 0 24px; line-height: 1.7; }
+
+/* Google Maps embed */
+.article-content iframe { max-width: 100%; }
+
+@media (max-width: 767px) {
+    .knt-restaurant-card { flex-direction: column; }
+    .knt-restaurant-card__image { width: 100%; height: 180px; }
+    .knt-btn-wrapper { text-align: center !important; }
+    .knt-btn { width: 100%; justify-content: center; }
+}

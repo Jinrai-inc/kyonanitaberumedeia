@@ -107,4 +107,98 @@
             }
         });
     });
+
+    // ========================================
+    // 一括生成
+    // ========================================
+    $('#knt-bulk-btn').on('click', function() {
+        var prefId = $('#knt-area-pref').val();
+        if (!prefId || !kntAreaCities || !kntAreaCities[prefId]) {
+            alert('都道府県を選択してください。');
+            return;
+        }
+
+        var cities = kntAreaCities[prefId];
+        if (cities.length === 0) {
+            alert('この都道府県には市区町村カテゴリが登録されていません。');
+            return;
+        }
+
+        var mode = $('#knt-mode').val();
+        var genreName = $('#knt-genre-keyword').val() || 'グルメ';
+        var genreCode = $('#knt-genre').val() || '';
+        var sceneKey = $('#knt-scene').val() || '';
+        var count = $('#knt-count').val() || 5;
+        var modeLabel = mode === 'scene' ? ('シーン: ' + $('#knt-scene option:selected').text()) : ('ジャンル: ' + genreName);
+
+        if (!confirm(cities.length + '件の市区町村で記事を一括生成します。\n\n' + modeLabel + '\n\nこの処理にはしばらく時間がかかります。よろしいですか？')) {
+            return;
+        }
+
+        var $btn = $(this);
+        var $loading = $('#knt-generator-loading');
+        var $result = $('#knt-generator-result');
+        var $error = $('#knt-generator-error');
+
+        $btn.prop('disabled', true);
+        $('#knt-generate-btn').prop('disabled', true);
+        $result.hide();
+        $error.hide();
+
+        // 結果表示エリアを作成
+        var $bulkLog = $('<div id="knt-bulk-log" style="margin-top:20px;"></div>');
+        $('#knt-generator-form').after($bulkLog);
+        $bulkLog.html('<h3>一括生成中... (0/' + cities.length + ')</h3><div id="knt-bulk-items"></div>');
+
+        var completed = 0;
+        var errors = 0;
+        var queue = cities.slice();
+
+        function processNext() {
+            if (queue.length === 0) {
+                $bulkLog.find('h3').text('一括生成完了！ (' + (completed - errors) + '件成功 / ' + errors + '件エラー)');
+                $btn.prop('disabled', false);
+                $('#knt-generate-btn').prop('disabled', false);
+                return;
+            }
+
+            var city = queue.shift();
+            completed++;
+            $bulkLog.find('h3').text('一括生成中... (' + completed + '/' + cities.length + ') - ' + city.name);
+
+            $.ajax({
+                url: kntGenerator.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'knt_generate_bulk',
+                    nonce: kntGenerator.nonce,
+                    area: city.name,
+                    city_id: city.id,
+                    pref_id: prefId,
+                    mode: mode,
+                    genre_name: genreName,
+                    genre_code: genreCode,
+                    scene: sceneKey,
+                    count: count
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#knt-bulk-items').prepend('<p style="color:green;">✅ ' + response.data.area + ' → ' + response.data.title + '</p>');
+                    } else {
+                        errors++;
+                        $('#knt-bulk-items').prepend('<p style="color:red;">❌ ' + city.name + ': ' + response.data + '</p>');
+                    }
+                    // API負荷軽減のため2秒待つ
+                    setTimeout(processNext, 2000);
+                },
+                error: function() {
+                    errors++;
+                    $('#knt-bulk-items').prepend('<p style="color:red;">❌ ' + city.name + ': 通信エラー</p>');
+                    setTimeout(processNext, 2000);
+                }
+            });
+        }
+
+        processNext();
+    });
 })(jQuery);

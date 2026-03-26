@@ -236,6 +236,9 @@ function knt_render_generator_page() {
                 <button type="submit" id="knt-generate-btn" class="button button-primary button-hero">
                     記事を生成する
                 </button>
+                <button type="button" id="knt-bulk-btn" class="button button-secondary button-hero" style="margin-left: 12px;">
+                    選択中の都道府県の全市区町村で一括生成
+                </button>
             </p>
         </form>
 
@@ -345,3 +348,50 @@ function knt_ajax_generate_article() {
     ) );
 }
 add_action( 'wp_ajax_knt_generate_article', 'knt_ajax_generate_article' );
+
+/**
+ * AJAX: 一括記事生成（1市区町村ずつ呼ばれる）
+ */
+function knt_ajax_generate_bulk() {
+    check_ajax_referer( 'knt_generate_article', 'nonce' );
+    if ( ! current_user_can( 'edit_posts' ) ) {
+        wp_send_json_error( '権限がありません。' );
+    }
+
+    $area       = sanitize_text_field( $_POST['area'] ?? '' );
+    $city_id    = intval( $_POST['city_id'] ?? 0 );
+    $pref_id    = intval( $_POST['pref_id'] ?? 0 );
+    $mode       = sanitize_text_field( $_POST['mode'] ?? 'genre' );
+    $genre_name = sanitize_text_field( $_POST['genre_name'] ?? 'グルメ' );
+    $genre_code = sanitize_text_field( $_POST['genre_code'] ?? '' );
+    $scene_key  = sanitize_text_field( $_POST['scene'] ?? '' );
+    $count      = intval( $_POST['count'] ?? 5 );
+
+    if ( empty( $area ) ) {
+        wp_send_json_error( 'エリア名が空です。' );
+    }
+
+    $category_ids = array();
+    if ( $pref_id ) $category_ids[] = $pref_id;
+    if ( $city_id ) $category_ids[] = $city_id;
+
+    require_once KNT_DIR . '/inc/article-generator.php';
+    $generator = new KNT_Article_Generator();
+
+    if ( $mode === 'scene' && $scene_key ) {
+        $result = $generator->generate_by_scene( $area, $scene_key, $count, $category_ids );
+    } else {
+        $result = $generator->generate( $area, $genre_name, $genre_code, $count, $category_ids );
+    }
+
+    if ( is_wp_error( $result ) ) {
+        wp_send_json_error( $area . ': ' . $result->get_error_message() );
+    }
+
+    wp_send_json_success( array(
+        'post_id' => $result,
+        'area'    => $area,
+        'title'   => get_the_title( $result ),
+    ) );
+}
+add_action( 'wp_ajax_knt_generate_bulk', 'knt_ajax_generate_bulk' );
