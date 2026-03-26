@@ -431,7 +431,11 @@ function knt_scene_query_vars( $vars ) {
 add_filter( 'query_vars', 'knt_scene_query_vars' );
 
 function knt_scene_template( $template ) {
-    if ( get_query_var( 'knt_scene_slug' ) || ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#^/scene(/|$)#', $_SERVER['REQUEST_URI'] ) ) ) {
+    // Customizer プレビュー時は干渉しない
+    if ( is_customize_preview() ) {
+        return $template;
+    }
+    if ( get_query_var( 'knt_scene_slug' ) ) {
         $scene_template = KNT_DIR . '/page-scene.php';
         if ( file_exists( $scene_template ) ) {
             return $scene_template;
