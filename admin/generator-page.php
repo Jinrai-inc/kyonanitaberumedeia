@@ -346,10 +346,13 @@ function knt_ajax_generate_article() {
         wp_send_json_error( $result->get_error_message() );
     }
 
+    // プレビューURL: 下書きは ?p=ID&preview=true で直接アクセス
+    $preview_url = add_query_arg( array( 'p' => $result, 'preview' => 'true' ), home_url( '/' ) );
+
     wp_send_json_success( array(
         'post_id'     => $result,
-        'edit_url'    => get_edit_post_link( $result, '' ),
-        'preview_url' => get_preview_post_link( $result ),
+        'edit_url'    => admin_url( 'post.php?post=' . $result . '&action=edit' ),
+        'preview_url' => $preview_url,
         'title'       => get_the_title( $result ),
         'area'        => $area,
     ) );

@@ -189,11 +189,6 @@ add_action( 'wp_head', 'knt_customizer_css' );
  * REST API CORS for app (additive – keeps WordPress default CORS intact)
  */
 function knt_rest_cors_headers( $value ) {
-    // 管理画面からのリクエスト（同一オリジン）は何もしない
-    if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && ! get_http_origin() ) ) {
-        return $value;
-    }
-
     $allowed_origins = array(
         'https://kyou-nani-taberu.app',
         'https://www.kyou-nani-taberu.app',
