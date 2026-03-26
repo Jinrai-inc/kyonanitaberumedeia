@@ -85,21 +85,19 @@
                     'depth'          => 1,
                 ) );
             } else {
-                // シーンリンクをデフォルトナビに
-                // シーン + ジャンル をタグページにリンク
+                // ナビゲーション: 表示名 → 検索キーワード のマッピング
+                // タグページではなく検索結果で確実に記事を表示
                 $nav_items = array(
-                    'ラーメン', 'デート', '飲み会', 'ランチ', '接待', '女子会', '子連れ',
+                    'ラーメン' => 'ラーメン',
+                    'デート'   => 'デート',
+                    '飲み会'   => '居酒屋',
+                    'ランチ'   => 'ランチ',
+                    '接待'     => '接待',
+                    '女子会'   => '女子会',
+                    '子連れ'   => '子連れ',
                 );
-                foreach ( $nav_items as $display ) {
-                    // タグが存在しなければ自動作成
-                    $tag = get_term_by( 'name', $display, 'post_tag' );
-                    if ( ! $tag ) {
-                        $result = wp_insert_term( $display, 'post_tag' );
-                        if ( ! is_wp_error( $result ) ) {
-                            $tag = get_term( $result['term_id'], 'post_tag' );
-                        }
-                    }
-                    $url = $tag ? get_tag_link( $tag->term_id ) : home_url( '/?s=' . urlencode( $display ) );
+                foreach ( $nav_items as $display => $keyword ) {
+                    $url = home_url( '/?s=' . urlencode( $keyword ) );
                     echo '<a href="' . esc_url( $url ) . '">' . esc_html( $display ) . '</a>';
                 }
             }
