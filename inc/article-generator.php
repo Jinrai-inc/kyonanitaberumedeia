@@ -190,19 +190,150 @@ class KNT_Article_Generator {
             . "<!-- /wp:html -->";
     }
 
+    // ========================================
+    // Phase 5: 充実化ブロック群
+    // ========================================
+
     private function block_shop_image( $shop ) {
-        // photo_l(238px)を使用。引き伸ばさずネイティブサイズで表示
         $photo = $shop['photo_l'] ?: ( $shop['photo_m'] ?: $shop['photo_mobile'] );
         if ( ! $photo ) return '';
-
         return "<!-- wp:html -->\n"
-            . '<figure class="knt-shop-photo">'
+            . '<div class="knt-shop-photo">'
             . '<img src="' . esc_url( $photo ) . '" alt="' . esc_attr( $shop['name'] ) . '" loading="lazy">'
-            . '<figcaption>画像提供：ホットペッパー グルメ</figcaption>'
-            . '</figure>' . "\n"
-            . '<!-- /wp:html -->';
+            . '<span class="knt-shop-photo__credit">画像提供：ホットペッパー グルメ</span>'
+            . '</div>' . "\n<!-- /wp:html -->";
     }
 
+    private function build_heading_text( $shop, $index ) {
+        $h = sprintf( '%d. %s', $index, $shop['name'] );
+        $sub = $shop['genre_catch'] ?: mb_substr( $shop['catch'] ?? '', 0, 30 );
+        if ( $sub ) $h .= '｜' . $sub;
+        return $h;
+    }
+
+    private function block_shop_info_table( $shop ) {
+        $rows = '';
+        $fields = array(
+            array( '住所', $shop['address'] ),
+            array( 'アクセス', $shop['access'] ),
+            array( '予算', $shop['budget_avg'] ?: $shop['budget'] ),
+            array( '営業時間', $shop['open'] ),
+            array( '定休日', $shop['close'] ),
+            array( '席数', $shop['capacity'] ? $shop['capacity'] . '席' : '' ),
+            array( '駐車場', $shop['parking'] ),
+        );
+        foreach ( $fields as $f ) {
+            if ( ! empty( $f[1] ) && $f[1] !== 'なし' ) {
+                $rows .= '<tr><th>' . esc_html( $f[0] ) . '</th><td>' . esc_html( $f[1] ) . '</td></tr>';
+            }
+        }
+        if ( ! $rows ) return '';
+        return "<!-- wp:html -->\n<div class=\"knt-shop-info\"><table class=\"knt-shop-info__table\">{$rows}</table></div>\n<!-- /wp:html -->";
+    }
+
+    private function build_facility_badges_block( $shop, $scene_key = '' ) {
+        $badges = $this->build_facility_badges( $shop, $scene_key );
+        if ( empty( $badges ) ) return '';
+        return "<!-- wp:html -->\n<div class=\"knt-facility-badges\">" . implode( ' / ', $badges ) . "</div>\n<!-- /wp:html -->";
+    }
+
+    private function block_special_callout( $shop ) {
+        if ( empty( $shop['specials'] ) || empty( $shop['specials'][0]['title'] ) ) return '';
+        return $this->block_callout( 'tip', 'おすすめポイント', esc_html( $shop['specials'][0]['title'] ) );
+    }
+
+    private function build_editorial_comment( $shop, $index ) {
+        $parts = array();
+        if ( $shop['access'] ) $parts[] = $shop['access'] . 'の好立地';
+        if ( $shop['genre_catch'] ) $parts[] = $shop['genre_catch'] . 'が評判';
+
+        $hl = array();
+        if ( $this->has_value( $shop, 'private_room' ) ) $hl[] = '個室もあるのでゆっくり食事が楽しめます';
+        if ( $this->has_value( $shop, 'free_drink' ) )   $hl[] = '飲み放題付きコースもあり宴会にも◎';
+        if ( $this->has_value( $shop, 'lunch' ) && $this->has_value( $shop, 'midnight' ) )
+            $hl[] = 'ランチから深夜まで営業で使い勝手抜群';
+        elseif ( $this->has_value( $shop, 'lunch' ) )    $hl[] = 'ランチ営業もしているのでお昼にもおすすめ';
+        elseif ( $this->has_value( $shop, 'midnight' ) ) $hl[] = '深夜まで営業で飲み会の後にも';
+        if ( $this->has_value( $shop, 'night_view' ) )   $hl[] = '夜景が見える席がありデートにもぴったり';
+        if ( $this->has_value( $shop, 'child' ) )        $hl[] = 'お子様連れでも安心して利用可能';
+        if ( ! empty( $hl ) ) $parts[] = implode( '。', array_slice( $hl, 0, 2 ) );
+
+        if ( $shop['budget_avg'] ) $parts[] = '予算は' . $shop['budget_avg'] . '程度';
+        if ( $shop['capacity'] && intval( $shop['capacity'] ) > 50 )
+            $parts[] = '全' . $shop['capacity'] . '席の広々とした店内';
+        if ( $shop['party_capacity'] && intval( $shop['party_capacity'] ) > 20 )
+            $parts[] = '最大' . $shop['party_capacity'] . '名までの宴会にも対応';
+
+        if ( empty( $parts ) ) return '';
+        $closings = array( 'ぜひ一度足を運んでみてください。', '気になる方はホットペッパーからチェックしてみてください。', '予約してから訪れるのがおすすめです。' );
+        $text = implode( '。', $parts ) . '。' . $closings[ array_rand( $closings ) ];
+        return $this->block_paragraph( $text );
+    }
+
+    private function block_gmap_accordion( $shop ) {
+        return "<!-- wp:html -->\n"
+            . '<details class="knt-map-accordion">'
+            . '<summary>地図を見る（タップで開く）</summary>'
+            . '<div class="knt-map-accordion__content">'
+            . '<iframe src="' . esc_url( $shop['gmap_embed'] ) . '" width="100%" height="200" style="border:0;" loading="lazy" allowfullscreen></iframe>'
+            . '</div></details>' . "\n<!-- /wp:html -->";
+    }
+
+    private function block_main_cta( $shop ) {
+        return "<!-- wp:html -->\n"
+            . '<div class="knt-btn-wrapper" style="text-align:center">'
+            . '<a class="knt-btn knt-btn--primary knt-btn--large" href="' . esc_url( $shop['hotpepper_url'] ) . '" target="_blank" rel="noopener noreferrer sponsored">'
+            . 'ホットペッパーで予約・詳細を見る</a></div>' . "\n<!-- /wp:html -->";
+    }
+
+    private function block_shop_sublinks( $shop, $area = '' ) {
+        $links = array();
+        if ( $shop['coupon_url'] ) {
+            $links[] = '<a href="' . esc_url( $shop['coupon_url'] ) . '" target="_blank" rel="noopener noreferrer sponsored">クーポン</a>';
+        }
+        $links[] = '<a href="' . esc_url( $shop['gmap_url'] ) . '" target="_blank" rel="noopener noreferrer">Maps</a>';
+        if ( empty( $links ) ) return '';
+        return "<!-- wp:html -->\n<div class=\"knt-shop-sublinks\">" . implode( ' <span>|</span> ', $links ) . "</div>\n<!-- /wp:html -->";
+    }
+
+    private function block_genre_divider( $genre ) {
+        $icons = array(
+            'ラーメン' => "\xF0\x9F\x8D\x9C", "\xE7\x84\xBC\xE8\x82\x89" => "\xF0\x9F\xA5\xA9",
+            '和食' => "\xF0\x9F\x8D\xA3", '中華' => "\xF0\x9F\xA5\x9F",
+            'イタリアン' => "\xF0\x9F\x8D\x9D", 'カフェ' => "\xE2\x98\x95",
+            'カレー' => "\xF0\x9F\x8D\x9B", '居酒屋' => "\xF0\x9F\x8D\xBA",
+        );
+        $icon = "\xF0\x9F\x8D\xBD"; // default fork+knife
+        foreach ( $icons as $k => $v ) {
+            if ( mb_strpos( $genre, $k ) !== false ) { $icon = $v; break; }
+        }
+        return "<!-- wp:html -->\n<div class=\"knt-shop-divider\"><span class=\"knt-shop-divider__icon\">{$icon}</span></div>\n<!-- /wp:html -->";
+    }
+
+    private function block_summary_table( $shops ) {
+        $rows = '';
+        foreach ( $shops as $i => $shop ) {
+            $rows .= sprintf( '<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>',
+                $i + 1, esc_html( $shop['name'] ), esc_html( $shop['genre'] ?: $shop['sub_genre'] ),
+                esc_html( $shop['budget'] ?: $shop['budget_avg'] ),
+                esc_html( $shop['station'] ? $shop['station'] . '駅' : '' )
+            );
+        }
+        return "<!-- wp:html -->\n<div class=\"knt-summary-table\"><table>"
+            . '<thead><tr><th>#</th><th>店名</th><th>ジャンル</th><th>予算</th><th>最寄駅</th></tr></thead>'
+            . '<tbody>' . $rows . '</tbody></table></div>' . "\n<!-- /wp:html -->";
+    }
+
+    private function block_article_overview( $area, $genre, $count ) {
+        $content = sprintf(
+            '%sで人気の%s店%d選（写真・住所・営業時間つき）<br>'
+            . '各店舗の特徴・おすすめポイント<br>'
+            . 'ネット予約リンク・クーポン情報<br>'
+            . 'Google Mapsへのリンクでアクセスも簡単',
+            esc_html( $area ), esc_html( $genre ), $count
+        );
+        return $this->block_callout( 'info', 'この記事でわかること', $content );
+    }
     private function block_restaurant_card( $shop ) {
         $desc  = $shop['catch'] ?: ( $shop['genre_catch'] ?: '' );
         $genre = $shop['genre'] ?: $shop['sub_genre'];
@@ -807,10 +938,11 @@ class KNT_Article_Generator {
             $slug = $area_slug . '-' . $genre_slug . '-osusume';
         }
 
-        // 記事HTML構築
+        // 記事HTML構築（Phase 5 新構成）
         $blocks = array();
         $blocks[] = $this->block_callout( 'note', 'PR', 'この記事にはアフィリエイト広告・PR情報が含まれます' );
         $blocks[] = $this->block_paragraph( $lead );
+        $blocks[] = $this->block_article_overview( $area, $genre_name, count( $shops ) );
 
         // シーンの選定基準
         if ( $mode === 'scene' && $scene_key && isset( KNT_SCENES[ $scene_key ] ) ) {
@@ -828,46 +960,31 @@ class KNT_Article_Generator {
             }
         }
 
-        // 店舗ブロック
+        $scene_for_badges = ( $mode === 'scene' && $scene_key ) ? $scene_key : '';
+
+        // 各店舗セクション
         foreach ( $shops as $i => $shop ) {
-            $blocks[] = $this->block_heading( sprintf( '%d. %s', $i + 1, $shop['name'] ) );
+            $blocks[] = $this->block_heading( $this->build_heading_text( $shop, $i + 1 ) );
             $blocks[] = $this->block_shop_image( $shop );
             $blocks[] = $this->block_restaurant_card( $shop );
-            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
-
-            $info = array();
-            $info[] = esc_html( $shop['address'] );
-            if ( $shop['access'] )  $info[] = '<strong>' . esc_html( $shop['access'] ) . '</strong>';
-            if ( $shop['budget'] )  $info[] = esc_html( $shop['budget'] );
-            if ( $shop['open'] )    $info[] = esc_html( $shop['open'] );
-            if ( $shop['close'] )   $info[] = esc_html( $shop['close'] );
-            $blocks[] = $this->block_paragraph( implode( '<br>', $info ) );
-
-            // 設備バッジ
-            $scene_for_badges = ( $mode === 'scene' && $scene_key ) ? $scene_key : '';
-            $badges = $this->build_facility_badges( $shop, $scene_for_badges );
-            if ( ! empty( $badges ) ) {
-                $blocks[] = "<!-- wp:html -->\n<div class=\"knt-facility-badges\">" . implode( ' / ', $badges ) . "</div>\n<!-- /wp:html -->";
-            }
-
-            // 特集キャッチ
-            if ( ! empty( $shop['specials'] ) && ! empty( $shop['specials'][0]['title'] ) ) {
-                $blocks[] = $this->block_callout( 'tip', 'おすすめポイント', esc_html( $shop['specials'][0]['title'] ) );
-            }
-
-            // 予約ボタン
-            $blocks[] = $this->block_button( 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left' );
-            if ( $shop['coupon_url'] ) {
-                $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
-            }
-            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
-
-            if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
+            $blocks[] = $this->block_shop_info_table( $shop );
+            $b = $this->build_facility_badges_block( $shop, $scene_for_badges );
+            if ( $b ) $blocks[] = $b;
+            $b = $this->block_special_callout( $shop );
+            if ( $b ) $blocks[] = $b;
+            $b = $this->build_editorial_comment( $shop, $i + 1 );
+            if ( $b ) $blocks[] = $b;
+            $blocks[] = $this->block_gmap_accordion( $shop );
+            $blocks[] = $this->block_main_cta( $shop );
+            $b = $this->block_shop_sublinks( $shop, $area );
+            if ( $b ) $blocks[] = $b;
+            if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_genre_divider( $genre_name );
         }
 
         // まとめ
-        $blocks[] = $this->block_heading( 'まとめ' );
+        $blocks[] = $this->block_heading( 'まとめ｜' . $area . 'で美味しい' . $genre_name . 'を見つけよう' );
         $blocks[] = $this->block_paragraph( sprintf( '今回ご紹介した%d店舗は、どれも人気の実力店ばかりです。気になるお店があればぜひ予約してみてください。', count( $shops ) ) );
+        $blocks[] = $this->block_summary_table( $shops );
         $blocks[] = $this->block_faq( $area, $genre_name );
         $blocks[] = $this->block_paragraph( '<small>店舗情報・画像提供：<a href="https://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">ホットペッパーグルメ Webサービス</a></small>' );
 
