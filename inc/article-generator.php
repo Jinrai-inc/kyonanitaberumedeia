@@ -381,46 +381,106 @@ class KNT_Article_Generator {
         }
     }
 
+    /**
+     * 日本語→ローマ字変換マスター
+     */
+    private static $romaji_map = array(
+        // エリア・都道府県・市区町村
+        '北海道' => 'hokkaido', '青森' => 'aomori', '岩手' => 'iwate', '宮城' => 'miyagi',
+        '秋田' => 'akita', '山形' => 'yamagata', '福島' => 'fukushima',
+        '茨城' => 'ibaraki', '栃木' => 'tochigi', '群馬' => 'gunma',
+        '埼玉' => 'saitama', 'さいたま' => 'saitama', '千葉' => 'chiba',
+        '東京' => 'tokyo', '神奈川' => 'kanagawa', '新潟' => 'niigata',
+        '富山' => 'toyama', '石川' => 'ishikawa', '福井' => 'fukui',
+        '山梨' => 'yamanashi', '長野' => 'nagano', '岐阜' => 'gifu',
+        '静岡' => 'shizuoka', '愛知' => 'aichi', '三重' => 'mie',
+        '滋賀' => 'shiga', '京都' => 'kyoto', '大阪' => 'osaka',
+        '兵庫' => 'hyogo', '奈良' => 'nara', '和歌山' => 'wakayama',
+        '鳥取' => 'tottori', '島根' => 'shimane', '岡山' => 'okayama',
+        '広島' => 'hiroshima', '山口' => 'yamaguchi', '徳島' => 'tokushima',
+        '香川' => 'kagawa', '愛媛' => 'ehime', '高知' => 'kochi',
+        '福岡' => 'fukuoka', '佐賀' => 'saga', '長崎' => 'nagasaki',
+        '熊本' => 'kumamoto', '大分' => 'oita', '宮崎' => 'miyazaki',
+        '鹿児島' => 'kagoshima', '沖縄' => 'okinawa',
+        // 主要エリア・駅
+        '渋谷' => 'shibuya', '新宿' => 'shinjuku', '池袋' => 'ikebukuro',
+        '銀座' => 'ginza', '上野' => 'ueno', '浅草' => 'asakusa',
+        '秋葉原' => 'akihabara', '六本木' => 'roppongi', '品川' => 'shinagawa',
+        '恵比寿' => 'ebisu', '中目黒' => 'nakameguro', '代官山' => 'daikanyama',
+        '表参道' => 'omotesando', '神田' => 'kanda', '横浜' => 'yokohama',
+        '川崎' => 'kawasaki', '梅田' => 'umeda', '難波' => 'namba',
+        '名古屋' => 'nagoya', '札幌' => 'sapporo', '仙台' => 'sendai', '神戸' => 'kobe',
+        '東京駅' => 'tokyo-eki', '新橋' => 'shimbashi', '赤坂' => 'akasaka',
+        '麻布十番' => 'azabujuban', '原宿' => 'harajuku', '神泉' => 'shinsen',
+        '高田馬場' => 'takadanobaba', '神楽坂' => 'kagurazaka', '新大久保' => 'shinokubo',
+        '錦糸町' => 'kinshicho', '豊洲' => 'toyosu', '門前仲町' => 'monzennakacho',
+        '亀戸' => 'kameido', '大井町' => 'oimachi', '五反田' => 'gotanda',
+        '目黒' => 'meguro', '自由が丘' => 'jiyugaoka', '学芸大学' => 'gakugeidaigaku',
+        '蒲田' => 'kamata', '大森' => 'omori', '三軒茶屋' => 'sangenjaya',
+        '下北沢' => 'shimokitazawa', '二子玉川' => 'futakotamagawa',
+        '成城学園前' => 'seijogakuenmae', '中野' => 'nakano',
+        '荻窪' => 'ogikubo', '高円寺' => 'koenji', '阿佐ヶ谷' => 'asagaya',
+        '大塚' => 'otsuka', '巣鴨' => 'sugamo', '赤羽' => 'akabane',
+        '王子' => 'oji', '十条' => 'jujo', '北千住' => 'kitasenju',
+        '西新井' => 'nishiarai', '竹ノ塚' => 'takenotsuka',
+        '後楽園' => 'korakuen', '本郷三丁目' => 'hongosanchome',
+        '御茶ノ水' => 'ochanomizu', '神保町' => 'jimbocho', '大手町' => 'otemachi',
+        '日本橋' => 'nihonbashi', '築地' => 'tsukiji', '人形町' => 'ningyocho',
+        '月島' => 'tsukishima', '御徒町' => 'okachimachi',
+        '八王子' => 'hachioji', '立川' => 'tachikawa', '吉祥寺' => 'kichijoji', '町田' => 'machida',
+        '関内' => 'kannai', '桜木町' => 'sakuragicho', '新横浜' => 'shinyokohama',
+        '中華街' => 'chinatown', '武蔵小杉' => 'musashikosugi', '溝の口' => 'mizonokuchi',
+        '鎌倉' => 'kamakura', '藤沢' => 'fujisawa',
+        '心斎橋' => 'shinsaibashi', '天王寺' => 'tennoji', '新大阪' => 'shinosaka',
+        // 区
+        '千代田区' => 'chiyoda', '中央区' => 'chuo', '港区' => 'minato',
+        '新宿区' => 'shinjuku', '文京区' => 'bunkyo', '台東区' => 'taito',
+        '墨田区' => 'sumida', '江東区' => 'koto', '品川区' => 'shinagawa',
+        '目黒区' => 'meguro', '大田区' => 'ota', '世田谷区' => 'setagaya',
+        '渋谷区' => 'shibuya', '中野区' => 'nakano', '杉並区' => 'suginami',
+        '豊島区' => 'toshima', '北区' => 'kita', '荒川区' => 'arakawa',
+        '板橋区' => 'itabashi', '練馬区' => 'nerima', '足立区' => 'adachi',
+        '葛飾区' => 'katsushika', '江戸川区' => 'edogawa',
+        // ジャンル
+        'ラーメン' => 'ramen', '焼肉' => 'yakiniku', '寿司' => 'sushi',
+        '居酒屋' => 'izakaya', 'カフェ' => 'cafe', 'イタリアン' => 'italian',
+        '中華' => 'chinese', 'カレー' => 'curry', 'フレンチ' => 'french',
+        '韓国料理' => 'korean', '和食' => 'washoku', 'バー' => 'bar',
+        'お好み焼き' => 'okonomiyaki', '洋食' => 'yoshoku', 'エスニック' => 'ethnic',
+        'ダイニングバー' => 'diningbar', 'グルメ' => 'gourmet',
+        'カフェ・スイーツ' => 'cafe', 'イタリアン・フレンチ' => 'italian-french',
+        '焼肉・ホルモン' => 'yakiniku', 'アジア・エスニック' => 'asian',
+        'バー・カクテル' => 'bar',
+    );
+
+    private function to_romaji( $text ) {
+        // 完全一致
+        if ( isset( self::$romaji_map[ $text ] ) ) {
+            return self::$romaji_map[ $text ];
+        }
+        // 「駅」を除去して再検索
+        $no_eki = str_replace( array( '駅', '区', '市', '県', '都', '府' ), '', $text );
+        if ( isset( self::$romaji_map[ $no_eki ] ) ) {
+            return self::$romaji_map[ $no_eki ];
+        }
+        // 部分一致（長い方から順にマッチ）
+        $sorted = self::$romaji_map;
+        uksort( $sorted, function($a, $b) { return mb_strlen($b) - mb_strlen($a); });
+        foreach ( $sorted as $jp => $en ) {
+            if ( mb_strpos( $text, $jp ) !== false ) {
+                return $en;
+            }
+        }
+        // フォールバック: ランダムID
+        return 'area-' . substr( md5( $text ), 0, 8 );
+    }
+
     private function generate_slug( $area, $genre_name ) {
-        $area_map = array(
-            '渋谷' => 'shibuya', '新宿' => 'shinjuku', '池袋' => 'ikebukuro',
-            '銀座' => 'ginza', '東京駅' => 'tokyo-station', '上野' => 'ueno',
-            '浅草' => 'asakusa', '秋葉原' => 'akihabara', '六本木' => 'roppongi',
-            '品川' => 'shinagawa', '恵比寿' => 'ebisu', '中目黒' => 'nakameguro',
-            '代官山' => 'daikanyama', '表参道' => 'omotesando', '神田' => 'kanda',
-            '横浜' => 'yokohama', '川崎' => 'kawasaki', '大阪' => 'osaka',
-            '梅田' => 'umeda', '難波' => 'namba', '京都' => 'kyoto',
-            '名古屋' => 'nagoya', '福岡' => 'fukuoka', '札幌' => 'sapporo',
-            '仙台' => 'sendai', '広島' => 'hiroshima', '神戸' => 'kobe',
-        );
-        $genre_map = array(
-            'ラーメン' => 'ramen', '焼肉' => 'yakiniku', '寿司' => 'sushi',
-            '居酒屋' => 'izakaya', 'カフェ' => 'cafe', 'イタリアン' => 'italian',
-            '中華' => 'chinese', 'カレー' => 'curry', 'フレンチ' => 'french',
-            '韓国料理' => 'korean', '和食' => 'washoku', 'バー' => 'bar',
-            'お好み焼き' => 'okonomiyaki', '洋食' => 'yoshoku', 'エスニック' => 'ethnic',
-            'ダイニングバー' => 'diningbar',
-        );
-
-        $area_slug  = $area_map[ $area ] ?? sanitize_title( $area );
-        $genre_slug = $genre_map[ $genre_name ] ?? sanitize_title( $genre_name );
-
-        return $area_slug . '-' . $genre_slug . '-osusume';
+        return $this->to_romaji( $area ) . '-' . $this->to_romaji( $genre_name ) . '-osusume';
     }
 
     private function get_area_slug( $area ) {
-        $area_map = array(
-            '渋谷' => 'shibuya', '新宿' => 'shinjuku', '池袋' => 'ikebukuro',
-            '銀座' => 'ginza', '東京駅' => 'tokyo-station', '上野' => 'ueno',
-            '浅草' => 'asakusa', '秋葉原' => 'akihabara', '六本木' => 'roppongi',
-            '品川' => 'shinagawa', '恵比寿' => 'ebisu', '中目黒' => 'nakameguro',
-            '代官山' => 'daikanyama', '表参道' => 'omotesando', '神田' => 'kanda',
-            '横浜' => 'yokohama', '川崎' => 'kawasaki', '大阪' => 'osaka',
-            '梅田' => 'umeda', '難波' => 'namba', '京都' => 'kyoto',
-            '名古屋' => 'nagoya', '福岡' => 'fukuoka', '札幌' => 'sapporo',
-            '仙台' => 'sendai', '広島' => 'hiroshima', '神戸' => 'kobe',
-        );
-        return $area_map[ $area ] ?? sanitize_title( $area );
+        return $this->to_romaji( $area );
     }
 
     // ========================================
