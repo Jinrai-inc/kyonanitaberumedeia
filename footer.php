@@ -3,15 +3,20 @@
 <?php
 $footer_style = get_theme_mod( 'knt_footer_style', 'dark' );
 $footer_class = ( $footer_style === 'light' ) ? 'site-footer site-footer--light' : 'site-footer';
+$is_light     = ( $footer_style === 'light' );
+$text_color   = $is_light ? 'color: var(--color-text-sub);' : '';
+$heading_color = $is_light ? 'color: var(--color-text-main);' : '';
+$light_color  = $is_light ? 'color: var(--color-text-light);' : '';
 ?>
 
 <footer class="<?php echo esc_attr( $footer_class ); ?>" role="contentinfo"
-    <?php if ( $footer_style === 'light' ) : ?>
+    <?php if ( $is_light ) : ?>
         style="background: var(--color-bg-secondary); color: var(--color-text-sub);"
     <?php endif; ?>
 >
     <div class="container">
         <div class="footer__grid">
+            <!-- サイト紹介 -->
             <div class="footer__about">
                 <?php if ( has_custom_logo() ) : ?>
                     <div style="margin-bottom: 12px;">
@@ -19,114 +24,98 @@ $footer_class = ( $footer_style === 'light' ) ? 'site-footer site-footer--light'
                     </div>
                 <?php else : ?>
                     <div style="font-family: var(--font-heading); font-size: 18px; font-weight: 700; margin-bottom: 12px;
-                        <?php echo ( $footer_style === 'light' ) ? 'color: var(--color-text-main);' : 'color: #fff;'; ?>">
+                        <?php echo $is_light ? 'color: var(--color-text-main);' : 'color: #fff;'; ?>">
                         <?php bloginfo( 'name' ); ?>
                     </div>
                 <?php endif; ?>
-                <p class="footer__brand-text"
-                    <?php if ( $footer_style === 'light' ) : ?>
-                        style="color: var(--color-text-sub);"
-                    <?php endif; ?>
-                >
-                    <?php echo esc_html( get_theme_mod( 'knt_footer_description', '「今日何食べる？」は、毎日の食事選びをもっと楽しくするグルメアプリです。' ) ); ?>
+                <p class="footer__brand-text" <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>>
+                    <?php echo esc_html( get_theme_mod( 'knt_footer_description', '「今日何食べる？」は、毎日の食事選びをもっと楽しくするグルメメディアです。' ) ); ?>
+                </p>
+                <p class="footer__brand-text" style="margin-top: 8px; font-size: 11px; <?php echo $is_light ? $text_color : 'color: rgba(255,255,255,0.5);'; ?>">
+                    ※ 本サイトに掲載されている店舗情報の一部は、ホットペッパーグルメ Webサービスを利用して取得しています。<br>
+                    ※ 掲載情報は取得時点のものです。最新情報は各店舗の公式サイト等でご確認ください。<br>
+                    ※ 本サイトにはPR・広告を含むコンテンツが含まれます。
                 </p>
             </div>
 
+            <!-- カテゴリ -->
             <div>
-                <h4 class="footer__heading"
-                    <?php if ( $footer_style === 'light' ) : ?>
-                        style="color: var(--color-text-main);"
-                    <?php endif; ?>
-                >カテゴリ</h4>
+                <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>カテゴリ</h4>
                 <ul class="footer__links">
                     <?php
-                    $cats = get_categories( array( 'hide_empty' => false, 'number' => 6 ) );
+                    $cats = get_categories( array( 'hide_empty' => false, 'number' => 6, 'parent' => 0 ) );
                     foreach ( $cats as $cat ) :
                     ?>
                         <li><a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>"
-                            <?php if ( $footer_style === 'light' ) : ?>
-                                style="color: var(--color-text-sub);"
-                            <?php endif; ?>
+                            <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                         ><?php echo esc_html( $cat->name ); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </div>
 
+            <!-- 運営会社・リンク -->
             <div>
-                <h4 class="footer__heading"
-                    <?php if ( $footer_style === 'light' ) : ?>
-                        style="color: var(--color-text-main);"
-                    <?php endif; ?>
-                >リンク</h4>
+                <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>運営会社</h4>
                 <ul class="footer__links">
+                    <li><a href="https://jinrai.co.jp" target="_blank" rel="noopener noreferrer"
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                    >株式会社仁頼</a></li>
                     <li><a href="<?php echo esc_url( get_theme_mod( 'knt_header_cta_url', 'https://kyou-nani-taberu.app' ) ); ?>"
-                        <?php if ( $footer_style === 'light' ) : ?>style="color: var(--color-text-sub);"<?php endif; ?>
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                     >アプリを使う</a></li>
-                    <?php if ( get_theme_mod( 'knt_company_url' ) ) : ?>
-                        <li><a href="<?php echo esc_url( get_theme_mod( 'knt_company_url' ) ); ?>"
-                            <?php if ( $footer_style === 'light' ) : ?>style="color: var(--color-text-sub);"<?php endif; ?>
-                        ><?php echo esc_html( get_theme_mod( 'knt_company_name', '株式会社仁頼' ) ); ?></a></li>
-                    <?php endif; ?>
+                    <li><a href="https://jinrai.co.jp/contact" target="_blank" rel="noopener noreferrer"
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                    >お問い合わせ</a></li>
                 </ul>
             </div>
 
-            <?php if ( has_nav_menu( 'footer' ) ) : ?>
+            <!-- 法的情報 -->
             <div>
-                <h4 class="footer__heading"
-                    <?php if ( $footer_style === 'light' ) : ?>
-                        style="color: var(--color-text-main);"
-                    <?php endif; ?>
-                >メニュー</h4>
+                <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>ポリシー</h4>
                 <ul class="footer__links">
                     <?php
-                    wp_nav_menu( array(
-                        'theme_location' => 'footer',
-                        'container'      => false,
-                        'items_wrap'     => '%3$s',
-                        'depth'          => 1,
-                        'walker'         => new KNT_Footer_Walker(),
-                    ) );
+                    $privacy_url = get_theme_mod( 'knt_privacy_url' );
+                    if ( ! $privacy_url ) {
+                        $privacy_page = get_page_by_path( 'privacy-policy' );
+                        if ( $privacy_page ) {
+                            $privacy_url = get_permalink( $privacy_page->ID );
+                        }
+                    }
+                    if ( $privacy_url ) :
                     ?>
+                        <li><a href="<?php echo esc_url( $privacy_url ); ?>"
+                            <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                        >プライバシーポリシー</a></li>
+                    <?php endif; ?>
+
+                    <?php $terms_url = get_theme_mod( 'knt_terms_url' ); ?>
+                    <?php if ( $terms_url ) : ?>
+                        <li><a href="<?php echo esc_url( $terms_url ); ?>"
+                            <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                        >利用規約</a></li>
+                    <?php endif; ?>
+
+                    <li><a href="https://jinrai.co.jp/legal/commerce" target="_blank" rel="noopener noreferrer"
+                        <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
+                    >特定商取引法に基づく表記</a></li>
                 </ul>
             </div>
-            <?php endif; ?>
         </div>
 
-        <div class="footer__bottom"
-            <?php if ( $footer_style === 'light' ) : ?>
-                style="border-top-color: var(--color-border);"
-            <?php endif; ?>
-        >
-            <p class="footer__copyright"
-                <?php if ( $footer_style === 'light' ) : ?>
-                    style="color: var(--color-text-light);"
-                <?php endif; ?>
-            >
-                <?php echo esc_html( get_theme_mod( 'knt_copyright', '© 2025 Jinrai Inc.' ) ); ?>
-            </p>
-            <div class="footer__legal">
-                <?php
-                $privacy_url = get_theme_mod( 'knt_privacy_url' );
-                if ( ! $privacy_url ) {
-                    $privacy_page = get_page_by_path( 'privacy-policy' );
-                    if ( $privacy_page ) {
-                        $privacy_url = get_permalink( $privacy_page->ID );
-                    }
-                }
-                if ( $privacy_url ) :
-                ?>
-                    <a href="<?php echo esc_url( $privacy_url ); ?>"
-                        <?php if ( $footer_style === 'light' ) : ?>style="color: var(--color-text-light);"<?php endif; ?>
-                    >プライバシーポリシー</a>
-                <?php endif; ?>
-
-                <?php $terms_url = get_theme_mod( 'knt_terms_url' ); ?>
-                <?php if ( $terms_url ) : ?>
-                    <a href="<?php echo esc_url( $terms_url ); ?>"
-                        <?php if ( $footer_style === 'light' ) : ?>style="color: var(--color-text-light);"<?php endif; ?>
-                    >利用規約</a>
-                <?php endif; ?>
+        <!-- API クレジット + コピーライト -->
+        <div class="footer__bottom" <?php if ( $is_light ) : ?>style="border-top-color: var(--color-border);"<?php endif; ?>>
+            <div class="footer__credits">
+                <a href="http://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">
+                    <img src="http://webservice.recruit.co.jp/banner/hotpepper-s.gif"
+                         alt="ホットペッパーグルメ Webサービス"
+                         width="135" height="17"
+                         loading="lazy"
+                         style="vertical-align: middle;">
+                </a>
             </div>
+            <p class="footer__copyright" <?php if ( $is_light ) : ?>style="<?php echo $light_color; ?>"<?php endif; ?>>
+                &copy; <?php echo date( 'Y' ); ?> 株式会社仁頼 All Rights Reserved.
+            </p>
         </div>
     </div>
 </footer>

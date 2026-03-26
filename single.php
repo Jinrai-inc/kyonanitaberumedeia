@@ -17,6 +17,12 @@ get_header();
 <article class="container--narrow" style="padding-top: 16px; padding-bottom: 48px;">
 
     <header class="article-header">
+        <?php
+        $is_pr = get_post_meta( get_the_ID(), 'knt_is_pr', true );
+        if ( $is_pr ) :
+        ?>
+            <div class="article-header__pr">PR</div>
+        <?php endif; ?>
         <div class="article-header__cat">
             <?php
             $cats = get_the_category();
