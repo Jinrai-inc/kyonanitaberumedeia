@@ -95,8 +95,8 @@ class KNT_Article_Generator {
             $num = $i + 1;
 
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $num, $shop['name'] ) );
-            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
             $blocks[] = $this->block_restaurant_card( $shop );
+            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
             $info_parts = array();
             $info_parts[] = esc_html( $shop['address'] );
@@ -538,8 +538,8 @@ class KNT_Article_Generator {
         foreach ( $shops as $i => $shop ) {
             $num = $i + 1;
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $num, $shop['name'] ) );
-            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
             $blocks[] = $this->block_restaurant_card( $shop );
+            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
             $info = array();
             $info[] = esc_html( $shop['address'] );
@@ -767,8 +767,8 @@ class KNT_Article_Generator {
         // 店舗ブロック
         foreach ( $shops as $i => $shop ) {
             $blocks[] = $this->block_heading( sprintf( '%d. %s', $i + 1, $shop['name'] ) );
-            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
             $blocks[] = $this->block_restaurant_card( $shop );
+            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
 
             $info = array();
             $info[] = esc_html( $shop['address'] );
