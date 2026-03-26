@@ -2565,3 +2565,144 @@ h4 {
     min-width: auto;
   }
 }
+
+/* ========================================
+   2-Column Single Layout
+   ======================================== */
+.single-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 20px 48px;
+}
+.single-layout__main {
+  flex: 1;
+  min-width: 0;
+}
+.single-layout__sidebar {
+  width: 300px;
+  flex-shrink: 0;
+}
+@media (max-width: 960px) {
+  .single-layout { flex-direction: column; gap: 32px; }
+  .single-layout__sidebar { width: 100%; }
+}
+
+/* Sidebar Sticky */
+.sidebar-sticky {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (max-width: 960px) {
+  .sidebar-sticky { position: static; }
+}
+
+/* Sidebar Widgets */
+.sidebar-widget {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--color-border);
+}
+.sidebar-widget__title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--color-accent);
+}
+.sidebar-ad { background: transparent; border: none; padding: 0; text-align: center; }
+
+/* App Banner (sidebar default) */
+.sidebar-app-banner {
+  display: block;
+  background: linear-gradient(135deg, var(--color-accent), #D4795E);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.sidebar-app-banner:hover { transform: translateY(-2px); color: #fff; }
+.sidebar-app-banner__inner strong { display: block; font-size: 16px; margin-bottom: 4px; }
+.sidebar-app-banner__inner span { font-size: 12px; opacity: 0.9; }
+
+/* Popular Ranking */
+.sidebar-popular { list-style: none; margin: 0; padding: 0; }
+.sidebar-popular__item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--color-border);
+}
+.sidebar-popular__item:last-child { border-bottom: none; }
+.sidebar-popular__rank {
+  flex-shrink: 0; width: 24px; height: 24px;
+  background: var(--color-accent); color: #fff; border-radius: 50%;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.sidebar-popular__item:nth-child(1) .sidebar-popular__rank { background: #D4A857; }
+.sidebar-popular__item:nth-child(2) .sidebar-popular__rank { background: #A0A0A0; }
+.sidebar-popular__item:nth-child(3) .sidebar-popular__rank { background: #B8734A; }
+.sidebar-popular__link {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--color-text-main); flex: 1;
+}
+.sidebar-popular__thumb {
+  width: 60px; height: 42px; border-radius: 6px;
+  overflow: hidden; flex-shrink: 0;
+}
+.sidebar-popular__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.sidebar-popular__title {
+  font-size: 13px; line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* Area List */
+.sidebar-area-list { list-style: none; margin: 0; padding: 0; }
+.sidebar-area-list li { padding: 8px 0; border-bottom: 1px solid var(--color-border); }
+.sidebar-area-list li:last-child { border-bottom: none; }
+.sidebar-area-list a {
+  font-size: 13px; color: var(--color-text-main); text-decoration: none;
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.sidebar-area-list a:hover { color: var(--color-accent); }
+.sidebar-more-link {
+  display: inline-block; margin-top: 8px;
+  font-size: 13px; color: var(--color-accent); text-decoration: none;
+}
+
+/* Genre List */
+.sidebar-genre-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.sidebar-genre-list li a {
+  display: inline-block; padding: 4px 12px;
+  font-size: 13px; color: var(--color-text-main);
+  background: var(--color-bg-main); border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill); text-decoration: none; transition: all 0.2s;
+}
+.sidebar-genre-list li a:hover {
+  background: var(--color-accent); color: #fff; border-color: var(--color-accent);
+}
+.sidebar-genre-count { font-size: 11px; color: var(--color-text-light); }
+
+/* Area Related (article footer) */
+.related-area-section {
+  margin-top: 40px; padding-top: 32px;
+  border-top: 1px solid var(--color-border);
+}
+.related-area-section .section__title {
+  font-family: var(--font-heading);
+  margin-bottom: 20px;
+}

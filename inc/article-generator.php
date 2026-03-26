@@ -293,6 +293,63 @@ class KNT_Article_Generator {
     /**
      * 自動タグ付け（駅名・シーン・ジャンル）
      */
+    private function has_value( $shop, $key ) {
+        $v = $shop[ $key ] ?? '';
+        return $v && $v !== 'なし' && $v !== '利用不可' && $v !== '不可' && $v !== '';
+    }
+
+    private function build_shop_description( $shop ) {
+        $parts = array();
+        if ( ! empty( $shop['catch'] ) ) $parts[] = $shop['catch'];
+        if ( ! empty( $shop['specials'] ) ) {
+            foreach ( $shop['specials'] as $sp ) {
+                if ( ! empty( $sp['title'] ) && $sp['title'] !== ( $shop['catch'] ?? '' ) ) {
+                    $parts[] = $sp['title'];
+                    break;
+                }
+            }
+        }
+        if ( empty( $parts ) && ! empty( $shop['genre_catch'] ) ) $parts[] = $shop['genre_catch'];
+        if ( ! empty( $shop['budget_avg'] ) ) $parts[] = $shop['budget_avg'];
+        return implode( '。', array_filter( $parts ) );
+    }
+
+    private function build_facility_badges( $shop, $scene_key = '' ) {
+        $all_badges = array(
+            'private_room' => '個室', 'free_drink' => '飲み放題', 'free_food' => '食べ放題',
+            'horigotatsu' => '掘りごたつ', 'tatami' => '座敷', 'night_view' => '夜景',
+            'open_air' => 'テラス', 'lunch' => 'ランチ', 'midnight' => '深夜営業',
+            'english' => '英語OK', 'child' => '子連れOK', 'wifi' => 'Wi-Fi',
+            'parking' => '駐車場', 'card' => 'カード可', 'non_smoking' => '禁煙',
+            'sommelier' => 'ソムリエ', 'charter' => '貸切可', 'karaoke' => 'カラオケ',
+        );
+        $highlight = array(
+            'date' => array('private_room','night_view','open_air','sommelier','wine'),
+            'nomikai' => array('free_drink','party_capacity','charter','karaoke','private_room'),
+            'settai' => array('private_room','horigotatsu','tatami','sake','card'),
+            'joshikai' => array('private_room','cocktail','wine','non_smoking'),
+            'kinenbi' => array('private_room','night_view','sommelier','wine'),
+            'hitorimeshi' => array('lunch','wifi','non_smoking','card'),
+            'family' => array('child','tatami','horigotatsu','parking','barrier_free'),
+            'goukon' => array('private_room','free_drink','karaoke','charter'),
+            'lunch' => array('lunch','non_smoking','wifi'),
+            'shinya' => array('midnight','card'),
+            'tabehodai' => array('free_food','free_drink','private_room'),
+        );
+        $scene_fields = $highlight[ $scene_key ] ?? array();
+        $badges = array();
+        foreach ( $all_badges as $key => $label ) {
+            if ( $this->has_value( $shop, $key ) ) {
+                $is_highlight = in_array( $key, $scene_fields );
+                $badges[] = $is_highlight ? '<strong>' . $label . '</strong>' : $label;
+            }
+        }
+        if ( $shop['party_capacity'] && in_array( 'party_capacity', $scene_fields ) ) {
+            $badges[] = '<strong>最大宴会' . esc_html( $shop['party_capacity'] ) . '名</strong>';
+        }
+        return $badges;
+    }
+
     private function auto_set_tags( $post_id, $params = array() ) {
         $tags = array();
 
@@ -721,7 +778,19 @@ class KNT_Article_Generator {
             if ( $shop['close'] )   $info[] = esc_html( $shop['close'] );
             $blocks[] = $this->block_paragraph( implode( '<br>', $info ) );
 
-            // 予約ボタン（ホットペッパーのみ）
+            // 設備バッジ
+            $scene_for_badges = ( $mode === 'scene' && $scene_key ) ? $scene_key : '';
+            $badges = $this->build_facility_badges( $shop, $scene_for_badges );
+            if ( ! empty( $badges ) ) {
+                $blocks[] = "<!-- wp:html -->\n<div class=\"knt-facility-badges\">" . implode( ' / ', $badges ) . "</div>\n<!-- /wp:html -->";
+            }
+
+            // 特集キャッチ
+            if ( ! empty( $shop['specials'] ) && ! empty( $shop['specials'][0]['title'] ) ) {
+                $blocks[] = $this->block_callout( 'tip', 'おすすめポイント', esc_html( $shop['specials'][0]['title'] ) );
+            }
+
+            // 予約ボタン
             $blocks[] = $this->block_button( 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left' );
             if ( $shop['coupon_url'] ) {
                 $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );

@@ -36,6 +36,7 @@ class KNT_HotPepper_API {
             'start'       => 1,
             'order'       => 4,
             'format'      => 'json',
+            'type'        => 'special',
         );
 
         $params = wp_parse_args( $args, $defaults );
@@ -108,6 +109,24 @@ class KNT_HotPepper_API {
                 'child'         => $shop['child'] ?? '',
                 'lunch'         => $shop['lunch'] ?? '',
                 'midnight'      => $shop['midnight'] ?? '',
+                'capacity'      => $shop['capacity'] ?? '',
+                'party_capacity'=> $shop['party_capacity'] ?? '',
+                'horigotatsu'   => $shop['horigotatsu'] ?? '',
+                'tatami'        => $shop['tatami'] ?? '',
+                'charter'       => $shop['charter'] ?? '',
+                'barrier_free'  => $shop['barrier_free'] ?? '',
+                'night_view'    => $shop['night_view'] ?? '',
+                'open_air'      => $shop['open_air'] ?? '',
+                'english'       => $shop['english'] ?? '',
+                'sommelier'     => $shop['sommelier'] ?? '',
+                'karaoke'       => $shop['karaoke'] ?? '',
+                'cocktail'      => $shop['cocktail'] ?? '',
+                'sake'          => $shop['sake'] ?? '',
+                'wine'          => $shop['wine'] ?? '',
+                'shop_detail_memo' => $shop['shop_detail_memo'] ?? '',
+                'specials'      => array_map( function( $sp ) {
+                    return array( 'name' => $sp['name'] ?? '', 'title' => $sp['title'] ?? '' );
+                }, $shop['special'] ?? array() ),
                 'gmap_url'      => sprintf(
                     'https://www.google.com/maps/search/?api=1&query=%s,%s',
                     $shop['lat'] ?? '',

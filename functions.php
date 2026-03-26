@@ -519,6 +519,57 @@ add_action( 'wp_ajax_knt_load_more', 'knt_load_more_posts' );
 add_action( 'wp_ajax_nopriv_knt_load_more', 'knt_load_more_posts' );
 
 /**
+ * エリア別関連記事
+ */
+function knt_render_area_related_posts() {
+    $post_id = get_the_ID();
+    $categories = wp_get_post_categories( $post_id, array( 'fields' => 'all' ) );
+    $genre_names = array( 'ラーメン','焼肉','和食','中華','イタリアン・フレンチ','カフェ・スイーツ','カレー','居酒屋','韓国料理','ハンバーガー','ステーキ','エスニック','バー','洋食' );
+
+    $pref_cat = null;
+    $city_cat = null;
+    foreach ( $categories as $cat ) {
+        if ( in_array( $cat->name, $genre_names, true ) ) continue;
+        if ( $cat->parent > 0 ) {
+            $parent = get_category( $cat->parent );
+            if ( $parent && ! in_array( $parent->name, $genre_names, true ) ) {
+                $pref_cat = $parent;
+                $city_cat = $cat;
+            }
+        } elseif ( $cat->parent === 0 ) {
+            $pref_cat = $cat;
+        }
+    }
+
+    $shown = array( $post_id );
+    echo '<div class="related-area-posts" style="margin-top: 48px;">';
+
+    if ( $city_cat ) {
+        $q = new WP_Query( array( 'posts_per_page' => 6, 'category__in' => array( $city_cat->term_id ), 'post__not_in' => $shown, 'post_status' => 'publish' ) );
+        if ( $q->have_posts() ) {
+            while ( $q->have_posts() ) { $q->the_post(); $shown[] = get_the_ID(); }
+            $q->rewind_posts();
+            echo '<section class="related-area-section"><h2 class="section__title">' . esc_html( $city_cat->name ) . 'のその他のグルメ記事</h2><div class="grid grid--3">';
+            while ( $q->have_posts() ) { $q->the_post(); echo '<article class="card fadeup">'; get_template_part( 'template-parts/card' ); echo '</article>'; }
+            echo '</div><div style="text-align:center;margin-top:16px;"><a href="' . esc_url( get_category_link( $city_cat->term_id ) ) . '" class="btn btn--secondary">' . esc_html( $city_cat->name ) . 'の記事をもっと見る →</a></div></section>';
+            wp_reset_postdata();
+        }
+    }
+
+    if ( $pref_cat ) {
+        $q2 = new WP_Query( array( 'posts_per_page' => 6, 'category__in' => array( $pref_cat->term_id ), 'post__not_in' => $shown, 'post_status' => 'publish' ) );
+        if ( $q2->have_posts() ) {
+            echo '<section class="related-area-section" style="margin-top:40px;"><h2 class="section__title">' . esc_html( $pref_cat->name ) . 'のその他のグルメ記事</h2><div class="grid grid--3">';
+            while ( $q2->have_posts() ) { $q2->the_post(); echo '<article class="card fadeup">'; get_template_part( 'template-parts/card' ); echo '</article>'; }
+            echo '</div><div style="text-align:center;margin-top:16px;"><a href="' . esc_url( get_category_link( $pref_cat->term_id ) ) . '" class="btn btn--secondary">' . esc_html( $pref_cat->name ) . 'の記事をもっと見る →</a></div></section>';
+            wp_reset_postdata();
+        }
+    }
+
+    echo '</div>';
+}
+
+/**
  * Limit post revisions for performance
  */
 if ( ! defined( 'WP_POST_REVISIONS' ) ) {

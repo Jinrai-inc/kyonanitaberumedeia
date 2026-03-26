@@ -1031,3 +1031,17 @@
     .knt-btn-wrapper { text-align: center !important; }
     .knt-btn { width: 100%; justify-content: center; }
 }
+
+/* Facility Badges */
+.knt-facility-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 13px;
+    color: var(--color-text-sub, #5C564E);
+    line-height: 1.8;
+    margin: 12px 0;
+}
+.knt-facility-badges strong {
+    color: var(--color-accent, #C9553E);
+}
