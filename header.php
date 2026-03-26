@@ -52,6 +52,10 @@
         <?php echo $adsense_head; ?>
     <?php endif; ?>
 
+    <?php // ValueCommerce LinkSwitch ?>
+    <script type="text/javascript">var vc_pid = "892570587";</script>
+    <script type="text/javascript" src="//aml.valuecommerce.com/vcdal.js" async></script>
+
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

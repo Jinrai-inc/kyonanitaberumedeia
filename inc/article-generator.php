@@ -124,6 +124,9 @@ class KNT_Article_Generator {
                 $blocks[] = $this->block_paragraph( implode( ' / ', $facilities ) );
             }
 
+            // ── 予約・口コミボタン群 ──
+
+            // ホットペッパー（APIから直接取得、確実）
             $blocks[] = $this->block_button(
                 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left'
             );
@@ -133,13 +136,25 @@ class KNT_Article_Generator {
                 );
             }
 
+            // 食べログ（LinkSwitchで自動アフィリエイト変換）
             $tabelog_url = sprintf(
                 'https://tabelog.com/rstLst/?vs=1&sa=%s&sk=%s',
                 urlencode( $area ), urlencode( $shop['name'] )
             );
             $blocks[] = $this->block_button(
-                '食べログで探す', $tabelog_url, 'secondary', 'medium', true, 'left'
+                '食べログで口コミを見る', $tabelog_url, 'secondary', 'medium', true, 'left'
             );
+
+            // 一休.comレストラン（LinkSwitchで自動アフィリエイト変換）
+            $ikkyuu_url = sprintf(
+                'https://restaurant.ikyu.com/search/?keyword=%s',
+                urlencode( $shop['name'] )
+            );
+            $blocks[] = $this->block_button(
+                '一休.comで予約する', $ikkyuu_url, 'secondary', 'medium', true, 'left'
+            );
+
+            // Google Maps
             $blocks[] = $this->block_button(
                 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left'
             );
