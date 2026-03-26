@@ -567,6 +567,224 @@ function knt_lazy_load_images( $attr, $attachment, $size ) {
 add_filter( 'wp_get_attachment_image_attributes', 'knt_lazy_load_images', 10, 3 );
 
 /**
+ * テーマ有効化時にプライバシーポリシー・特商法ページを自動作成
+ */
+function knt_create_legal_pages() {
+    // プライバシーポリシー
+    if ( ! get_page_by_path( 'privacy-policy' ) ) {
+        wp_insert_post( array(
+            'post_title'   => 'プライバシーポリシー',
+            'post_name'    => 'privacy-policy',
+            'post_content' => knt_privacy_policy_content(),
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        ) );
+    }
+
+    // 特定商取引法に基づく表記
+    if ( ! get_page_by_path( 'legal-commerce' ) ) {
+        wp_insert_post( array(
+            'post_title'   => '特定商取引法に基づく表記',
+            'post_name'    => 'legal-commerce',
+            'post_content' => knt_commerce_law_content(),
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        ) );
+    }
+
+    // 利用規約
+    if ( ! get_page_by_path( 'terms' ) ) {
+        wp_insert_post( array(
+            'post_title'   => '利用規約',
+            'post_name'    => 'terms',
+            'post_content' => knt_terms_content(),
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        ) );
+    }
+}
+add_action( 'after_switch_theme', 'knt_create_legal_pages' );
+
+// 管理画面からも手動実行可能
+function knt_maybe_create_legal_pages() {
+    if ( is_admin() && current_user_can( 'manage_options' ) ) {
+        if ( ! get_page_by_path( 'privacy-policy' ) || ! get_page_by_path( 'legal-commerce' ) || ! get_page_by_path( 'terms' ) ) {
+            knt_create_legal_pages();
+        }
+    }
+}
+add_action( 'admin_init', 'knt_maybe_create_legal_pages' );
+
+function knt_privacy_policy_content() {
+    return '<!-- wp:heading -->
+<h2>個人情報の利用目的</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイト「今日何食べるが決まるメディア」（以下、「当サイト」）では、お問い合わせやコメント投稿の際に、お名前・メールアドレス等の個人情報をご入力いただく場合がございます。取得した個人情報は、お問い合わせへの回答や必要な情報のご連絡のために利用し、それ以外の目的では利用いたしません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>広告について</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトでは、第三者配信の広告サービスを利用しています。このような広告配信事業者は、ユーザーの興味に応じた商品やサービスの広告を表示するため、当サイトや他サイトへのアクセスに関する情報（氏名、住所、メールアドレス、電話番号は含まれません）を使用することがあります。</p>
+<!-- /wp:paragraph -->
+<!-- wp:paragraph -->
+<p>当サイトが利用している広告サービス：</p>
+<!-- /wp:paragraph -->
+<!-- wp:list -->
+<ul>
+<li>バリューコマース（ValueCommerce）</li>
+<li>ホットペッパーグルメ Webサービス</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading -->
+<h2>アフィリエイトプログラムについて</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトは、バリューコマースアフィリエイトプログラムに参加しています。当サイトの記事内にはアフィリエイトリンクが含まれており、リンク先での商品購入やサービス利用により、当サイトが報酬を受け取る場合があります。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>アクセス解析ツールについて</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を利用しています。このGoogleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。このトラフィックデータは匿名で収集されており、個人を特定するものではありません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>店舗情報について</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトに掲載されている店舗情報の一部は、ホットペッパーグルメ Webサービスを利用して取得しています。掲載情報は取得時点のものであり、最新情報は各店舗の公式サイト等でご確認ください。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>免責事項</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトに掲載された内容によって生じた損害等の一切の責任を負いかねますのでご了承ください。当サイトからリンクやバナーなどによって他のサイトに移動された場合、移動先サイトで提供される情報、サービス等について一切の責任を負いません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>著作権について</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトで掲載している画像の著作権・肖像権等は各権利所有者に帰属いたします。権利を侵害する目的ではございません。記事の内容や掲載画像等に問題がございましたら、お手数ですがお問い合わせよりご連絡ください。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading -->
+<h2>運営者情報</h2>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>運営者：株式会社仁頼（じんらい）<br>所在地：〒221-0001 神奈川県横浜市神奈川区西寺尾4丁目6番6-3号<br>代表者：齊藤 一樹<br>URL：<a href="https://jinrai.co.jp">https://jinrai.co.jp</a><br>お問い合わせ：<a href="https://jinrai.co.jp/contact">お問い合わせフォーム</a></p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>制定日：2026年3月26日</p>
+<!-- /wp:paragraph -->';
+}
+
+function knt_commerce_law_content() {
+    return '<!-- wp:heading -->
+<h2>特定商取引法に基づく表記</h2>
+<!-- /wp:heading -->
+
+<!-- wp:html -->
+<table class="knt-legal-table">
+<tr><th>事業者名</th><td>株式会社仁頼（じんらい）/ Jinrai Co., Ltd.</td></tr>
+<tr><th>代表者</th><td>齊藤 一樹（さいとう かずき）</td></tr>
+<tr><th>所在地</th><td>〒221-0001 神奈川県横浜市神奈川区西寺尾4丁目6番6-3号</td></tr>
+<tr><th>設立</th><td>2022年9月</td></tr>
+<tr><th>法人番号</th><td>4020001148080</td></tr>
+<tr><th>電話番号</th><td>お問い合わせフォームよりご連絡ください</td></tr>
+<tr><th>メールアドレス</th><td>お問い合わせフォームよりご連絡ください</td></tr>
+<tr><th>URL</th><td><a href="https://jinrai.co.jp">https://jinrai.co.jp</a></td></tr>
+<tr><th>商品の販売価格</th><td>各商品・サービスのページに記載</td></tr>
+<tr><th>商品代金以外の必要料金</th><td>なし</td></tr>
+<tr><th>支払方法</th><td>各サービスページに記載</td></tr>
+<tr><th>商品の引渡時期</th><td>各サービスページに記載</td></tr>
+<tr><th>返品・キャンセル</th><td>サービスの性質上、提供後の返品・キャンセルはお受けできません</td></tr>
+</table>
+<!-- /wp:html -->
+
+<!-- wp:paragraph -->
+<p>※ 当サイトはグルメ情報メディアであり、店舗の予約・決済は各外部サービス（ホットペッパーグルメ等）にて行われます。各店舗での飲食・予約に関するお問い合わせは、各店舗または各予約サービスにお問い合わせください。</p>
+<!-- /wp:paragraph -->';
+}
+
+function knt_terms_content() {
+    return '<!-- wp:heading -->
+<h2>利用規約</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>この利用規約（以下、「本規約」）は、株式会社仁頼（以下、「当社」）が運営するウェブサイト「今日何食べるが決まるメディア」（以下、「当サイト」）の利用条件を定めるものです。当サイトをご利用いただくすべての方（以下、「利用者」）に本規約が適用されます。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第1条（適用）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>本規約は、利用者と当社との間の当サイト利用に関わる一切の関係に適用されるものとします。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第2条（掲載情報について）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトに掲載されている店舗情報は、ホットペッパーグルメ Webサービスから取得した情報に基づいています。情報は取得時点のものであり、最新の営業時間・定休日・メニュー・価格等は各店舗にご確認ください。当社は掲載情報の正確性を保証するものではありません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第3条（外部リンクについて）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトにはホットペッパーグルメ、食べログ、一休.comレストラン、Google Maps等の外部サービスへのリンクが含まれます。これらのサービスでの予約・決済・トラブル等について、当社は一切の責任を負いません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第4条（広告・アフィリエイトについて）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトにはアフィリエイト広告が含まれます。利用者が当サイト内のリンクを経由して外部サービスで商品購入やサービス利用をされた場合、当社が報酬を受け取ることがあります。これにより利用者に追加の費用が発生することはありません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第5条（禁止事項）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトの利用にあたり、以下の行為を禁止します。</p>
+<!-- /wp:paragraph -->
+<!-- wp:list -->
+<ul>
+<li>当サイトのコンテンツを無断で複製・転載する行為</li>
+<li>当サイトの運営を妨げる行為</li>
+<li>その他、当社が不適切と判断する行為</li>
+</ul>
+<!-- /wp:list -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第6条（免責事項）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当サイトに掲載された情報を利用することで生じた損害について、当社は一切の責任を負いません。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:heading {"level":3} -->
+<h3>第7条（規約の変更）</h3>
+<!-- /wp:heading -->
+<!-- wp:paragraph -->
+<p>当社は、必要と判断した場合には、利用者に通知することなくいつでも本規約を変更することができるものとします。</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p>制定日：2026年3月26日<br>株式会社仁頼</p>
+<!-- /wp:paragraph -->';
+}
+
+/**
  * AJAX Load More posts
  */
 function knt_load_more_posts() {

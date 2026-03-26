@@ -2762,3 +2762,33 @@ h4 {
   .footer__operator-table th { width: 80px; font-size: 12px; }
   .footer__operator-table td { font-size: 12px; }
 }
+
+/* Legal Page Table */
+.knt-legal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 24px 0;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.knt-legal-table th {
+  width: 160px;
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+.knt-legal-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.knt-legal-table tr:last-child th,
+.knt-legal-table tr:last-child td { border-bottom: none; }
+@media (max-width: 767px) {
+  .knt-legal-table th { width: 100px; font-size: 13px; }
+  .knt-legal-table td { font-size: 13px; }
+}

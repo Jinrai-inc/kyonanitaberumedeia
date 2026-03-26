@@ -73,14 +73,26 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
                         >プライバシーポリシー</a></li>
                     <?php endif; ?>
 
-                    <?php $terms_url = get_theme_mod( 'knt_terms_url' ); ?>
-                    <?php if ( $terms_url ) : ?>
+                    <?php
+                    $terms_url = get_theme_mod( 'knt_terms_url' );
+                    if ( ! $terms_url ) {
+                        $terms_page = get_page_by_path( 'terms' );
+                        if ( $terms_page ) {
+                            $terms_url = get_permalink( $terms_page->ID );
+                        }
+                    }
+                    if ( $terms_url ) :
+                    ?>
                         <li><a href="<?php echo esc_url( $terms_url ); ?>"
                             <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                         >利用規約</a></li>
                     <?php endif; ?>
 
-                    <li><a href="https://jinrai.co.jp/legal/commerce" target="_blank" rel="noopener noreferrer"
+                    <?php
+                    $commerce_page = get_page_by_path( 'legal-commerce' );
+                    $commerce_url = $commerce_page ? get_permalink( $commerce_page->ID ) : 'https://jinrai.co.jp/legal/commerce';
+                    ?>
+                    <li><a href="<?php echo esc_url( $commerce_url ); ?>"
                         <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
                     >特定商取引法に基づく表記</a></li>
                     <li><a href="https://jinrai.co.jp/company" target="_blank" rel="noopener noreferrer"
