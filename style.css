@@ -2711,3 +2711,20 @@ h4 {
   font-family: var(--font-heading);
   margin-bottom: 20px;
 }
+
+/* ========================================
+   Mobile Responsive Fixes
+   ======================================== */
+@media (max-width: 767px) {
+  .container, .container--narrow {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .article-content { overflow-x: hidden; word-break: break-word; }
+  .article-content img { max-width: 100%; height: auto; }
+  .article-content iframe { max-width: 100%; }
+  .article-content table { display: block; overflow-x: auto; }
+  .article-header__title { font-size: 1.3rem; }
+  h2 { font-size: 1.2rem; word-break: break-word; }
+  h3 { font-size: 1.05rem; word-break: break-word; }
+}

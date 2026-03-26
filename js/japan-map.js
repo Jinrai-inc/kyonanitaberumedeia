@@ -294,7 +294,8 @@
     btn.classList.remove('is-disabled');
     var prefCode = normalizeCode(state.selectedPref);
     var prefSlug = 'area-' + prefCode;
-    var base = window.location.origin;
+    // kntMapData.homeUrl（PHPのhome_url()）を使う
+    var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
 
     if (state.selectedCity) {
       var citySlug = prefSlug + '-' + encodeURIComponent(state.selectedCity);

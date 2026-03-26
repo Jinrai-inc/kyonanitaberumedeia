@@ -39,7 +39,7 @@ $fv_subtitle = get_theme_mod( 'knt_japan_map_subtitle', '地図をタップ or �
       </div>
       <div class="japan-map-controls">
         <div class="japan-map-controls-card">
-          <p class="japan-map-controls-card-title">どこのグルメが気になる？</p>
+          <p class="japan-map-controls-card-title">今日は何食べる？</p>
 
           <div class="japan-map-dropdown-group">
             <label for="pref-select">都道府県を選ぶ</label>

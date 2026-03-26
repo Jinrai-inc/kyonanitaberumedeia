@@ -104,6 +104,7 @@ function knt_enqueue_assets() {
         }
         wp_localize_script( 'knt-japan-map', 'kntMapData', array(
             'themeUrl'       => KNT_URI,
+            'homeUrl'        => home_url(),
             'municipalities' => $municipalities,
             'svgInline'      => true,
         ) );
