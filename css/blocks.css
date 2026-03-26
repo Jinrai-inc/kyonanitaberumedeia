@@ -903,20 +903,22 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 .knt-btn--primary {
-    background: linear-gradient(135deg, #C9553E 0%, #F0B34A 100%);
+    background: #E60012;
     color: #fff;
-    border-color: transparent;
+    border-color: #E60012;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
 }
-.knt-btn--primary:hover { color: #fff; filter: brightness(1.05); }
+.knt-btn--primary:hover { color: #fff; background: #cc0010; border-color: #cc0010; }
 .knt-btn--secondary {
     background: #fff;
-    color: var(--color-accent, #C9553E);
-    border-color: var(--color-accent, #C9553E);
+    color: #E60012;
+    border-color: #E60012;
 }
-.knt-btn--secondary:hover { background: var(--color-accent-light, #faeae6); color: var(--color-accent, #C9553E); }
+.knt-btn--secondary:hover { background: #FFF0F0; color: #E60012; }
 .knt-btn--small { min-height: 36px; padding: 6px 18px; font-size: 0.82rem; }
-.knt-btn--medium { min-height: 44px; }
-.knt-btn--large { min-height: 52px; padding: 12px 32px; font-size: 1rem; }
+.knt-btn--medium { min-height: 48px; padding: 10px 28px; }
+.knt-btn--large { min-height: 56px; padding: 14px 40px; font-size: 1.05rem; }
 
 /* Restaurant Card */
 .knt-restaurant-card {
@@ -1164,16 +1166,32 @@
 
 /* Shop Sublinks */
 .knt-shop-sublinks {
-    text-align: center;
-    margin: 8px 0 0;
-    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0 0;
+    flex-wrap: wrap;
 }
 .knt-shop-sublinks a {
-    color: var(--color-accent, #C9553E);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 20px;
+    border: 1.5px solid var(--color-border, #ddd);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-sub, #5C564E);
     text-decoration: none;
+    background: #fff;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
-.knt-shop-sublinks a:hover { text-decoration: underline; }
-.knt-shop-sublinks span { color: #ddd; margin: 0 8px; }
+.knt-shop-sublinks a:hover {
+    border-color: #E60012;
+    color: #E60012;
+    background: #FFF0F0;
+}
+.knt-shop-sublinks span { display: none; }
 
 /* Genre Divider */
 .knt-shop-divider {

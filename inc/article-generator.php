@@ -290,11 +290,10 @@ class KNT_Article_Generator {
     private function block_shop_sublinks( $shop, $area = '' ) {
         $links = array();
         if ( $shop['coupon_url'] ) {
-            $links[] = '<a href="' . esc_url( $shop['coupon_url'] ) . '" target="_blank" rel="noopener noreferrer sponsored">クーポン</a>';
+            $links[] = '<a href="' . esc_url( $shop['coupon_url'] ) . '" target="_blank" rel="noopener noreferrer sponsored">&#x1F3AB; クーポンを使う</a>';
         }
-        $links[] = '<a href="' . esc_url( $shop['gmap_url'] ) . '" target="_blank" rel="noopener noreferrer">Maps</a>';
-        if ( empty( $links ) ) return '';
-        return "<!-- wp:html -->\n<div class=\"knt-shop-sublinks\">" . implode( ' <span>|</span> ', $links ) . "</div>\n<!-- /wp:html -->";
+        $links[] = '<a href="' . esc_url( $shop['gmap_url'] ) . '" target="_blank" rel="noopener noreferrer">&#x1F4CD; Google Maps</a>';
+        return "<!-- wp:html -->\n<div class=\"knt-shop-sublinks\">" . implode( '', $links ) . "</div>\n<!-- /wp:html -->";
     }
 
     private function block_genre_divider( $genre ) {
