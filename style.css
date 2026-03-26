@@ -35,13 +35,13 @@ Tags: food, blog, custom-colors, custom-logo, featured-images, translation-ready
   --color-success: #5A9E6F;
   --color-footer-bg: #2A2622;
 
-  /* Typography */
-  --font-heading: 'Klee One', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
-  --font-body: 'Zen Maru Gothic', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  /* Typography — サイト全体を可愛いフォントに */
+  --font-heading: 'Klee One', 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-body: 'Zen Maru Gothic', 'Klee One', 'Hiragino Maru Gothic ProN', 'Yu Gothic', sans-serif;
 
   /* Spacing */
-  --radius-lg: 16px;
-  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
   --radius-pill: 28px;
   --content-width: 720px;
   --wide-width: 1080px;
@@ -463,18 +463,17 @@ h4 {
    Card
    ======================================== */
 .card {
-  background: var(--color-card-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1.5px solid var(--color-border);
+  background: #fff;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
 .card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
 .card__image-wrapper {
