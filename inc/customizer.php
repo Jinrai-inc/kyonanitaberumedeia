@@ -382,6 +382,16 @@ function knt_customize_register( $wp_customize ) {
         'type'    => 'url',
     ) );
 
+    $wp_customize->add_setting( 'knt_app_screenshot', array(
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ) );
+    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'knt_app_screenshot', array(
+        'label'   => 'アプリスクリーンショット画像',
+        'description' => 'トップページのアプリ紹介セクションに表示される端末キャプチャ画像',
+        'section' => 'knt_app_banner',
+    ) ) );
+
     // ========================================
     // 記事ページ設定
     // ========================================

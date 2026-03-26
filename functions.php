@@ -408,6 +408,40 @@ require_once KNT_DIR . '/inc/blocks.php';
 require_once KNT_DIR . '/inc/scenes.php';
 
 /**
+ * シーンページのリライトルール
+ */
+function knt_scene_rewrite_rules() {
+    add_rewrite_rule(
+        '^scene/([^/]+)/?$',
+        'index.php?pagename=scene&knt_scene_slug=$matches[1]',
+        'top'
+    );
+    add_rewrite_rule(
+        '^scene/?$',
+        'index.php?pagename=scene',
+        'top'
+    );
+}
+add_action( 'init', 'knt_scene_rewrite_rules' );
+
+function knt_scene_query_vars( $vars ) {
+    $vars[] = 'knt_scene_slug';
+    return $vars;
+}
+add_filter( 'query_vars', 'knt_scene_query_vars' );
+
+function knt_scene_template( $template ) {
+    if ( get_query_var( 'knt_scene_slug' ) || ( isset( $_SERVER['REQUEST_URI'] ) && preg_match( '#^/scene(/|$)#', $_SERVER['REQUEST_URI'] ) ) ) {
+        $scene_template = KNT_DIR . '/page-scene.php';
+        if ( file_exists( $scene_template ) ) {
+            return $scene_template;
+        }
+    }
+    return $template;
+}
+add_filter( 'template_include', 'knt_scene_template' );
+
+/**
  * Include Restaurant Links meta box & auto-display
  */
 require_once KNT_DIR . '/inc/restaurant-links.php';

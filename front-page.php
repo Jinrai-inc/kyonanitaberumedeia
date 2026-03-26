@@ -214,24 +214,45 @@ endif;
 
     <?php
     // ========================================
-    // 6. アプリ訴求バナー
+    // 6. アプリ紹介セクション
     // ========================================
     if ( get_theme_mod( 'knt_app_banner_show', true ) ) :
+        $app_screenshot = get_theme_mod( 'knt_app_screenshot', '' );
+        $app_url = get_theme_mod( 'knt_app_banner_url', 'https://kyou-nani-taberu.app' );
     ?>
     <section class="section">
-        <div class="app-banner fadeup">
-            <h2 class="app-banner__title">
-                <?php echo esc_html( get_theme_mod( 'knt_app_banner_title', '近くのお店をサクッと検索' ) ); ?>
-            </h2>
-            <p class="app-banner__text">
-                <?php echo esc_html( get_theme_mod( 'knt_app_banner_text', '「今日何食べる？」アプリなら、現在地周辺のお店をすぐに検索。気分やジャンルで絞り込んで、あなたにぴったりの一軒が見つかります。' ) ); ?>
-            </p>
-            <a href="<?php echo esc_url( get_theme_mod( 'knt_app_banner_url', 'https://kyou-nani-taberu.app' ) ); ?>"
-               class="btn btn--primary"
-               target="_blank"
-               rel="noopener noreferrer">
-                <?php echo esc_html( get_theme_mod( 'knt_app_banner_btn_text', 'アプリを使ってみる' ) ); ?> →
-            </a>
+        <div class="app-showcase fadeup">
+            <div class="app-showcase__phone">
+                <?php if ( $app_screenshot ) : ?>
+                    <img src="<?php echo esc_url( $app_screenshot ); ?>" alt="今日何食べる？アプリ画面" class="app-showcase__screenshot" loading="lazy">
+                <?php else : ?>
+                    <div class="app-showcase__screenshot-placeholder">
+                        <span>アプリ画面</span>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div class="app-showcase__content">
+                <h2 class="app-showcase__title">「今日何食べる？」で<br>お店選びをもっと楽しく</h2>
+                <ul class="app-showcase__features">
+                    <li>
+                        <strong>現在地からすぐ検索</strong>
+                        <span>GPSで今いる場所の周辺にある飲食店を距離順・評価順で瞬時に表示。徒歩圏内のお店がすぐ見つかります。</span>
+                    </li>
+                    <li>
+                        <strong>ルーレットで迷わず決まる</strong>
+                        <span>「何食べよう…」と迷ったらルーレット機能におまかせ。ジャンルや気分をシャッフルして、運命の一軒に出会えます。</span>
+                    </li>
+                    <li>
+                        <strong>ジャンル・予算・シーンで絞り込み</strong>
+                        <span>ラーメン・焼肉・カフェなどのジャンルはもちろん、デート・飲み会などのシーンでもお店を検索できます。</span>
+                    </li>
+                </ul>
+                <a href="<?php echo esc_url( $app_url ); ?>"
+                   class="btn btn--primary btn--large"
+                   target="_blank" rel="noopener noreferrer">
+                    無料でアプリを使ってみる →
+                </a>
+            </div>
         </div>
     </section>
     <?php endif; ?>

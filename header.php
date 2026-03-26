@@ -85,10 +85,18 @@
                     'depth'          => 1,
                 ) );
             } else {
-                // Default categories
-                $cats = get_categories( array( 'number' => 5, 'hide_empty' => false ) );
-                foreach ( $cats as $cat ) {
-                    echo '<a href="' . esc_url( get_category_link( $cat->term_id ) ) . '">' . esc_html( $cat->name ) . '</a>';
+                // シーンリンクをデフォルトナビに
+                $nav_scenes = array(
+                    'date'    => 'デート',
+                    'nomikai' => '飲み会',
+                    'lunch'   => 'ランチ',
+                    'settai'  => '接待',
+                    'joshikai'=> '女子会',
+                    'family'  => '子連れ',
+                );
+                foreach ( $nav_scenes as $skey => $slabel ) {
+                    $sslug = KNT_SCENES[ $skey ]['slug'] ?? $skey;
+                    echo '<a href="' . esc_url( home_url( '/scene/' . $sslug . '/' ) ) . '">' . esc_html( $slabel ) . '</a>';
                 }
             }
             ?>
