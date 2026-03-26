@@ -611,6 +611,24 @@ function knt_customize_register( $wp_customize ) {
         'section'     => 'knt_analytics',
         'type'        => 'text',
     ) );
+    // ========================================
+    // API設定
+    // ========================================
+    $wp_customize->add_section( 'knt_api', array(
+        'title'    => 'API設定',
+        'priority' => 195,
+    ) );
+
+    $wp_customize->add_setting( 'knt_hotpepper_api_key', array(
+        'default'           => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_hotpepper_api_key', array(
+        'label'       => 'ホットペッパー APIキー',
+        'description' => 'リクルートWebサービスのAPIキー',
+        'section'     => 'knt_api',
+        'type'        => 'text',
+    ) );
 }
 add_action( 'customize_register', 'knt_customize_register' );
 
