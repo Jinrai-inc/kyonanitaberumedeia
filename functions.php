@@ -189,9 +189,16 @@ add_action( 'wp_head', 'knt_customizer_css' );
  * REST API CORS for app (additive – keeps WordPress default CORS intact)
  */
 function knt_rest_cors_headers( $value ) {
+    // 管理画面からのリクエスト（同一オリジン）は何もしない
+    if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && ! get_http_origin() ) ) {
+        return $value;
+    }
+
     $allowed_origins = array(
         'https://kyou-nani-taberu.app',
         'https://www.kyou-nani-taberu.app',
+        'https://media.kyou-nani-taberu.app',
+    );
     );
 
     $origin = get_http_origin();
@@ -380,6 +387,11 @@ function knt_generate_toc( $content ) {
     return $toc . $content;
 }
 add_filter( 'the_content', 'knt_generate_toc', 1 );
+
+/**
+ * アプリケーションパスワードを明示的に有効化
+ */
+add_filter( 'wp_is_application_passwords_available', '__return_true' );
 
 /**
  * Include Customizer settings
