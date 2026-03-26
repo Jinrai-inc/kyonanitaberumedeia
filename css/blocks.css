@@ -892,24 +892,29 @@
     font-family: var(--font-body, sans-serif);
     font-size: 0.9rem;
     font-weight: 700;
-    text-decoration: none;
+    text-decoration: none !important;
     transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
     border: 2px solid transparent;
     cursor: pointer;
     line-height: 1.4;
 }
+/* グローバルa色を上書き */
+a.knt-btn { color: inherit; }
+a.knt-btn.knt-btn--primary { color: #fff !important; }
+a.knt-btn.knt-btn--primary:hover { color: #fff !important; }
 .knt-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 .knt-btn--primary {
     background: #E60012;
-    color: #fff;
+    color: #fff !important;
     border-color: #E60012;
     font-size: 1rem;
     letter-spacing: 0.04em;
+    text-shadow: none;
 }
-.knt-btn--primary:hover { color: #fff; background: #cc0010; border-color: #cc0010; }
+.knt-btn--primary:hover { color: #fff !important; background: #cc0010; border-color: #cc0010; }
 .knt-btn--secondary {
     background: #fff;
     color: #E60012;
