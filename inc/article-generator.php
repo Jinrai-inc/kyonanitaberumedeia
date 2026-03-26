@@ -153,12 +153,6 @@ class KNT_Article_Generator {
             '今回紹介した%d店舗は、どれもホットペッパーグルメで高く評価されている人気店ばかりです。気になるお店があれば、ぜひ予約してみてください。',
             count( $shops )
         ) );
-        $blocks[] = $this->block_app_cta(
-            $area . 'の' . $genre_name . '店を今すぐ探す',
-            '「今日何食べる？」アプリなら、現在地から近い人気店をすぐに検索できます。',
-            'アプリを使ってみる',
-            'https://www.kyou-nani-taberu.app/'
-        );
 
         $blocks[] = $this->block_faq( $area, $genre_name );
 
@@ -195,40 +189,29 @@ class KNT_Article_Generator {
     }
 
     private function block_restaurant_card( $shop ) {
-        $rating = 3;
         $desc = $shop['catch'] ?: ( $shop['genre_catch'] ?: '' );
-
-        $attrs = array(
-            'name'        => $shop['name'],
-            'genre'       => $shop['genre'] ?: $shop['sub_genre'],
-            'area'        => $shop['station'] ? $shop['station'] . '駅' : '',
-            'rating'      => $rating,
-            'description' => $desc,
-            'url'         => '',
-            'imageUrl'    => $shop['photo_l'],
-            'imageId'     => 0,
-        );
-        $json = wp_json_encode( $attrs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-        $stars = str_repeat( "\xE2\x98\x85", $rating ) . str_repeat( "\xE2\x98\x86", 5 - $rating );
+        $genre = $shop['genre'] ?: $shop['sub_genre'];
+        $area  = $shop['station'] ? $shop['station'] . '駅' : '';
+        // 大きい画像を優先（mobile > l > m）
+        $photo = $shop['photo_mobile'] ?: ( $shop['photo_l'] ?: $shop['photo_m'] );
 
         $image_html = '';
-        if ( $shop['photo_l'] ) {
+        if ( $photo ) {
             $image_html = '<div class="knt-restaurant-card__image">'
-                . '<img src="' . esc_url( $shop['photo_l'] ) . '" alt="' . esc_attr( $shop['name'] ) . '">'
+                . '<img src="' . esc_url( $photo ) . '" alt="' . esc_attr( $shop['name'] ) . '" loading="lazy">'
                 . '<small class="knt-restaurant-card__credit">画像提供：ホットペッパー グルメ</small>'
                 . '</div>';
         }
 
         return "<!-- wp:html -->\n"
-            . '<div class="knt-restaurant-card">'
+            . '<div class="knt-restaurant-card knt-restaurant-card--vertical">'
             . $image_html
             . '<div class="knt-restaurant-card__body">'
             . '<div class="knt-restaurant-card__tags">'
-            . '<span class="cat-tag">' . esc_html( $attrs['genre'] ) . '</span>'
-            . '<span class="knt-restaurant-card__area">' . esc_html( $attrs['area'] ) . '</span>'
+            . '<span class="cat-tag">' . esc_html( $genre ) . '</span>'
+            . '<span class="knt-restaurant-card__area">' . esc_html( $area ) . '</span>'
             . '</div>'
             . '<div class="knt-restaurant-card__name">' . esc_html( $shop['name'] ) . '</div>'
-            . '<div class="knt-rating__stars">' . $stars . '</div>'
             . '<p class="knt-restaurant-card__desc">' . esc_html( $desc ) . '</p>'
             . '</div></div>' . "\n"
             . '<!-- /wp:html -->';
@@ -508,7 +491,6 @@ class KNT_Article_Generator {
             '今回は%sで%sに使えるおすすめのお店を%d店舗ご紹介しました。気になるお店があれば予約してみてください。',
             $area, $scene['label'], count( $shops )
         ) );
-        $blocks[] = $this->block_app_cta( $area . 'のお店を今すぐ探す', '「今日何食べる？」アプリなら、現在地から近い人気店をすぐに検索できます。', 'アプリを使ってみる', 'https://www.kyou-nani-taberu.app/' );
 
         // シーンFAQ
         $blocks[] = $this->block_scene_faq( $area, $scene_key );
@@ -719,7 +701,6 @@ class KNT_Article_Generator {
         // まとめ
         $blocks[] = $this->block_heading( 'まとめ' );
         $blocks[] = $this->block_paragraph( sprintf( '今回ご紹介した%d店舗は、どれも人気の実力店ばかりです。気になるお店があればぜひ予約してみてください。', count( $shops ) ) );
-        $blocks[] = $this->block_app_cta( $area . 'のお店を今すぐ探す', '「今日何食べる？」アプリなら、現在地から近い人気店をすぐに検索できます。', 'アプリを使ってみる', 'https://www.kyou-nani-taberu.app/' );
         $blocks[] = $this->block_faq( $area, $genre_name );
         $blocks[] = $this->block_paragraph( '<small>店舗情報・画像提供：<a href="https://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">ホットペッパーグルメ Webサービス</a></small>' );
 

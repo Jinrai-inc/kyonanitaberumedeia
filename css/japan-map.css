@@ -305,4 +305,14 @@
   .japan-map-svg-wrapper {
     max-width: 100%;
   }
+  /* スマホ: SVGを回転させず、viewBoxで北海道を左上・沖縄を右下に見せる */
+  .japan-map-svg-wrapper svg {
+    aspect-ratio: 3 / 4;
+  }
+  .japan-map-section .section__header {
+    margin-bottom: 16px;
+  }
+  .japan-map-section .section__title {
+    font-size: 1.1rem;
+  }
 }
