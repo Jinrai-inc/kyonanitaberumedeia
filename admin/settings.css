@@ -1,0 +1,112 @@
+.knt-settings {
+    max-width: 960px;
+}
+.knt-settings__desc {
+    color: #646970;
+    margin-bottom: 20px;
+}
+.knt-settings__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 2px solid #c3c4c7;
+    margin-bottom: 24px;
+}
+.knt-settings__tab {
+    display: inline-block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #50575e;
+    font-weight: 600;
+    font-size: 13px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: -2px;
+    transition: background 0.15s ease;
+}
+.knt-settings__tab:hover {
+    color: #1d2327;
+    background: #f0f0f1;
+}
+.knt-settings__tab.is-active {
+    color: #1d2327;
+    background: #fff;
+    border-color: #c3c4c7;
+    border-bottom-color: #fff;
+}
+.knt-settings__panel {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 0 0 4px 4px;
+    padding: 24px;
+}
+.knt-settings__panel h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+.knt-settings__panel h2 + .description {
+    margin-top: -12px;
+    margin-bottom: 16px;
+}
+.knt-settings__panel h3 {
+    font-size: 14px;
+    margin: 24px 0 12px;
+}
+
+/* Toggle Switch */
+.knt-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f1;
+}
+.knt-toggle-row:last-child {
+    border-bottom: none;
+}
+.knt-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.knt-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.knt-toggle__slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    transition: background 0.2s ease;
+}
+.knt-toggle__slider::before {
+    content: '';
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+.knt-toggle input:checked + .knt-toggle__slider {
+    background: #C9553E;
+}
+.knt-toggle input:checked + .knt-toggle__slider::before {
+    transform: translateX(20px);
+}
+.knt-toggle__label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1d2327;
+}

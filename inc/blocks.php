@@ -38,21 +38,26 @@ function knt_enqueue_block_editor_assets() {
     wp_enqueue_script(
         'knt-blocks-editor',
         KNT_URI . '/js/blocks.js',
-        array(
-            'wp-blocks',
-            'wp-element',
-            'wp-block-editor',
-            'wp-components',
-            'wp-i18n',
-            'wp-data',
-        ),
+        array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n', 'wp-data' ),
         KNT_VERSION,
         true
     );
-
+    wp_enqueue_script(
+        'knt-blocks-extra-editor',
+        KNT_URI . '/js/blocks-extra.js',
+        array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components' ),
+        KNT_VERSION,
+        true
+    );
     wp_enqueue_style(
         'knt-blocks-editor-style',
         KNT_URI . '/css/blocks.css',
+        array( 'wp-edit-blocks' ),
+        KNT_VERSION
+    );
+    wp_enqueue_style(
+        'knt-blocks-extra-editor-style',
+        KNT_URI . '/css/blocks-extra.css',
         array( 'wp-edit-blocks' ),
         KNT_VERSION
     );
@@ -65,12 +70,8 @@ add_action( 'enqueue_block_editor_assets', 'knt_enqueue_block_editor_assets' );
 
 function knt_enqueue_block_assets() {
     if ( ! is_admin() ) {
-        wp_enqueue_style(
-            'knt-blocks-style',
-            KNT_URI . '/css/blocks.css',
-            array(),
-            KNT_VERSION
-        );
+        wp_enqueue_style( 'knt-blocks-style', KNT_URI . '/css/blocks.css', array(), KNT_VERSION );
+        wp_enqueue_style( 'knt-blocks-extra-style', KNT_URI . '/css/blocks-extra.css', array(), KNT_VERSION );
     }
 }
 add_action( 'wp_enqueue_scripts', 'knt_enqueue_block_assets' );
@@ -282,6 +283,55 @@ document.addEventListener("click",function(e){
 </script>';
         $faq_script_added = true;
     }
+
+    return $html;
+}
+
+/* ──────────────────────────────────────────────
+   Blog Card Block - Server Side Render
+   ────────────────────────────────────────────── */
+
+function knt_register_blog_card_block() {
+    register_block_type( 'knt/blog-card', array(
+        'api_version'     => 2,
+        'render_callback' => 'knt_render_blog_card_block',
+        'attributes'      => array(
+            'url'    => array( 'type' => 'string', 'default' => '' ),
+            'postId' => array( 'type' => 'number', 'default' => 0 ),
+        ),
+    ) );
+}
+add_action( 'init', 'knt_register_blog_card_block' );
+
+function knt_render_blog_card_block( $attributes ) {
+    $url     = $attributes['url'] ?? '';
+    $post_id = $attributes['postId'] ?? 0;
+
+    if ( ! $post_id && $url ) {
+        $post_id = url_to_postid( $url );
+    }
+    if ( ! $post_id ) {
+        return '';
+    }
+
+    $post = get_post( $post_id );
+    if ( ! $post ) return '';
+
+    $title   = esc_html( $post->post_title );
+    $excerpt = esc_html( wp_trim_words( $post->post_excerpt ?: $post->post_content, 40 ) );
+    $link    = get_permalink( $post_id );
+    $thumb   = get_the_post_thumbnail( $post_id, 'knt-card' );
+    $site    = get_bloginfo( 'name' );
+
+    $html = '<a href="' . esc_url( $link ) . '" class="knt-blog-card">';
+    if ( $thumb ) {
+        $html .= '<div class="knt-blog-card__image">' . $thumb . '</div>';
+    }
+    $html .= '<div class="knt-blog-card__body">';
+    $html .= '<div class="knt-blog-card__title">' . $title . '</div>';
+    $html .= '<p class="knt-blog-card__excerpt">' . $excerpt . '</p>';
+    $html .= '<span class="knt-blog-card__site">' . esc_html( $site ) . '</span>';
+    $html .= '</div></a>';
 
     return $html;
 }

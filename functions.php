@@ -488,4 +488,5 @@ if ( ! defined( 'KNT_HOTPEPPER_API_KEY' ) ) {
  */
 if ( is_admin() ) {
     require_once KNT_DIR . '/admin/generator-page.php';
+    require_once KNT_DIR . '/admin/theme-settings.php';
 }
