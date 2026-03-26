@@ -189,12 +189,12 @@ add_action( 'wp_head', 'knt_customizer_css' );
  * REST API CORS for app (additive – keeps WordPress default CORS intact)
  * + REST API URLをWordPressアドレスに揃える（サブディレクトリ構成対応）
  */
+
+// PHP側: rest_url フィルター
 function knt_fix_rest_url_for_admin( $url ) {
-    // 管理画面からのREST APIリクエストがCORSエラーにならないよう
-    // REST API URLをWordPressアドレス（WP_SITEURL）ベースに変更
     if ( is_admin() ) {
-        $site_url = site_url();  // WordPressアドレス = https://media.kyou-nani-taberu.app
-        $home_url = home_url();  // サイトアドレス = https://kyou-nani-taberu.app/media
+        $site_url = site_url();
+        $home_url = home_url();
         if ( $site_url !== $home_url ) {
             $url = str_replace( $home_url, $site_url, $url );
         }
@@ -202,6 +202,55 @@ function knt_fix_rest_url_for_admin( $url ) {
     return $url;
 }
 add_filter( 'rest_url', 'knt_fix_rest_url_for_admin' );
+
+// JS側: Gutenbergが使う wpApiSettings.root を上書き
+function knt_fix_rest_url_js() {
+    if ( ! is_admin() ) return;
+    $site_url = site_url();
+    $home_url = home_url();
+    if ( $site_url === $home_url ) return;
+
+    $correct_root = esc_url_raw( trailingslashit( $site_url ) . rest_get_url_prefix() . '/' );
+    ?>
+    <script>
+    if (typeof wpApiSettings !== 'undefined') {
+        wpApiSettings.root = '<?php echo esc_js( $correct_root ); ?>';
+    }
+    window.addEventListener('load', function() {
+        if (typeof wpApiSettings !== 'undefined') {
+            wpApiSettings.root = '<?php echo esc_js( $correct_root ); ?>';
+        }
+        if (typeof wp !== 'undefined' && wp.apiFetch) {
+            wp.apiFetch.use(wp.apiFetch.createRootURLMiddleware('<?php echo esc_js( $correct_root ); ?>'));
+        }
+    });
+    </script>
+    <?php
+}
+add_action( 'admin_head', 'knt_fix_rest_url_js', 1 );
+
+// OPTIONSプリフライトへの応答
+function knt_handle_preflight() {
+    if ( $_SERVER['REQUEST_METHOD'] === 'OPTIONS' ) {
+        $origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? $_SERVER['HTTP_ORIGIN'] : '';
+        $allowed = array(
+            'https://media.kyou-nani-taberu.app',
+            'https://kyou-nani-taberu.app',
+            'https://www.kyou-nani-taberu.app',
+        );
+        if ( in_array( $origin, $allowed, true ) ) {
+            header( 'Access-Control-Allow-Origin: ' . $origin );
+            header( 'Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS' );
+            header( 'Access-Control-Allow-Headers: Content-Type, Authorization, X-WP-Nonce, X-Requested-With' );
+            header( 'Access-Control-Allow-Credentials: true' );
+            header( 'Access-Control-Max-Age: 86400' );
+            header( 'Content-Length: 0' );
+            header( 'Content-Type: text/plain' );
+            exit;
+        }
+    }
+}
+add_action( 'init', 'knt_handle_preflight', 1 );
 
 function knt_rest_cors_headers( $value ) {
     $allowed_origins = array(
