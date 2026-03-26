@@ -11,13 +11,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $slider_count = 10;
-$slider_query = new WP_Query( array(
+
+// 東京都カテゴリ（area-13）を優先表示
+$tokyo_cat = get_term_by( 'slug', 'area-13', 'category' );
+$slider_args = array(
     'posts_per_page' => $slider_count,
     'post_type'      => 'post',
     'post_status'    => 'publish',
     'orderby'        => 'date',
     'order'          => 'DESC',
-) );
+);
+if ( $tokyo_cat ) {
+    $slider_args['cat'] = $tokyo_cat->term_id;
+}
+$slider_query = new WP_Query( $slider_args );
+
+// 東京都の記事が足りなければ全体から補充
+if ( $slider_query->post_count < $slider_count ) {
+    $exclude_ids = wp_list_pluck( $slider_query->posts, 'ID' );
+    $extra = new WP_Query( array(
+        'posts_per_page' => $slider_count - $slider_query->post_count,
+        'post_type'      => 'post',
+        'post_status'    => 'publish',
+        'post__not_in'   => $exclude_ids,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ) );
+    if ( $extra->have_posts() ) {
+        $slider_query->posts = array_merge( $slider_query->posts, $extra->posts );
+        $slider_query->post_count = count( $slider_query->posts );
+    }
+}
 
 if ( ! $slider_query->have_posts() ) {
     return;
