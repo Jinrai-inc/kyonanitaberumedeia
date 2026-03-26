@@ -207,14 +207,13 @@ class KNT_Article_Generator {
     private function block_callout( $type, $title, $content ) {
         $icons = array( 'note' => "\xF0\x9F\x93\x9D", 'info' => "\xE2\x84\xB9\xEF\xB8\x8F", 'tip' => "\xF0\x9F\x92\xA1", 'warning' => "\xE2\x9A\xA0\xEF\xB8\x8F" );
         $icon = $icons[ $type ] ?? "\xF0\x9F\x93\x9D";
-        $json = wp_json_encode( array( 'type' => $type, 'title' => $title, 'content' => $content ), JSON_UNESCAPED_UNICODE );
 
-        return "<!-- wp:knt/callout {$json} -->\n"
+        return "<!-- wp:html -->\n"
             . "<div class=\"knt-callout knt-callout--{$type}\">"
             . "<div class=\"knt-callout__header\"><span class=\"knt-callout__icon\">{$icon}</span>"
             . "<strong>{$title}</strong></div>"
             . "<div class=\"knt-callout__content\">{$content}</div></div>\n"
-            . "<!-- /wp:knt/callout -->";
+            . "<!-- /wp:html -->";
     }
 
     private function block_restaurant_card( $shop ) {
@@ -242,7 +241,7 @@ class KNT_Article_Generator {
                 . '</div>';
         }
 
-        return "<!-- wp:knt/restaurant-card {$json} -->\n"
+        return "<!-- wp:html -->\n"
             . '<div class="knt-restaurant-card">'
             . $image_html
             . '<div class="knt-restaurant-card__body">'
@@ -254,19 +253,17 @@ class KNT_Article_Generator {
             . '<div class="knt-rating__stars">' . $stars . '</div>'
             . '<p class="knt-restaurant-card__desc">' . esc_html( $desc ) . '</p>'
             . '</div></div>' . "\n"
-            . '<!-- /wp:knt/restaurant-card -->';
+            . '<!-- /wp:html -->';
     }
 
     private function block_button( $text, $url, $style = 'primary', $size = 'medium', $new_tab = true, $align = 'left' ) {
-        $attrs = array( 'text' => $text, 'url' => $url, 'style' => $style, 'size' => $size, 'newTab' => $new_tab, 'align' => $align );
-        $json = wp_json_encode( $attrs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
         $cls = "knt-btn knt-btn--{$style} knt-btn--{$size}";
         $target = $new_tab ? ' target="_blank" rel="noopener noreferrer sponsored"' : '';
 
-        return "<!-- wp:knt/button {$json} -->\n"
+        return "<!-- wp:html -->\n"
             . "<div class=\"knt-btn-wrapper\" style=\"text-align:{$align}\">"
             . "<a class=\"{$cls}\" href=\"{$url}\"{$target}>{$text}</a></div>\n"
-            . "<!-- /wp:knt/button -->";
+            . "<!-- /wp:html -->";
     }
 
     private function block_gmap_embed( $embed_url ) {
@@ -279,16 +276,13 @@ class KNT_Article_Generator {
     }
 
     private function block_app_cta( $title, $desc, $btn_text, $btn_url ) {
-        $attrs = array( 'title' => $title, 'description' => $desc, 'buttonText' => $btn_text, 'buttonUrl' => $btn_url );
-        $json = wp_json_encode( $attrs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-
-        return "<!-- wp:knt/app-cta {$json} -->\n"
+        return "<!-- wp:html -->\n"
             . '<div class="knt-app-cta">'
             . '<h3 class="knt-app-cta__title">' . esc_html( $title ) . '</h3>'
             . '<p class="knt-app-cta__desc">' . esc_html( $desc ) . '</p>'
             . '<a href="' . esc_url( $btn_url ) . '" class="knt-btn knt-btn--primary knt-btn--large" target="_blank" rel="noopener noreferrer">'
             . esc_html( $btn_text ) . '</a></div>' . "\n"
-            . "<!-- /wp:knt/app-cta -->";
+            . "<!-- /wp:html -->";
     }
 
     private function block_faq( $area, $genre_name ) {
