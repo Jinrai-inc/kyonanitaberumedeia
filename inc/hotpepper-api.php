@@ -22,6 +22,20 @@ class KNT_HotPepper_API {
         }
     }
 
+    /**
+     * ホットペッパーAPIで有効な検索パラメータ一覧
+     */
+    const VALID_PARAMS = array(
+        'keyword', 'lat', 'lng', 'range', 'genre', 'large_area', 'middle_area',
+        'small_area', 'count', 'start', 'order', 'format', 'key', 'type',
+        // 設備フィルター（ホットペッパーAPI対応済み）
+        'private_room', 'free_drink', 'free_food', 'wifi', 'card',
+        'non_smoking', 'parking', 'pet', 'child', 'lunch', 'midnight',
+        'charter', 'tatami', 'horigotatsu', 'karaoke', 'band', 'tv',
+        'english', 'barrier_free', 'sommelier', 'night_view', 'open_air',
+        'show', 'equipment', 'ktai_coupon',
+    );
+
     public function search_shops( $args = array() ) {
         $defaults = array(
             'keyword'     => '',
@@ -36,15 +50,16 @@ class KNT_HotPepper_API {
             'start'       => 1,
             'order'       => 4,
             'format'      => 'json',
-            'type'        => 'special',
         );
 
         $params = wp_parse_args( $args, $defaults );
         $params['key'] = $this->api_key;
 
+        // 空値を除去 + APIに有効なパラメータのみ送信
         $params = array_filter( $params, function( $v ) {
-            return $v !== '' && $v !== null;
+            return $v !== '' && $v !== null && $v !== 0;
         } );
+        $params = array_intersect_key( $params, array_flip( self::VALID_PARAMS ) );
 
         $url = add_query_arg( $params, self::GOURMET_SEARCH_URL );
 

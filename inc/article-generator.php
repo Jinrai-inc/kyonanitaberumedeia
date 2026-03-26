@@ -675,12 +675,17 @@ class KNT_Article_Generator {
         $scene = KNT_SCENES[ $scene_key ];
 
         $search_args = array(
-            'keyword' => $area . ' ' . $scene['keywords'],
+            'keyword' => $area . ' ' . $scene['label'],
             'count'   => $count + 5,
             'order'   => 4,
         );
+        // 有効なAPIフィルターのみ追加
         foreach ( $scene['api_filters'] as $key => $value ) {
             $search_args[ $key ] = $value;
+        }
+        // ジャンル絞り込み
+        if ( ! empty( $scene['allowed_genres'] ) ) {
+            $search_args['genre'] = $scene['allowed_genres'][0];
         }
 
         $shops = $this->api->search_shops( $search_args );
@@ -930,13 +935,19 @@ class KNT_Article_Generator {
         // シーンの場合は追加条件
         if ( $mode === 'scene' && $scene_key && isset( KNT_SCENES[ $scene_key ] ) ) {
             $scene = KNT_SCENES[ $scene_key ];
+            // キーワードはシーンラベルのみ（複数キーワードだとAND検索で0件になる）
             if ( ! $station ) {
-                $search_args['keyword'] = $area . ' ' . $scene['keywords'];
+                $search_args['keyword'] = $area . ' ' . $scene['label'];
             } else {
-                $search_args['keyword'] = $scene['keywords'];
+                $search_args['keyword'] = $scene['label'];
             }
+            // 有効なAPIパラメータのみ追加
             foreach ( $scene['api_filters'] as $k => $v ) {
                 $search_args[ $k ] = $v;
+            }
+            // ジャンルが未指定の場合、allowed_genresの最初のジャンルで絞り込み
+            if ( empty( $search_args['genre'] ) && ! empty( $scene['allowed_genres'] ) ) {
+                $search_args['genre'] = $scene['allowed_genres'][0];
             }
         }
 
