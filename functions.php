@@ -475,3 +475,17 @@ add_action( 'wp_ajax_nopriv_knt_load_more', 'knt_load_more_posts' );
 if ( ! defined( 'WP_POST_REVISIONS' ) ) {
     define( 'WP_POST_REVISIONS', 5 );
 }
+
+/**
+ * ホットペッパーグルメ APIキー（wp_optionsが優先、未設定時のフォールバック）
+ */
+if ( ! defined( 'KNT_HOTPEPPER_API_KEY' ) ) {
+    define( 'KNT_HOTPEPPER_API_KEY', 'acffba006a6824d4' );
+}
+
+/**
+ * 記事自動生成機能の読み込み（管理画面のみ）
+ */
+if ( is_admin() ) {
+    require_once KNT_DIR . '/admin/generator-page.php';
+}
