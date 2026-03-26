@@ -37,7 +37,8 @@ function knt_generator_admin_assets( $hook ) {
     wp_enqueue_style( 'knt-generator', KNT_URI . '/admin/generator.css', array(), KNT_VERSION );
     wp_enqueue_script( 'knt-generator', KNT_URI . '/js/admin-generator.js', array( 'jquery' ), KNT_VERSION, true );
     wp_localize_script( 'knt-generator', 'kntGenerator', array(
-        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+        'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
+        'stationData' => KNT_STATION_DATA,
         'nonce'   => wp_create_nonce( 'knt_generate_article' ),
         'scenes'  => knt_scenes_for_js(),
     ) );
@@ -129,6 +130,17 @@ function knt_render_generator_page() {
                             });
                         });
                         </script>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="knt-station">駅（任意）</label></th>
+                    <td>
+                        <select id="knt-station" name="station" class="regular-text" style="max-width:300px;">
+                            <option value="">駅を選択しない（市区町村全体で検索）</option>
+                        </select>
+                        <input type="hidden" id="knt-station-lat" name="station_lat" value="">
+                        <input type="hidden" id="knt-station-lng" name="station_lng" value="">
+                        <p class="description">駅を選択すると半径1km以内で店舗を検索します</p>
                     </td>
                 </tr>
                 <tr>
@@ -306,36 +318,26 @@ function knt_ajax_generate_article() {
     }
 
     $area  = sanitize_text_field( $_POST['area'] ?? '' );
-    $mode  = sanitize_text_field( $_POST['mode'] ?? 'genre' );
-    $count = intval( $_POST['count'] ?? 5 );
-
-    $category_ids = array();
-    if ( ! empty( $_POST['category_1'] ) ) $category_ids[] = intval( $_POST['category_1'] );
-    if ( ! empty( $_POST['category_2'] ) ) $category_ids[] = intval( $_POST['category_2'] );
-
     if ( empty( $area ) ) {
-        wp_send_json_error( 'エリア名を入力してください。' );
+        wp_send_json_error( 'エリアを選択してください。' );
     }
 
     require_once KNT_DIR . '/inc/article-generator.php';
     $generator = new KNT_Article_Generator();
 
-    if ( $mode === 'scene' ) {
-        // シーン別記事生成
-        $scene_key = sanitize_text_field( $_POST['scene'] ?? '' );
-        if ( empty( $scene_key ) ) {
-            wp_send_json_error( 'シーンを選択してください。' );
-        }
-        $result = $generator->generate_by_scene( $area, $scene_key, $count, $category_ids );
-    } else {
-        // 通常のエリア×ジャンル記事生成
-        $genre_name = sanitize_text_field( $_POST['genre_name'] ?? '' );
-        $genre_code = sanitize_text_field( $_POST['genre_code'] ?? '' );
-        if ( empty( $genre_name ) ) {
-            wp_send_json_error( 'ジャンル名を入力してください。' );
-        }
-        $result = $generator->generate( $area, $genre_name, $genre_code, $count, $category_ids );
-    }
+    $result = $generator->generate_smart( array(
+        'area'           => $area,
+        'city_id'        => intval( $_POST['category_2'] ?? $_POST['city_id'] ?? 0 ),
+        'prefecture_id'  => intval( $_POST['category_1'] ?? $_POST['pref_id'] ?? 0 ),
+        'station_name'   => sanitize_text_field( $_POST['station_name'] ?? $_POST['station'] ?? '' ),
+        'station_lat'    => sanitize_text_field( $_POST['station_lat'] ?? '' ),
+        'station_lng'    => sanitize_text_field( $_POST['station_lng'] ?? '' ),
+        'mode'           => sanitize_text_field( $_POST['mode'] ?? 'genre' ),
+        'genre_name'     => sanitize_text_field( $_POST['genre_name'] ?? 'グルメ' ),
+        'genre_code'     => sanitize_text_field( $_POST['genre_code'] ?? '' ),
+        'scene'          => sanitize_text_field( $_POST['scene'] ?? '' ),
+        'count'          => intval( $_POST['count'] ?? 5 ),
+    ) );
 
     if ( is_wp_error( $result ) ) {
         wp_send_json_error( $result->get_error_message() );

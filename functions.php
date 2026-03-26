@@ -408,6 +408,12 @@ require_once KNT_DIR . '/inc/blocks.php';
 require_once KNT_DIR . '/inc/scenes.php';
 
 /**
+ * Include Station Data + Lead Templates
+ */
+require_once KNT_DIR . '/inc/station-data.php';
+require_once KNT_DIR . '/inc/lead-templates.php';
+
+/**
  * シーンページのリライトルール
  */
 function knt_scene_rewrite_rules() {

@@ -581,4 +581,203 @@ class KNT_Article_Generator {
         $json = wp_json_encode( array( 'items' => $items ), JSON_UNESCAPED_UNICODE );
         return "<!-- wp:knt/faq {$json} /-->";
     }
+
+    // ========================================
+    // Phase 3: 駅ベース検索 + リード文強化
+    // ========================================
+
+    public function generate_smart( $params ) {
+        $area       = $params['area'] ?? '';
+        $city_id    = intval( $params['city_id'] ?? 0 );
+        $pref_id    = intval( $params['prefecture_id'] ?? 0 );
+        $station    = $params['station_name'] ?? '';
+        $lat        = $params['station_lat'] ?? '';
+        $lng        = $params['station_lng'] ?? '';
+        $mode       = $params['mode'] ?? 'genre';
+        $genre_name = $params['genre_name'] ?? 'グルメ';
+        $genre_code = $params['genre_code'] ?? '';
+        $scene_key  = $params['scene'] ?? '';
+        $count      = intval( $params['count'] ?? 5 );
+
+        $category_ids = array();
+        if ( $pref_id ) $category_ids[] = $pref_id;
+        if ( $city_id ) $category_ids[] = $city_id;
+
+        // 駅名テキスト
+        $station_text = '';
+        if ( $city_id ) {
+            $station_text = knt_format_station_names( $city_id, 3 );
+        }
+
+        // API検索パラメータ構築
+        $search_args = array( 'count' => $count + 5, 'order' => 4 );
+
+        if ( $station && $lat && $lng ) {
+            // 駅指定 → 緯度経度ベース検索
+            $search_args['lat']   = floatval( $lat );
+            $search_args['lng']   = floatval( $lng );
+            $search_args['range'] = 3; // 1000m
+
+            if ( $mode === 'genre' && $genre_name ) {
+                $search_args['keyword'] = $genre_name;
+            }
+            if ( $genre_code ) {
+                $search_args['genre'] = $genre_code;
+            }
+        } else {
+            // キーワード検索
+            $search_args['keyword'] = $area . ' ' . $genre_name;
+            if ( $genre_code ) {
+                $search_args['genre'] = $genre_code;
+            }
+        }
+
+        // シーンの場合は追加条件
+        if ( $mode === 'scene' && $scene_key && isset( KNT_SCENES[ $scene_key ] ) ) {
+            $scene = KNT_SCENES[ $scene_key ];
+            if ( ! $station ) {
+                $search_args['keyword'] = $area . ' ' . $scene['keywords'];
+            } else {
+                $search_args['keyword'] = $scene['keywords'];
+            }
+            foreach ( $scene['api_filters'] as $k => $v ) {
+                $search_args[ $k ] = $v;
+            }
+        }
+
+        // API検索
+        $shops = $this->api->search_shops( $search_args );
+        if ( is_wp_error( $shops ) ) return $shops;
+
+        // シーンフィルタリング
+        if ( $mode === 'scene' && $scene_key ) {
+            $shops = $this->filter_shops_by_scene( $shops, $scene_key );
+        }
+
+        if ( empty( $shops ) ) {
+            return new WP_Error( 'no_shops', '該当する店舗が見つかりませんでした。' );
+        }
+        $shops = array_slice( $shops, 0, $count );
+
+        // リード文変数
+        $lead_vars = array(
+            'area'       => $area,
+            'stations'   => $station_text,
+            'station'    => $station,
+            'genre'      => $genre_name,
+            'scene'      => $mode === 'scene' && $scene_key ? ( KNT_SCENES[ $scene_key ]['label'] ?? '' ) : '',
+            'scene_desc' => $mode === 'scene' && $scene_key ? ( KNT_SCENES[ $scene_key ]['description'] ?? '' ) : '',
+            'count'      => count( $shops ),
+        );
+
+        // タイトル生成
+        $title_vars = $lead_vars;
+        $title_vars['suffix'] = $mode === 'scene' && $scene_key ? ( KNT_SCENES[ $scene_key ]['title_suffix'] ?? '' ) : '';
+
+        if ( $station ) {
+            $title_type = $mode === 'scene' ? 'station_scene' : 'station_genre';
+            $lead_type  = 'station';
+        } elseif ( $station_text ) {
+            $title_type = $mode === 'scene' ? 'scene' : 'genre';
+            $lead_type  = $mode === 'scene' ? 'scene' : 'genre';
+        } else {
+            $title_type = $mode === 'scene' ? 'scene_no_st' : 'genre_no_st';
+            $lead_type  = $mode === 'scene' ? 'scene' : 'genre';
+        }
+
+        $title = knt_generate_title( $title_type, $title_vars );
+        $lead  = knt_generate_lead( $lead_type, $lead_vars );
+
+        // スラッグ
+        $area_slug = $this->get_area_slug( $station ?: $area );
+        if ( $mode === 'scene' && $scene_key ) {
+            $slug = $area_slug . '-' . ( KNT_SCENES[ $scene_key ]['slug'] ?? $scene_key ) . '-osusume';
+        } else {
+            $genre_slug = $this->get_area_slug( $genre_name );
+            $slug = $area_slug . '-' . $genre_slug . '-osusume';
+        }
+
+        // 記事HTML構築
+        $blocks = array();
+        $blocks[] = $this->block_callout( 'note', 'PR', 'この記事にはアフィリエイト広告・PR情報が含まれます' );
+        $blocks[] = $this->block_paragraph( $lead );
+
+        // シーンの選定基準
+        if ( $mode === 'scene' && $scene_key && isset( KNT_SCENES[ $scene_key ] ) ) {
+            $tips = array();
+            $sf = KNT_SCENES[ $scene_key ]['api_filters'];
+            if ( ! empty( $sf['private_room'] ) ) $tips[] = '個室完備';
+            if ( ! empty( $sf['free_drink'] ) )   $tips[] = '飲み放題あり';
+            if ( ! empty( $sf['free_food'] ) )    $tips[] = '食べ放題あり';
+            if ( ! empty( $sf['lunch'] ) )        $tips[] = 'ランチ営業あり';
+            if ( ! empty( $sf['midnight'] ) )     $tips[] = '深夜営業あり';
+            if ( ! empty( $sf['child'] ) )        $tips[] = 'お子様連れOK';
+            if ( ! empty( $sf['course'] ) )       $tips[] = 'コースあり';
+            if ( $tips ) {
+                $blocks[] = $this->block_callout( 'info', 'この記事の選定基準', implode( ' / ', $tips ) . ' の条件で厳選しています。' );
+            }
+        }
+
+        // 店舗ブロック
+        foreach ( $shops as $i => $shop ) {
+            $blocks[] = $this->block_heading( sprintf( '%d. %s', $i + 1, $shop['name'] ) );
+            $blocks[] = $this->block_gmap_embed( $shop['gmap_embed'] );
+            $blocks[] = $this->block_restaurant_card( $shop );
+
+            $info = array();
+            $info[] = esc_html( $shop['address'] );
+            if ( $shop['access'] )  $info[] = '<strong>' . esc_html( $shop['access'] ) . '</strong>';
+            if ( $shop['budget'] )  $info[] = esc_html( $shop['budget'] );
+            if ( $shop['open'] )    $info[] = esc_html( $shop['open'] );
+            if ( $shop['close'] )   $info[] = esc_html( $shop['close'] );
+            $blocks[] = $this->block_paragraph( implode( '<br>', $info ) );
+
+            $blocks[] = $this->block_button( 'ホットペッパーで予約する', $shop['hotpepper_url'], 'primary', 'medium', true, 'left' );
+            if ( $shop['coupon_url'] ) {
+                $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
+            }
+            $tabelog_url = sprintf( 'https://tabelog.com/rstLst/?vs=1&sa=%s&sk=%s', urlencode( $area ), urlencode( $shop['name'] ) );
+            $blocks[] = $this->block_button( '食べログで口コミを見る', $tabelog_url, 'secondary', 'medium', true, 'left' );
+            $ikkyuu_url = sprintf( 'https://restaurant.ikyu.com/search/?keyword=%s', urlencode( $shop['name'] ) );
+            $blocks[] = $this->block_button( '一休.comで予約する', $ikkyuu_url, 'secondary', 'medium', true, 'left' );
+            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
+
+            if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
+        }
+
+        // まとめ
+        $blocks[] = $this->block_heading( 'まとめ' );
+        $blocks[] = $this->block_paragraph( sprintf( '今回ご紹介した%d店舗は、どれも人気の実力店ばかりです。気になるお店があればぜひ予約してみてください。', count( $shops ) ) );
+        $blocks[] = $this->block_app_cta( $area . 'のお店を今すぐ探す', '「今日何食べる？」アプリなら、現在地から近い人気店をすぐに検索できます。', 'アプリを使ってみる', 'https://www.kyou-nani-taberu.app/' );
+        $blocks[] = $this->block_faq( $area, $genre_name );
+        $blocks[] = $this->block_paragraph( '<small>店舗情報・画像提供：<a href="https://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">ホットペッパーグルメ Webサービス</a></small>' );
+
+        $content = implode( "\n\n", $blocks );
+
+        $excerpt = $station
+            ? sprintf( '%s周辺で美味しい%sを厳選！%d店舗を写真・予算・営業時間付きで紹介。予約リンクあり。', $station, $genre_name, count( $shops ) )
+            : sprintf( '%sで%sを食べるならここ！厳選%d店舗を紹介。予約リンクあり。', $area, $genre_name, count( $shops ) );
+
+        $post_data = array(
+            'post_title' => $title, 'post_content' => $content, 'post_status' => 'draft',
+            'post_type' => 'post', 'post_name' => $slug, 'post_excerpt' => $excerpt,
+        );
+        if ( ! empty( $category_ids ) ) $post_data['post_category'] = $category_ids;
+
+        $post_id = wp_insert_post( $post_data, true );
+        if ( is_wp_error( $post_id ) ) return $post_id;
+
+        update_post_meta( $post_id, '_knt_generated', true );
+        update_post_meta( $post_id, '_knt_area', $area );
+        update_post_meta( $post_id, '_knt_station', $station );
+        update_post_meta( $post_id, '_knt_genre', $genre_name );
+        update_post_meta( $post_id, '_knt_shop_count', count( $shops ) );
+        update_post_meta( $post_id, '_knt_generated_at', current_time( 'mysql' ) );
+        if ( $mode === 'scene' && $scene_key ) {
+            update_post_meta( $post_id, '_knt_scene', $scene_key );
+        }
+
+        $this->set_featured_image( $post_id, $shops[0] );
+        return $post_id;
+    }
 }

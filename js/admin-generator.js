@@ -66,6 +66,7 @@
         $result.hide();
         $error.hide();
 
+        var selectedStation = $('#knt-station').find(':selected');
         var data = {
             action: 'knt_generate_article',
             nonce: kntGenerator.nonce,
@@ -74,6 +75,9 @@
             count: $('#knt-count').val(),
             category_1: $('#knt-category-1').val(),
             category_2: $('#knt-category-2').val(),
+            station_name: selectedStation.val() || '',
+            station_lat: selectedStation.data('lat') || '',
+            station_lng: selectedStation.data('lng') || '',
         };
 
         if (data.mode === 'scene') {
@@ -106,6 +110,38 @@
                 $('#knt-error-message').text('通信エラーが発生しました。');
             }
         });
+    });
+
+    // ========================================
+    // 駅プルダウン連動（市区町村選択時）
+    // ========================================
+    var STATION_DATA = (typeof kntGenerator !== 'undefined' && kntGenerator.stationData) ? kntGenerator.stationData : {};
+
+    $('#knt-area-city').on('change', function() {
+        var cityId = $(this).val();
+        var $station = $('#knt-station');
+        $station.html('<option value="">駅を選択しない（市区町村全体で検索）</option>');
+        $('#knt-station-lat').val('');
+        $('#knt-station-lng').val('');
+
+        if (cityId && STATION_DATA[cityId]) {
+            STATION_DATA[cityId].forEach(function(st) {
+                $station.append(
+                    '<option value="' + st.name + '" data-lat="' + st.lat + '" data-lng="' + st.lng + '">'
+                    + st.name + '（' + st.lines + '）</option>'
+                );
+            });
+        }
+    });
+
+    $('#knt-station').on('change', function() {
+        var sel = $(this).find(':selected');
+        $('#knt-station-lat').val(sel.data('lat') || '');
+        $('#knt-station-lng').val(sel.data('lng') || '');
+        // 駅選択時はエリア名を駅名に更新
+        if (sel.val()) {
+            $('#knt-area').val(sel.val().replace('駅', '') || '');
+        }
     });
 
     // ========================================
