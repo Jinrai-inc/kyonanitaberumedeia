@@ -86,17 +86,21 @@
                 ) );
             } else {
                 // シーンリンクをデフォルトナビに
-                $nav_scenes = array(
-                    'date'    => 'デート',
-                    'nomikai' => '飲み会',
-                    'lunch'   => 'ランチ',
-                    'settai'  => '接待',
-                    'joshikai'=> '女子会',
-                    'family'  => '子連れ',
+                // シーン + ジャンル をタグページにリンク
+                $nav_items = array(
+                    'ラーメン' => 'ラーメン',
+                    'デート'   => 'デート',
+                    '飲み会'   => '飲み会・宴会',
+                    'ランチ'   => 'ランチ',
+                    '接待'     => '接待・ビジネス',
+                    '女子会'   => '女子会',
+                    '子連れ'   => '家族・子連れ',
                 );
-                foreach ( $nav_scenes as $skey => $slabel ) {
-                    $sslug = KNT_SCENES[ $skey ]['slug'] ?? $skey;
-                    echo '<a href="' . esc_url( home_url( '/scene/' . $sslug . '/' ) ) . '">' . esc_html( $slabel ) . '</a>';
+                foreach ( $nav_items as $display => $tag_name ) {
+                    $tag = get_term_by( 'name', $tag_name, 'post_tag' );
+                    if ( ! $tag ) $tag = get_term_by( 'name', $display, 'post_tag' );
+                    $url = $tag ? get_tag_link( $tag->term_id ) : home_url( '/?tag=' . urlencode( $display ) );
+                    echo '<a href="' . esc_url( $url ) . '">' . esc_html( $display ) . '</a>';
                 }
             }
             ?>

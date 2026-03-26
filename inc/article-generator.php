@@ -75,6 +75,7 @@ class KNT_Article_Generator {
         update_post_meta( $post_id, '_knt_generated_at', current_time( 'mysql' ) );
 
         $this->set_featured_image( $post_id, $shops[0] );
+        $this->auto_set_tags( $post_id, array( 'genre' => $genre_name, 'area' => $area ) );
 
         return $post_id;
     }
@@ -289,6 +290,37 @@ class KNT_Article_Generator {
         set_post_thumbnail( $post_id, $attachment_id );
     }
 
+    /**
+     * 自動タグ付け（駅名・シーン・ジャンル）
+     */
+    private function auto_set_tags( $post_id, $params = array() ) {
+        $tags = array();
+
+        // 駅名タグ
+        if ( ! empty( $params['station'] ) ) {
+            $tags[] = $params['station'];
+        }
+
+        // ジャンル名タグ
+        if ( ! empty( $params['genre'] ) && $params['genre'] !== 'グルメ' ) {
+            $tags[] = $params['genre'];
+        }
+
+        // シーン名タグ
+        if ( ! empty( $params['scene_key'] ) && isset( KNT_SCENES[ $params['scene_key'] ] ) ) {
+            $tags[] = KNT_SCENES[ $params['scene_key'] ]['label'];
+        }
+
+        // エリア名タグ
+        if ( ! empty( $params['area'] ) ) {
+            $tags[] = $params['area'];
+        }
+
+        if ( ! empty( $tags ) ) {
+            wp_set_post_tags( $post_id, $tags, true );
+        }
+    }
+
     private function generate_slug( $area, $genre_name ) {
         $area_map = array(
             '渋谷' => 'shibuya', '新宿' => 'shinjuku', '池袋' => 'ikebukuro',
@@ -383,6 +415,7 @@ class KNT_Article_Generator {
         update_post_meta( $post_id, '_knt_generated_at', current_time( 'mysql' ) );
 
         $this->set_featured_image( $post_id, $shops[0] );
+        $this->auto_set_tags( $post_id, array( 'scene_key' => $scene_key, 'area' => $area ) );
         return $post_id;
     }
 
@@ -730,6 +763,12 @@ class KNT_Article_Generator {
         }
 
         $this->set_featured_image( $post_id, $shops[0] );
+        $this->auto_set_tags( $post_id, array(
+            'station'   => $station,
+            'genre'     => $genre_name,
+            'scene_key' => ( $mode === 'scene' && $scene_key ) ? $scene_key : '',
+            'area'      => $area,
+        ) );
         return $post_id;
     }
 }
