@@ -292,16 +292,16 @@
       return;
     }
     btn.classList.remove('is-disabled');
-    var section = document.querySelector('.japan-map-section');
-    var urlPattern = section ? section.getAttribute('data-area-url') : 'search';
-    var prefName = getPrefName(state.selectedPref);
-    var query = state.selectedCity || prefName;
-    if (urlPattern === 'taxonomy') {
-      var base = window.location.origin;
-      var slug = prefName.replace(/[都府県]/g, '').replace('北海道', '北海道');
-      btn.href = base + '/area/' + encodeURIComponent(slug) + '/';
+    var prefCode = normalizeCode(state.selectedPref);
+    var prefSlug = 'area-' + prefCode;
+
+    if (state.selectedCity) {
+      // 市区町村カテゴリ: area-{code}-{city-slug}
+      var citySlug = prefSlug + '-' + encodeURIComponent(state.selectedCity);
+      btn.href = '/?cat_name=' + citySlug;
     } else {
-      btn.href = '/?s=' + encodeURIComponent(query + ' グルメ');
+      // 都道府県カテゴリ: area-{code}
+      btn.href = '/?cat_name=' + prefSlug;
     }
   }
   function highlightPref(code) {

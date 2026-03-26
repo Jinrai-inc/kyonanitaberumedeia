@@ -397,6 +397,11 @@ require_once KNT_DIR . '/inc/blocks.php';
 require_once KNT_DIR . '/inc/restaurant-links.php';
 
 /**
+ * Include Area Categories setup tool
+ */
+require_once KNT_DIR . '/inc/area-categories.php';
+
+/**
  * Lazy load images - add loading attribute
  */
 function knt_lazy_load_images( $attr, $attachment, $size ) {
