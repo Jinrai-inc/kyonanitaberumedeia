@@ -392,6 +392,16 @@ function knt_customize_register( $wp_customize ) {
         'section' => 'knt_app_banner',
     ) ) );
 
+    $wp_customize->add_setting( 'knt_app_logo', array(
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ) );
+    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'knt_app_logo', array(
+        'label'   => 'アプリロゴ画像',
+        'description' => 'アプリ紹介セクション左上 + 追尾バナーに表示されるロゴ',
+        'section' => 'knt_app_banner',
+    ) ) );
+
     // ========================================
     // 記事ページ設定
     // ========================================

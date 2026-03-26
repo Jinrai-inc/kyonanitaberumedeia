@@ -120,6 +120,25 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
     </div>
 </footer>
 
+<!-- Sticky App Banner (右下追尾) -->
+<div class="sticky-app-banner" id="sticky-app-banner">
+    <button class="sticky-app-banner__close" id="sticky-app-banner-close" aria-label="閉じる">&times;</button>
+    <?php
+    $sticky_logo = get_theme_mod( 'knt_app_logo', '' );
+    if ( $sticky_logo ) :
+    ?>
+        <img src="<?php echo esc_url( $sticky_logo ); ?>" alt="" class="sticky-app-banner__icon" width="40" height="40">
+    <?php endif; ?>
+    <div class="sticky-app-banner__text">
+        <strong>今日何食べる？</strong>
+        <span>近くのお店をすぐ検索</span>
+    </div>
+    <a href="<?php echo esc_url( get_theme_mod( 'knt_header_cta_url', 'https://kyou-nani-taberu.app' ) ); ?>"
+       class="sticky-app-banner__btn" target="_blank" rel="noopener noreferrer">
+        開く
+    </a>
+</div>
+
 <!-- Back to Top -->
 <button class="back-to-top" id="back-to-top" aria-label="ページトップへ戻る">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>

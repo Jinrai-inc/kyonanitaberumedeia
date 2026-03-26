@@ -222,6 +222,14 @@ endif;
     ?>
     <section class="section">
         <div class="app-showcase fadeup">
+            <?php
+            $app_logo = get_theme_mod( 'knt_app_logo', '' );
+            if ( $app_logo ) :
+            ?>
+                <img src="<?php echo esc_url( $app_logo ); ?>" alt="アプリロゴ" class="app-showcase__logo">
+            <?php elseif ( has_custom_logo() ) : ?>
+                <div class="app-showcase__logo"><?php the_custom_logo(); ?></div>
+            <?php endif; ?>
             <div class="app-showcase__phone">
                 <?php if ( $app_screenshot ) : ?>
                     <img src="<?php echo esc_url( $app_screenshot ); ?>" alt="今日何食べる？アプリ画面" class="app-showcase__screenshot" loading="lazy">

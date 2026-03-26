@@ -85,6 +85,28 @@
   }
 
   // ========================================
+  // Sticky App Banner (右下追尾)
+  // ========================================
+  var stickyBanner = document.getElementById('sticky-app-banner');
+  var stickyClose = document.getElementById('sticky-app-banner-close');
+  var stickyDismissed = false;
+
+  if (stickyBanner) {
+    window.addEventListener('scroll', function () {
+      if (!stickyDismissed && window.pageYOffset > 600) {
+        stickyBanner.classList.add('is-visible');
+      }
+    }, { passive: true });
+
+    if (stickyClose) {
+      stickyClose.addEventListener('click', function () {
+        stickyBanner.classList.remove('is-visible');
+        stickyDismissed = true;
+      });
+    }
+  }
+
+  // ========================================
   // Back to Top Button
   // ========================================
   var backToTop = document.getElementById('back-to-top');
