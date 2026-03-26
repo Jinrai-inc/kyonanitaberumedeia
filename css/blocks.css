@@ -1048,16 +1048,18 @@
 
 /* Shop Photo (standalone) */
 .knt-shop-photo {
-    margin: 16px 0;
+    margin: 16px auto;
     border-radius: 12px;
     overflow: hidden;
+    max-width: 300px;
+    text-align: center;
 }
 .knt-shop-photo img {
     width: 100%;
+    max-width: 238px;
     height: auto;
     display: block;
-    max-height: 400px;
-    object-fit: cover;
+    margin: 0 auto;
 }
 .knt-shop-photo figcaption {
     font-size: 10px;

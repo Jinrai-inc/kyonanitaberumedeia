@@ -191,7 +191,8 @@ class KNT_Article_Generator {
     }
 
     private function block_shop_image( $shop ) {
-        $photo = $shop['photo_mobile'] ?: ( $shop['photo_l'] ?: $shop['photo_m'] );
+        // photo_l(238px)を使用。引き伸ばさずネイティブサイズで表示
+        $photo = $shop['photo_l'] ?: ( $shop['photo_m'] ?: $shop['photo_mobile'] );
         if ( ! $photo ) return '';
 
         return "<!-- wp:html -->\n"
