@@ -237,4 +237,101 @@
 
         processNext();
     });
+
+    // ========================================
+    // 駅一括生成
+    // ========================================
+    $('#knt-bulk-station-btn').on('click', function() {
+        var cityId = $('#knt-area-city').val();
+        var prefId = $('#knt-area-pref').val();
+        if (!cityId) {
+            alert('市区町村を選択してください。');
+            return;
+        }
+        if (!STATION_DATA[cityId] || STATION_DATA[cityId].length === 0) {
+            alert('この市区町村には駅データが登録されていません。');
+            return;
+        }
+
+        var stations = STATION_DATA[cityId];
+        var mode = $('#knt-mode').val();
+        var genreName = $('#knt-genre-keyword').val() || 'グルメ';
+        var genreCode = $('#knt-genre').val() || '';
+        var sceneKey = $('#knt-scene').val() || '';
+        var count = $('#knt-count').val() || 5;
+        var cityName = $('#knt-area-city').find(':selected').data('name') || '';
+        var modeLabel = mode === 'scene' ? ('シーン: ' + $('#knt-scene option:selected').text()) : ('ジャンル: ' + genreName);
+
+        if (!confirm(stations.length + '駅で記事を一括生成します。\n\n' + cityName + ' の駅: ' + stations.map(function(s){ return s.name; }).join('、') + '\n' + modeLabel + '\n\nよろしいですか？')) {
+            return;
+        }
+
+        var $btn = $(this);
+        $btn.prop('disabled', true);
+        $('#knt-generate-btn').prop('disabled', true);
+        $('#knt-bulk-btn').prop('disabled', true);
+        $('#knt-generator-result').hide();
+        $('#knt-generator-error').hide();
+
+        var $bulkLog = $('#knt-bulk-log');
+        if (!$bulkLog.length) {
+            $bulkLog = $('<div id="knt-bulk-log" style="margin-top:20px;"></div>');
+            $('#knt-generator-form').after($bulkLog);
+        }
+        $bulkLog.html('<h3>駅別一括生成中... (0/' + stations.length + ')</h3><div id="knt-bulk-items"></div>');
+
+        var completed = 0;
+        var errors = 0;
+        var queue = stations.slice();
+
+        function processNextStation() {
+            if (queue.length === 0) {
+                $bulkLog.find('h3').text('駅別一括生成完了！ (' + (completed - errors) + '件成功 / ' + errors + '件エラー)');
+                $btn.prop('disabled', false);
+                $('#knt-generate-btn').prop('disabled', false);
+                $('#knt-bulk-btn').prop('disabled', false);
+                return;
+            }
+
+            var st = queue.shift();
+            completed++;
+            $bulkLog.find('h3').text('駅別一括生成中... (' + completed + '/' + stations.length + ') - ' + st.name);
+
+            $.ajax({
+                url: kntGenerator.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'knt_generate_article',
+                    nonce: kntGenerator.nonce,
+                    area: cityName,
+                    mode: mode,
+                    count: count,
+                    genre_name: genreName,
+                    genre_code: genreCode,
+                    scene: sceneKey,
+                    station_name: st.name,
+                    station_lat: st.lat,
+                    station_lng: st.lng,
+                    category_1: prefId,
+                    category_2: cityId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#knt-bulk-items').prepend('<p style="color:green;">✅ ' + st.name + ' → <a href="' + response.data.edit_url + '" target="_blank">' + (response.data.title || 'ID:' + response.data.post_id) + '</a></p>');
+                    } else {
+                        errors++;
+                        $('#knt-bulk-items').prepend('<p style="color:red;">❌ ' + st.name + ': ' + response.data + '</p>');
+                    }
+                    setTimeout(processNextStation, 2000);
+                },
+                error: function() {
+                    errors++;
+                    $('#knt-bulk-items').prepend('<p style="color:red;">❌ ' + st.name + ': 通信エラー</p>');
+                    setTimeout(processNextStation, 2000);
+                }
+            });
+        }
+
+        processNextStation();
+    });
 })(jQuery);

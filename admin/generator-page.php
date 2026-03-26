@@ -249,7 +249,10 @@ function knt_render_generator_page() {
                     記事を生成する
                 </button>
                 <button type="button" id="knt-bulk-btn" class="button button-secondary button-hero" style="margin-left: 12px;">
-                    選択中の都道府県の全市区町村で一括生成
+                    全市区町村で一括生成
+                </button>
+                <button type="button" id="knt-bulk-station-btn" class="button button-secondary button-hero" style="margin-left: 12px;">
+                    選択中の市区町村の全駅で一括生成
                 </button>
             </p>
         </form>
@@ -347,6 +350,8 @@ function knt_ajax_generate_article() {
         'post_id'     => $result,
         'edit_url'    => get_edit_post_link( $result, '' ),
         'preview_url' => get_preview_post_link( $result ),
+        'title'       => get_the_title( $result ),
+        'area'        => $area,
     ) );
 }
 add_action( 'wp_ajax_knt_generate_article', 'knt_ajax_generate_article' );
