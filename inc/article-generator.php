@@ -135,6 +135,7 @@ class KNT_Article_Generator {
                     'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left'
                 );
             }
+            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
 
             if ( $i < count( $shops ) - 1 ) {
                 $blocks[] = $this->block_separator();
@@ -492,6 +493,7 @@ class KNT_Article_Generator {
             if ( $shop['coupon_url'] ) {
                 $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
             }
+            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
 
             if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
         }
@@ -709,6 +711,7 @@ class KNT_Article_Generator {
             if ( $shop['coupon_url'] ) {
                 $blocks[] = $this->block_button( 'クーポンを見る', $shop['coupon_url'], 'secondary', 'small', true, 'left' );
             }
+            $blocks[] = $this->block_button( 'Google Mapsで見る', $shop['gmap_url'], 'secondary', 'small', true, 'left' );
 
             if ( $i < count( $shops ) - 1 ) $blocks[] = $this->block_separator();
         }
