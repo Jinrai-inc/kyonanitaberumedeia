@@ -156,6 +156,7 @@ class KNT_Article_Generator {
             count( $shops )
         ) );
 
+        $blocks[] = $this->block_heading( $area . 'の' . $genre_name . 'に関するよくある質問' );
         $blocks[] = $this->block_faq( $area, $genre_name );
 
         $blocks[] = $this->block_paragraph(
@@ -984,8 +985,13 @@ class KNT_Article_Generator {
         // まとめ
         $blocks[] = $this->block_heading( 'まとめ｜' . $area . 'で美味しい' . $genre_name . 'を見つけよう' );
         $blocks[] = $this->block_paragraph( sprintf( '今回ご紹介した%d店舗は、どれも人気の実力店ばかりです。気になるお店があればぜひ予約してみてください。', count( $shops ) ) );
-        $blocks[] = $this->block_summary_table( $shops );
+        // FAQ（まとめの上）
+        $faq_title = $area . 'の' . $genre_name . 'に関するよくある質問';
+        $blocks[] = $this->block_heading( $faq_title );
         $blocks[] = $this->block_faq( $area, $genre_name );
+
+        // まとめ比較テーブル
+        $blocks[] = $this->block_summary_table( $shops );
         $blocks[] = $this->block_paragraph( '<small>店舗情報・画像提供：<a href="https://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">ホットペッパーグルメ Webサービス</a></small>' );
 
         $content = implode( "\n\n", $blocks );
