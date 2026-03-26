@@ -38,7 +38,7 @@ function knt_generator_admin_assets( $hook ) {
     wp_enqueue_script( 'knt-generator', KNT_URI . '/js/admin-generator.js', array( 'jquery' ), KNT_VERSION, true );
     wp_localize_script( 'knt-generator', 'kntGenerator', array(
         'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-        'stationData' => KNT_STATION_DATA,
+        'stationData' => knt_get_all_station_data(),
         'nonce'   => wp_create_nonce( 'knt_generate_article' ),
         'scenes'  => knt_scenes_for_js(),
     ) );
