@@ -2069,6 +2069,105 @@ h4 {
 }
 
 /* ========================================
+   Content Slider (Hero Carousel)
+   ======================================== */
+.content-slider {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+}
+.content-slider__track {
+  display: flex;
+  transition: transform 0.5s ease;
+  will-change: transform;
+}
+.content-slider__slide {
+  position: relative;
+  min-width: 33.3334%;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+}
+.content-slider__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.content-slider__img--placeholder {
+  background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-main));
+}
+.content-slider__slide:hover .content-slider__img {
+  transform: scale(1.04);
+}
+.content-slider__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 60%);
+}
+.content-slider__cat {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--color-accent);
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+.content-slider__title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.content-slider__dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+.content-slider__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-text-lightest);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  padding: 0;
+}
+.content-slider__dot.is-active {
+  background: var(--color-accent);
+}
+
+@media (max-width: 767px) {
+  .content-slider__slide {
+    min-width: 80%;
+  }
+  .content-slider__title {
+    font-size: 0.85rem;
+  }
+  .content-slider__overlay {
+    padding: 14px;
+  }
+}
+
+/* ========================================
    Restaurant Card (auto-inserted)
    ======================================== */
 .restaurant-card {

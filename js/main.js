@@ -301,6 +301,73 @@
   });
 
   // ========================================
+  // Content Slider (auto-play carousel)
+  // ========================================
+  var sliderTrack = document.getElementById('slider-track');
+  var sliderDotsWrap = document.getElementById('slider-dots');
+  if (sliderTrack && sliderDotsWrap) {
+    var slides = sliderTrack.querySelectorAll('.content-slider__slide');
+    var totalSlides = slides.length;
+    var slidesPerView = window.innerWidth <= 767 ? 1 : 3;
+    var maxIndex = Math.max(0, totalSlides - slidesPerView);
+    var sliderIndex = 0;
+    var sliderTimer = null;
+
+    // ドット生成
+    for (var d = 0; d <= maxIndex; d++) {
+      var dot = document.createElement('button');
+      dot.className = 'content-slider__dot' + (d === 0 ? ' is-active' : '');
+      dot.setAttribute('aria-label', 'スライド ' + (d + 1));
+      dot.setAttribute('data-idx', d);
+      sliderDotsWrap.appendChild(dot);
+    }
+
+    function goToSlide(idx) {
+      sliderIndex = Math.max(0, Math.min(idx, maxIndex));
+      var pct = (sliderIndex * (100 / slidesPerView));
+      sliderTrack.style.transform = 'translateX(-' + pct + '%)';
+      var dots = sliderDotsWrap.querySelectorAll('.content-slider__dot');
+      dots.forEach(function (dt, i) {
+        dt.classList.toggle('is-active', i === sliderIndex);
+      });
+    }
+
+    // ドットクリック
+    sliderDotsWrap.addEventListener('click', function (e) {
+      var dot = e.target.closest('.content-slider__dot');
+      if (dot) {
+        goToSlide(parseInt(dot.getAttribute('data-idx'), 10));
+        resetAutoPlay();
+      }
+    });
+
+    // スワイプ対応
+    var startX = 0;
+    sliderTrack.addEventListener('touchstart', function (e) {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+    sliderTrack.addEventListener('touchend', function (e) {
+      var diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) {
+        goToSlide(sliderIndex + (diff > 0 ? 1 : -1));
+        resetAutoPlay();
+      }
+    });
+
+    // 自動再生
+    function autoPlay() {
+      sliderTimer = setInterval(function () {
+        goToSlide(sliderIndex >= maxIndex ? 0 : sliderIndex + 1);
+      }, 4000);
+    }
+    function resetAutoPlay() {
+      clearInterval(sliderTimer);
+      autoPlay();
+    }
+    autoPlay();
+  }
+
+  // ========================================
   // Load More (AJAX Pagination)
   // ========================================
   var loadMoreBtn = document.getElementById('load-more-btn');

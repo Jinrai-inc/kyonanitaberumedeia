@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'KNT_VERSION', '1.0.4' );
+define( 'KNT_VERSION', '1.0.5' );
 define( 'KNT_DIR', get_template_directory() );
 define( 'KNT_URI', get_template_directory_uri() );
 
@@ -198,7 +198,6 @@ function knt_rest_cors_headers( $value ) {
         'https://kyou-nani-taberu.app',
         'https://www.kyou-nani-taberu.app',
         'https://media.kyou-nani-taberu.app',
-    );
     );
 
     $origin = get_http_origin();
