@@ -32,8 +32,14 @@ endif;
     // ========================================
     if ( get_theme_mod( 'knt_popular_show', true ) ) :
         $popular_title = get_theme_mod( 'knt_popular_title', '人気記事' );
-        $popular_count = get_theme_mod( 'knt_popular_count', 5 );
-        $popular_query = knt_get_popular_posts( $popular_count );
+        // 人気記事: 最新6件（PV順がなければ最新順）
+        $popular_query = new WP_Query( array(
+            'posts_per_page' => 6,
+            'post_type'      => 'post',
+            'post_status'    => 'publish',
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ) );
 
         if ( $popular_query->have_posts() ) :
     ?>
@@ -43,37 +49,11 @@ endif;
             <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' ) ); ?>" class="section__more">一覧 →</a>
         </div>
 
-        <div class="hscroll">
+        <div class="grid grid--3">
             <?php while ( $popular_query->have_posts() ) : $popular_query->the_post(); ?>
                 <article class="card fadeup">
                     <?php get_template_part( 'template-parts/card' ); ?>
                 </article>
-            <?php endwhile; ?>
-        </div>
-
-        <div class="ranking-compact fadeup" style="margin-top: 20px;">
-            <?php
-            $popular_query->rewind_posts();
-            $rank = 0;
-            while ( $popular_query->have_posts() ) : $popular_query->the_post();
-                $rank++;
-            ?>
-            <div class="ranking-item">
-                <span class="ranking-item__number ranking-item__number--<?php echo $rank; ?>"><?php echo $rank; ?></span>
-                <?php if ( has_post_thumbnail() ) : ?>
-                    <div class="ranking-item__thumb">
-                        <?php the_post_thumbnail( 'knt-ranking' ); ?>
-                    </div>
-                <?php endif; ?>
-                <div class="ranking-item__content">
-                    <h3 class="ranking-item__title">
-                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                    </h3>
-                    <div class="ranking-item__meta">
-                        <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'Y.m.d' ) ); ?></time>
-                    </div>
-                </div>
-            </div>
             <?php endwhile; ?>
         </div>
     </section>
@@ -141,11 +121,10 @@ endif;
     // ========================================
     // 4. 新着記事
     // ========================================
-    $latest_count = get_theme_mod( 'knt_latest_count', 6 );
     $latest_title = get_theme_mod( 'knt_latest_title', '新着記事' );
 
     $latest_query = new WP_Query( array(
-        'posts_per_page' => $latest_count,
+        'posts_per_page' => 9,
         'post_type'      => 'post',
         'post_status'    => 'publish',
     ) );
@@ -157,7 +136,7 @@ endif;
             <h2 class="section__title"><?php echo esc_html( $latest_title ); ?></h2>
             <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' ) ); ?>" class="section__more">すべて見る →</a>
         </div>
-        <div class="hscroll">
+        <div class="grid grid--3">
             <?php while ( $latest_query->have_posts() ) : $latest_query->the_post(); ?>
                 <article class="card fadeup">
                     <?php get_template_part( 'template-parts/card' ); ?>
