@@ -114,7 +114,10 @@ get_header();
         </noscript>
     <?php else : ?>
         <div class="text-center" style="padding: 80px 0;">
-            <p style="color: var(--color-text-light); font-size: 18px;">記事が見つかりませんでした。</p>
+            <p style="font-size: 48px; margin-bottom: 16px;">&#128531;</p>
+            <p style="color: var(--color-text-main); font-size: 18px; font-weight: 700; margin-bottom: 8px;">該当の記事がありません</p>
+            <p style="color: var(--color-text-light); font-size: 14px; margin-bottom: 24px;">このエリアの記事はまだ公開されていません。<br>他のエリアを探してみてください。</p>
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn--primary">トップページへ戻る</a>
         </div>
     <?php endif; ?>
 

@@ -294,14 +294,13 @@
     btn.classList.remove('is-disabled');
     var prefCode = normalizeCode(state.selectedPref);
     var prefSlug = 'area-' + prefCode;
+    var base = window.location.origin;
 
     if (state.selectedCity) {
-      // 市区町村カテゴリ: area-{code}-{city-slug}
       var citySlug = prefSlug + '-' + encodeURIComponent(state.selectedCity);
-      btn.href = '/?cat_name=' + citySlug;
+      btn.href = base + '/?category_name=' + encodeURIComponent(citySlug);
     } else {
-      // 都道府県カテゴリ: area-{code}
-      btn.href = '/?cat_name=' + prefSlug;
+      btn.href = base + '/?category_name=' + encodeURIComponent(prefSlug);
     }
   }
   function highlightPref(code) {
@@ -408,8 +407,11 @@
         var code = prefNode.getAttribute('data-code');
         console.log('[KNT Map] prefecture clicked:', code);
         selectPref(code);
-        return;
       }
+    });
+
+    // 市区町村チップはwrapperの外（#city-panel内）にあるため、documentでリッスン
+    document.addEventListener('click', function (e) {
       var cityTag = e.target.closest('.japan-map-city-tag');
       if (cityTag) {
         selectCity(cityTag.getAttribute('data-city'));

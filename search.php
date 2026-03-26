@@ -54,12 +54,10 @@ get_header();
         </div>
     <?php else : ?>
         <div class="text-center" style="padding: 60px 0;">
-            <p style="color: var(--color-text-light); font-size: 18px; margin-bottom: 16px;">
-                該当する記事が見つかりませんでした。
-            </p>
-            <p style="color: var(--color-text-light); font-size: 14px;">
-                別のキーワードで再度お試しください。
-            </p>
+            <p style="font-size: 48px; margin-bottom: 16px;">&#128531;</p>
+            <p style="color: var(--color-text-main); font-size: 18px; font-weight: 700; margin-bottom: 8px;">該当の記事がありません</p>
+            <p style="color: var(--color-text-light); font-size: 14px; margin-bottom: 24px;">別のキーワードで再度お試しください。</p>
+            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="btn btn--primary">トップページへ戻る</a>
         </div>
     <?php endif; ?>
 
