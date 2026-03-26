@@ -25,23 +25,75 @@ get_header();
     <div class="cat-filter">
         <?php
         $current_cat_id = is_category() ? get_queried_object_id() : 0;
-        $all_active = ! is_category() ? ' cat-filter__tab--active' : '';
-        $blog_url = get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' );
-        ?>
-        <a href="<?php echo esc_url( $blog_url ); ?>" class="cat-filter__tab<?php echo $all_active; ?>">すべて</a>
-        <?php
-        $categories = get_categories( array(
-            'orderby'    => 'count',
-            'order'      => 'DESC',
-            'hide_empty' => true,
-        ) );
-        foreach ( $categories as $cat ) :
-            $is_active = ( $current_cat_id === $cat->term_id ) ? ' cat-filter__tab--active' : '';
-        ?>
-            <a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="cat-filter__tab<?php echo $is_active; ?>">
-                <?php echo esc_html( $cat->name ); ?><span class="cat-filter__count"><?php echo esc_html( $cat->count ); ?></span>
+        $current_cat = $current_cat_id ? get_category( $current_cat_id ) : null;
+
+        // 現在のカテゴリが都道府県（area-XX、親なし）か市区町村（親あり）かを判定
+        $is_area_cat = false;
+        $parent_pref_cat = null;
+        $filter_cats = array();
+
+        if ( $current_cat ) {
+            if ( $current_cat->parent === 0 && preg_match( '/^area-\d{2}$/', $current_cat->slug ) ) {
+                // 都道府県カテゴリを閲覧中 → その子カテゴリ（市区町村）を表示
+                $is_area_cat = true;
+                $parent_pref_cat = $current_cat;
+            } elseif ( $current_cat->parent > 0 ) {
+                $parent = get_category( $current_cat->parent );
+                if ( $parent && preg_match( '/^area-\d{2}$/', $parent->slug ) ) {
+                    // 市区町村カテゴリを閲覧中 → 同じ都道府県の他の市区町村を表示
+                    $is_area_cat = true;
+                    $parent_pref_cat = $parent;
+                }
+            }
+        }
+
+        if ( $is_area_cat && $parent_pref_cat ) {
+            // 都道府県リンク（親に戻る）
+            $pref_active = ( $current_cat_id === $parent_pref_cat->term_id ) ? ' cat-filter__tab--active' : '';
+            ?>
+            <a href="<?php echo esc_url( get_category_link( $parent_pref_cat->term_id ) ); ?>" class="cat-filter__tab<?php echo $pref_active; ?>">
+                <?php echo esc_html( $parent_pref_cat->name ); ?>（すべて）<span class="cat-filter__count"><?php echo esc_html( $parent_pref_cat->count ); ?></span>
             </a>
-        <?php endforeach; ?>
+            <?php
+            // 子カテゴリ（市区町村）のみ表示
+            $child_cats = get_categories( array(
+                'parent'     => $parent_pref_cat->term_id,
+                'orderby'    => 'count',
+                'order'      => 'DESC',
+                'hide_empty' => true,
+            ) );
+            foreach ( $child_cats as $cat ) :
+                $is_active = ( $current_cat_id === $cat->term_id ) ? ' cat-filter__tab--active' : '';
+            ?>
+                <a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="cat-filter__tab<?php echo $is_active; ?>">
+                    <?php echo esc_html( $cat->name ); ?><span class="cat-filter__count"><?php echo esc_html( $cat->count ); ?></span>
+                </a>
+            <?php endforeach;
+        } else {
+            // 通常表示：都道府県カテゴリのみ表示（市区町村は出さない）
+            $all_active = ! is_category() ? ' cat-filter__tab--active' : '';
+            $blog_url = get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' );
+            ?>
+            <a href="<?php echo esc_url( $blog_url ); ?>" class="cat-filter__tab<?php echo $all_active; ?>">すべて</a>
+            <?php
+            $top_cats = get_categories( array(
+                'parent'     => 0,
+                'orderby'    => 'count',
+                'order'      => 'DESC',
+                'hide_empty' => true,
+                'number'     => 15,
+            ) );
+            foreach ( $top_cats as $cat ) :
+                // area-XX の都道府県カテゴリのみ表示
+                if ( ! preg_match( '/^area-\d{2}$/', $cat->slug ) ) continue;
+                $is_active = ( $current_cat_id === $cat->term_id ) ? ' cat-filter__tab--active' : '';
+            ?>
+                <a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="cat-filter__tab<?php echo $is_active; ?>">
+                    <?php echo esc_html( $cat->name ); ?><span class="cat-filter__count"><?php echo esc_html( $cat->count ); ?></span>
+                </a>
+            <?php endforeach;
+        }
+        ?>
     </div>
 
     <header class="archive-header">
