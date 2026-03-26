@@ -38,21 +38,6 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
                 </p>
             </div>
 
-            <!-- カテゴリ -->
-            <div>
-                <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>カテゴリ</h4>
-                <ul class="footer__links">
-                    <?php
-                    $cats = get_categories( array( 'hide_empty' => false, 'number' => 6, 'parent' => 0 ) );
-                    foreach ( $cats as $cat ) :
-                    ?>
-                        <li><a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>"
-                            <?php if ( $is_light ) : ?>style="<?php echo $text_color; ?>"<?php endif; ?>
-                        ><?php echo esc_html( $cat->name ); ?></a></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-
             <!-- 運営会社・リンク -->
             <div>
                 <h4 class="footer__heading" <?php if ( $is_light ) : ?>style="<?php echo $heading_color; ?>"<?php endif; ?>>運営会社</h4>
