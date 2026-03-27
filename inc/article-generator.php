@@ -943,10 +943,9 @@ class KNT_Article_Generator {
         $search_args = array( 'count' => min( $count * 3, 60 ), 'order' => 4 );
 
         if ( $station && $lat && $lng ) {
-            // 駅指定 → 緯度経度ベース検索
             $search_args['lat']   = floatval( $lat );
             $search_args['lng']   = floatval( $lng );
-            $search_args['range'] = 4; // 2000m（1000mだと少なすぎる場合がある）
+            $search_args['range'] = 5; // 3000m（広めに検索）
 
             if ( $mode === 'genre' && $genre_name && $genre_name !== 'グルメ' ) {
                 $search_args['keyword'] = $genre_name;
@@ -955,34 +954,61 @@ class KNT_Article_Generator {
                 $search_args['genre'] = $genre_code;
             }
         } else {
-            // キーワード検索（rangeは不要）
-            $search_args['keyword'] = $area . ' ' . $genre_name;
+            // キーワード検索（genre_codeがあればジャンル絞りのみ、keywordはエリア名のみ）
             if ( $genre_code ) {
+                $search_args['keyword'] = $area;
                 $search_args['genre'] = $genre_code;
+            } else {
+                $search_args['keyword'] = $area . ' ' . $genre_name;
             }
         }
 
         // シーンの場合は追加条件
         if ( $mode === 'scene' && $scene_key && isset( KNT_SCENES[ $scene_key ] ) ) {
             $scene = KNT_SCENES[ $scene_key ];
-            // キーワードはシーンラベルのみ（複数キーワードだとAND検索で0件になる）
             if ( ! $station ) {
-                $search_args['keyword'] = $area . ' ' . $scene['label'];
-            } else {
-                $search_args['keyword'] = $scene['label'];
+                $search_args['keyword'] = $area;
             }
-            // 有効なAPIパラメータのみ追加
-            foreach ( $scene['api_filters'] as $k => $v ) {
-                $search_args[ $k ] = $v;
-            }
-            // ジャンルが未指定の場合、allowed_genresの最初のジャンルで絞り込み
-            if ( empty( $search_args['genre'] ) && ! empty( $scene['allowed_genres'] ) ) {
+            // ジャンルで絞り込み
+            if ( ! empty( $scene['allowed_genres'] ) ) {
                 $search_args['genre'] = $scene['allowed_genres'][0];
+            }
+            // 設備フィルターは結果が少なくなるため除外（フィルタリングで対応）
+        }
+
+        // API検索（段階的フォールバック）
+        $shops = $this->api->search_shops( $search_args );
+
+        // フォールバック1: 結果が少なすぎる場合、genre絞りを外す
+        if ( is_wp_error( $shops ) || ( is_array( $shops ) && count( $shops ) < $count ) ) {
+            $fallback_args = $search_args;
+            unset( $fallback_args['genre'] );
+            $fallback_args['keyword'] = $area . ' ' . $genre_name;
+            $fb1 = $this->api->search_shops( $fallback_args );
+            if ( ! is_wp_error( $fb1 ) && is_array( $fb1 ) ) {
+                $existing_ids = is_array( $shops ) ? array_column( $shops, 'id' ) : array();
+                foreach ( $fb1 as $s ) {
+                    if ( ! in_array( $s['id'], $existing_ids ) ) {
+                        $shops[] = $s;
+                    }
+                }
             }
         }
 
-        // API検索
-        $shops = $this->api->search_shops( $search_args );
+        // フォールバック2: まだ少ない場合、エリア名のみで検索
+        if ( is_array( $shops ) && count( $shops ) < $count ) {
+            $fallback_args2 = array( 'keyword' => $area, 'count' => min( $count * 2, 40 ), 'order' => 4 );
+            $fb2 = $this->api->search_shops( $fallback_args2 );
+            if ( ! is_wp_error( $fb2 ) && is_array( $fb2 ) ) {
+                $existing_ids = array_column( $shops, 'id' );
+                foreach ( $fb2 as $s ) {
+                    if ( ! in_array( $s['id'], $existing_ids ) ) {
+                        $shops[] = $s;
+                    }
+                }
+            }
+        }
+
         if ( is_wp_error( $shops ) ) return $shops;
 
         // シーンフィルタリング

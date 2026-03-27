@@ -2956,3 +2956,39 @@ h4 {
   .food-quiz__heading { font-size: 1.2rem; }
   .food-quiz__option { padding: 12px 14px; font-size: 0.88rem; }
 }
+
+/* ========================================
+   Top Page Section Backgrounds
+   ======================================== */
+.section {
+  padding: 40px 0;
+}
+.section:nth-child(odd) {
+  background: transparent;
+}
+.section:nth-child(even) {
+  background: rgba(255,255,255,0.5);
+  border-radius: var(--radius-lg);
+  padding: 40px 24px;
+  margin-bottom: 8px;
+}
+
+/* 日本地図セクション */
+.japan-map-section {
+  background: linear-gradient(180deg, #FFF9F0 0%, var(--color-bg-main) 100%);
+}
+
+/* 食べたいもの診断 */
+.food-quiz {
+  background: linear-gradient(135deg, #FFF9F0 0%, #FAEAE6 100%);
+}
+
+/* アプリ紹介 */
+.app-showcase {
+  background: linear-gradient(135deg, #FFF5EE 0%, #FAE8E0 100%);
+}
+
+/* フロントページ全体のセクション間隔 */
+.front-page-container > .section + .section {
+  margin-top: 0;
+}

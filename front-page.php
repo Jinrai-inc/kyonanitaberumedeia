@@ -24,7 +24,7 @@ if ( get_theme_mod( 'knt_japan_map_show', true ) ) :
 endif;
 ?>
 
-<div class="container">
+<div class="container front-page-container">
 
     <?php
     // ========================================
