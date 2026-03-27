@@ -49,7 +49,7 @@ class KNT_Article_Generator {
     public function generate( $area, $genre_name, $genre_code = '', $count = 5, $category_ids = array() ) {
         $search_args = array(
             'keyword' => $area . ' ' . $genre_name,
-            'count'   => min( $count * 2, 20 ),
+            'count'   => min( $count * 2, 50 ),
             'order'   => 4,
         );
         if ( $genre_code ) {
@@ -676,7 +676,7 @@ class KNT_Article_Generator {
 
         $search_args = array(
             'keyword' => $area . ' ' . $scene['label'],
-            'count'   => min( $count * 3, 30 ),
+            'count'   => min( $count * 3, 60 ),
             'order'   => 4,
         );
         // 有効なAPIフィルターのみ追加
@@ -910,7 +910,7 @@ class KNT_Article_Generator {
         }
 
         // API検索パラメータ構築（多めに取得してフィルタリング）
-        $search_args = array( 'count' => min( $count * 3, 30 ), 'order' => 4 );
+        $search_args = array( 'count' => min( $count * 3, 60 ), 'order' => 4 );
 
         if ( $station && $lat && $lng ) {
             // 駅指定 → 緯度経度ベース検索

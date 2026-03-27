@@ -231,8 +231,10 @@ function knt_render_generator_page() {
                     <th><label for="knt-count">表示件数</label></th>
                     <td>
                         <select id="knt-count" name="count">
-                            <option value="5" selected>5件</option>
-                            <option value="10">10件</option>
+                            <option value="5">5件</option>
+                            <option value="10" selected>10件</option>
+                            <option value="15">15件</option>
+                            <option value="20">20件</option>
                         </select>
                     </td>
                 </tr>
