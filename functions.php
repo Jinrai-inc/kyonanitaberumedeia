@@ -189,6 +189,13 @@ function knt_adjust_query( $query ) {
     if ( ! is_admin() && $query->is_main_query() ) {
         if ( $query->is_search() ) {
             $query->set( 'posts_per_page', 12 );
+            // エリアフィルター対応
+            if ( ! empty( $_GET['area_cat'] ) ) {
+                $area_cat_id = intval( $_GET['area_cat'] );
+                if ( $area_cat_id > 0 ) {
+                    $query->set( 'cat', $area_cat_id );
+                }
+            }
         }
         if ( $query->is_category() || $query->is_tag() ) {
             $query->set( 'posts_per_page', 12 );

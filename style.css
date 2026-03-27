@@ -3021,3 +3021,32 @@ body > .skiptranslate { display: none !important; }
 @media (max-width: 767px) {
   .header-translate { display: none; }
 }
+
+/* Search Area Filter */
+.search-area-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.search-area-filter__btn {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text-sub);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.search-area-filter__btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.search-area-filter__btn.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff !important;
+}
