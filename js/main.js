@@ -379,4 +379,96 @@
       });
     });
   }
+  // ========================================
+  // Food Quiz (食べたいもの診断)
+  // ========================================
+  var quizSteps = document.getElementById('quiz-steps');
+  if (quizSteps) {
+    var answers = {};
+    var totalSteps = quizSteps.querySelectorAll('.food-quiz__step').length;
+    var progressBar = document.getElementById('quiz-progress');
+
+    // 結果マッピング
+    var QUIZ_RESULTS = {
+      // mood × who → genre + search keyword + description
+      'gatturi_solo':     { genre: 'ラーメン', search: 'ラーメン', desc: '一人でサクッと食べられるラーメンがぴったり。こだわりの一杯を見つけよう！' },
+      'gatturi_date':     { genre: '焼肉', search: '焼肉', desc: '二人で楽しむ焼肉デートはいかが？おしゃれな焼肉店を厳選。' },
+      'gatturi_family':   { genre: '焼肉', search: '焼肉', desc: '家族みんなで楽しめる焼肉店。キッズメニューありのお店も。' },
+      'gatturi_friends':  { genre: '焼肉・食べ放題', search: '焼肉', desc: '友達とがっつり焼肉！食べ放題や飲み放題付きのお店がおすすめ。' },
+      'gatturi_business': { genre: '和食', search: '和食', desc: 'しっかり食べられる和食。接待にも使える落ち着いたお店を厳選。' },
+      'assari_solo':      { genre: 'そば・うどん', search: '和食', desc: 'あっさりしたい気分なら、こだわりの蕎麦やうどんはいかが？' },
+      'assari_date':      { genre: 'イタリアン', search: 'イタリアン', desc: 'あっさり派のデートにはイタリアンがぴったり。パスタやサラダが充実。' },
+      'assari_family':    { genre: '和食', search: '和食', desc: '家族で落ち着いて食べられる和食。座敷席があるお店がおすすめ。' },
+      'assari_friends':   { genre: 'カフェ', search: 'カフェ', desc: '友達とゆっくりカフェタイム。軽食も充実のおしゃれカフェを厳選。' },
+      'assari_business':  { genre: '和食', search: '和食', desc: 'あっさりした和食ランチ。ビジネスシーンにも使えるお店を。' },
+      'nomitai_solo':     { genre: '居酒屋', search: '居酒屋', desc: 'カウンターで一人飲み。気軽に入れる居酒屋を見つけよう。' },
+      'nomitai_date':     { genre: 'ダイニングバー', search: 'デート', desc: '二人で楽しむおしゃれなバー。雰囲気の良いお店を厳選。' },
+      'nomitai_family':   { genre: '居酒屋', search: '居酒屋', desc: '家族で楽しめるファミリー居酒屋。お子様メニューありのお店も。' },
+      'nomitai_friends':  { genre: '居酒屋・飲み放題', search: '居酒屋', desc: '飲み放題付きコースで盛り上がろう！幹事さん必見のお店を厳選。' },
+      'nomitai_business': { genre: '個室居酒屋', search: '接待', desc: '接待にも使える個室居酒屋。落ち着いた雰囲気のお店を。' },
+      'mattari_solo':     { genre: 'カフェ', search: 'カフェ', desc: '一人でまったりできるカフェ。Wi-Fiや電源ありのお店も。' },
+      'mattari_date':     { genre: 'カフェ', search: 'カフェ', desc: 'デートにぴったりのおしゃれカフェ。スイーツが自慢のお店を厳選。' },
+      'mattari_family':   { genre: 'カフェ', search: 'カフェ', desc: '家族でゆっくりできるカフェ。キッズスペースありのお店も。' },
+      'mattari_friends':  { genre: 'カフェ', search: 'カフェ', desc: '友達とまったりおしゃべり。長居OKのカフェを集めました。' },
+      'mattari_business': { genre: 'カフェ', search: 'カフェ', desc: '打ち合わせにも使えるカフェ。静かで落ち着いた空間を。' },
+      'waiwai_solo':      { genre: 'ラーメン', search: 'ラーメン', desc: '活気あるラーメン店でエネルギーチャージ！' },
+      'waiwai_date':      { genre: 'イタリアン', search: 'イタリアン', desc: '二人で楽しむカジュアルイタリアン。ピザやパスタをシェアして。' },
+      'waiwai_family':    { genre: 'ファミリーレストラン', search: '子連れ', desc: '家族みんなで楽しめるレストラン。メニュー豊富なお店を厳選。' },
+      'waiwai_friends':   { genre: '居酒屋・飲み放題', search: '居酒屋', desc: 'みんなで盛り上がれる居酒屋！飲み放題付きコースがおすすめ。' },
+      'waiwai_business':  { genre: '居酒屋', search: '飲み会', desc: '会社の飲み会にぴったり！大人数対応の居酒屋を厳選。' },
+    };
+
+    quizSteps.addEventListener('click', function(e) {
+      var btn = e.target.closest('.food-quiz__option');
+      if (!btn) return;
+
+      var key = btn.getAttribute('data-key');
+      var value = btn.getAttribute('data-value');
+      answers[key] = value;
+
+      var currentStep = btn.closest('.food-quiz__step');
+      var stepNum = parseInt(currentStep.getAttribute('data-step'));
+
+      // 進捗バー更新
+      progressBar.style.width = ((stepNum / totalSteps) * 100) + '%';
+
+      if (stepNum < totalSteps) {
+        // 次のステップへ
+        currentStep.classList.remove('is-active');
+        var next = quizSteps.querySelector('[data-step="' + (stepNum + 1) + '"]');
+        if (next) next.classList.add('is-active');
+      } else {
+        // 結果表示
+        showQuizResult();
+      }
+    });
+
+    function showQuizResult() {
+      var resultKey = answers.mood + '_' + answers.who;
+      var result = QUIZ_RESULTS[resultKey] || { genre: 'グルメ', search: 'グルメ', desc: 'あなたにぴったりのお店を探してみましょう！' };
+
+      document.getElementById('quiz-result-genre').textContent = result.genre;
+      document.getElementById('quiz-result-desc').textContent = result.desc;
+
+      var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
+      document.getElementById('quiz-result-link').href = base + '/?s=' + encodeURIComponent(result.search);
+
+      quizSteps.style.display = 'none';
+      document.getElementById('quiz-result').style.display = 'block';
+      progressBar.style.width = '100%';
+    }
+
+    // リトライ
+    var retryBtn = document.getElementById('quiz-retry');
+    if (retryBtn) {
+      retryBtn.addEventListener('click', function() {
+        answers = {};
+        quizSteps.style.display = 'block';
+        document.getElementById('quiz-result').style.display = 'none';
+        quizSteps.querySelectorAll('.food-quiz__step').forEach(function(s) { s.classList.remove('is-active'); });
+        quizSteps.querySelector('[data-step="1"]').classList.add('is-active');
+        progressBar.style.width = '0%';
+      });
+    }
+  }
 })();
