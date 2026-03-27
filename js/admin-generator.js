@@ -342,4 +342,114 @@
 
         processNextStation();
     });
+
+    // ========================================
+    // 地方別一括生成
+    // ========================================
+    var REGION_LABELS = {
+        'hokkaido_tohoku': '北海道・東北',
+        'kanto': '関東（東京以外）',
+        'tokyo23': '東京23区',
+        'tokyo_tama': '東京多摩',
+        'chubu': '中部・北陸',
+        'kansai': '関西',
+        'chugoku_shikoku': '中国・四国',
+        'kyushu': '九州・沖縄'
+    };
+
+    $('.knt-region-bulk-btn').on('click', function() {
+        var region = $(this).data('region');
+        var regionGroups = (typeof kntGenerator !== 'undefined' && kntGenerator.regionGroups) ? kntGenerator.regionGroups : {};
+        var stations = regionGroups[region];
+
+        if (!stations || stations.length === 0) {
+            alert('この地方の駅データがありません。');
+            return;
+        }
+
+        var mode = $('#knt-mode').val();
+        var genreName = $('#knt-genre-keyword').val() || 'グルメ';
+        var genreCode = $('#knt-genre').val() || '';
+        var sceneKey = $('#knt-scene').val() || '';
+        var count = $('#knt-count').val() || 10;
+        var regionLabel = REGION_LABELS[region] || region;
+        var modeLabel = mode === 'scene' ? ('シーン: ' + $('#knt-scene option:selected').text()) : ('ジャンル: ' + genreName);
+
+        if (!confirm('[' + regionLabel + '] ' + stations.length + '駅で記事を一括生成します。\n\n' + modeLabel + '\n所要時間: 約' + Math.ceil(stations.length * 2 / 60) + '分\n\nよろしいですか？')) {
+            return;
+        }
+
+        // 全ボタンを無効化
+        $('.knt-region-bulk-btn').prop('disabled', true);
+        $('#knt-generate-btn').prop('disabled', true);
+        $('#knt-bulk-btn').prop('disabled', true);
+        $('#knt-bulk-station-btn').prop('disabled', true);
+        $('#knt-generator-result').hide();
+        $('#knt-generator-error').hide();
+
+        var $bulkLog = $('#knt-bulk-log');
+        if (!$bulkLog.length) {
+            $bulkLog = $('<div id="knt-bulk-log" style="margin-top:20px;"></div>');
+            $('#knt-generator-form').after($bulkLog);
+        }
+        $bulkLog.html('<h3>[' + regionLabel + '] 一括生成中... (0/' + stations.length + ')</h3><div id="knt-bulk-items"></div>');
+
+        var completed = 0;
+        var errors = 0;
+        var successes = 0;
+        var queue = stations.slice();
+
+        function processNextRegion() {
+            if (queue.length === 0) {
+                $bulkLog.find('h3').text('[' + regionLabel + '] 完了！ (' + successes + '件成功 / ' + errors + '件エラー)');
+                $('.knt-region-bulk-btn').prop('disabled', false);
+                $('#knt-generate-btn').prop('disabled', false);
+                $('#knt-bulk-btn').prop('disabled', false);
+                $('#knt-bulk-station-btn').prop('disabled', false);
+                return;
+            }
+
+            var st = queue.shift();
+            completed++;
+            $bulkLog.find('h3').text('[' + regionLabel + '] 一括生成中... (' + completed + '/' + stations.length + ') - ' + st.name);
+
+            $.ajax({
+                url: kntGenerator.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'knt_generate_article',
+                    nonce: kntGenerator.nonce,
+                    area: st.city,
+                    mode: mode,
+                    count: count,
+                    genre_name: genreName,
+                    genre_code: genreCode,
+                    scene: sceneKey,
+                    station_name: st.name,
+                    station_lat: st.lat,
+                    station_lng: st.lng,
+                    category_1: st.pref_id,
+                    category_2: st.city_id,
+                    allow_update: $('#knt-allow-update').is(':checked') ? 1 : 0
+                },
+                success: function(response) {
+                    if (response.success) {
+                        successes++;
+                        $('#knt-bulk-items').prepend('<p style="color:green;">&#x2705; ' + st.name + '（' + st.city + '）→ <a href="' + response.data.edit_url + '" target="_blank">' + (response.data.title || '') + '</a></p>');
+                    } else {
+                        errors++;
+                        $('#knt-bulk-items').prepend('<p style="color:red;">&#x274C; ' + st.name + '（' + st.city + '）: ' + response.data + '</p>');
+                    }
+                    setTimeout(processNextRegion, 2000);
+                },
+                error: function() {
+                    errors++;
+                    $('#knt-bulk-items').prepend('<p style="color:red;">&#x274C; ' + st.name + ': 通信エラー</p>');
+                    setTimeout(processNextRegion, 2000);
+                }
+            });
+        }
+
+        processNextRegion();
+    });
 })(jQuery);

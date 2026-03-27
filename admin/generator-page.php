@@ -58,11 +58,15 @@ function knt_generator_admin_assets( $hook ) {
             }
         }
     }
+    // 地方別駅グループを生成
+    $region_groups = knt_get_region_station_groups();
+
     wp_localize_script( 'knt-generator', 'kntGenerator', array(
-        'ajaxUrl'     => admin_url( 'admin-ajax.php' ),
-        'stationData' => $station_id_data,
-        'nonce'   => wp_create_nonce( 'knt_generate_article' ),
-        'scenes'  => knt_scenes_for_js(),
+        'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+        'stationData'   => $station_id_data,
+        'regionGroups'  => $region_groups,
+        'nonce'         => wp_create_nonce( 'knt_generate_article' ),
+        'scenes'        => knt_scenes_for_js(),
     ) );
 }
 add_action( 'admin_enqueue_scripts', 'knt_generator_admin_assets' );
@@ -286,6 +290,21 @@ function knt_render_generator_page() {
                     選択中の市区町村の全駅で一括生成
                 </button>
             </p>
+
+            <div style="margin-top: 20px; padding: 16px; background: #f9f9f9; border: 1px solid #dcdcde; border-radius: 6px;">
+                <h3 style="margin: 0 0 12px; font-size: 14px;">全国主要駅 地方別一括生成</h3>
+                <p style="font-size: 12px; color: #646970; margin: 0 0 12px;">選択中のジャンル/シーンで、各地方の全駅の記事を一括生成します。</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button type="button" class="button knt-region-bulk-btn" data-region="hokkaido_tohoku">北海道・東北</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="kanto">関東（東京以外）</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="tokyo23">東京23区</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="tokyo_tama">東京多摩</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="chubu">中部・北陸</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="kansai">関西</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="chugoku_shikoku">中国・四国</button>
+                    <button type="button" class="button knt-region-bulk-btn" data-region="kyushu">九州・沖縄</button>
+                </div>
+            </div>
         </form>
 
         <div id="knt-generator-result" style="display:none;">
@@ -446,3 +465,68 @@ function knt_ajax_generate_bulk() {
     ) );
 }
 add_action( 'wp_ajax_knt_generate_bulk', 'knt_ajax_generate_bulk' );
+
+/**
+ * 地方別駅グループ定義
+ */
+function knt_get_region_station_groups() {
+    $all = knt_get_all_station_data();
+    $regions = array(
+        'hokkaido_tohoku' => array( 'area-01','area-02','area-03','area-04','area-05','area-06','area-07' ),
+        'kanto'           => array( 'area-08','area-09','area-10','area-11','area-12','area-14' ),
+        'tokyo23'         => array( 'area-13' ),
+        'tokyo_tama'      => array( 'area-13' ),
+        'chubu'           => array( 'area-15','area-16','area-17','area-18','area-19','area-20','area-21','area-22','area-23','area-24' ),
+        'kansai'          => array( 'area-25','area-26','area-27','area-28','area-29','area-30' ),
+        'chugoku_shikoku' => array( 'area-31','area-32','area-33','area-34','area-35','area-36','area-37','area-38','area-39' ),
+        'kyushu'          => array( 'area-40','area-41','area-42','area-43','area-44','area-45','area-46','area-47' ),
+    );
+
+    // 東京23区の区名リスト
+    $tokyo23_names = array('千代田区','中央区','港区','新宿区','文京区','台東区','墨田区','江東区','品川区','目黒区','大田区','世田谷区','渋谷区','中野区','杉並区','豊島区','北区','荒川区','板橋区','練馬区','足立区','葛飾区','江戸川区');
+
+    $result = array();
+    foreach ( $regions as $region_key => $pref_codes ) {
+        $stations = array();
+        foreach ( $all as $slug => $station_list ) {
+            // slugからprefコードを抽出
+            if ( preg_match( '/^(area-\d{2})-(.+)$/', $slug, $m ) ) {
+                $pref = $m[1];
+                $city = $m[2];
+                if ( ! in_array( $pref, $pref_codes ) ) continue;
+
+                // 東京の場合、23区と多摩を分離
+                if ( $pref === 'area-13' ) {
+                    $is_23ku = in_array( $city, $tokyo23_names );
+                    if ( $region_key === 'tokyo23' && ! $is_23ku ) continue;
+                    if ( $region_key === 'tokyo_tama' && $is_23ku ) continue;
+                    if ( $region_key !== 'tokyo23' && $region_key !== 'tokyo_tama' ) continue;
+                }
+
+                // カテゴリIDを取得
+                $pref_term = get_term_by( 'slug', $pref, 'category' );
+                $city_term_id = 0;
+                $pref_term_id = $pref_term ? $pref_term->term_id : 0;
+                if ( $pref_term ) {
+                    $children = get_categories( array( 'parent' => $pref_term->term_id, 'hide_empty' => false ) );
+                    foreach ( $children as $ch ) {
+                        if ( $ch->name === $city ) { $city_term_id = $ch->term_id; break; }
+                    }
+                }
+
+                foreach ( $station_list as $st ) {
+                    $stations[] = array(
+                        'name'     => $st['name'],
+                        'lat'      => $st['lat'],
+                        'lng'      => $st['lng'],
+                        'city'     => $city,
+                        'city_id'  => $city_term_id,
+                        'pref_id'  => $pref_term_id,
+                    );
+                }
+            }
+        }
+        $result[ $region_key ] = $stations;
+    }
+    return $result;
+}
