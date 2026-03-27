@@ -243,8 +243,6 @@ function knt_seo_structured_data() {
     echo '<script type="application/ld+json">' . wp_json_encode( $org, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>' . "\n";
 }
 
-// 旧structured_dataを置換
-remove_action( 'wp_head', 'knt_structured_data' );
 add_action( 'wp_head', 'knt_seo_structured_data', 5 );
 
 /**
@@ -298,5 +296,6 @@ function knt_seo_cleanup_head() {
     remove_action( 'wp_head', 'wp_shortlink_wp_head' );            // ショートリンク
     remove_action( 'wp_head', 'rest_output_link_wp_head' );        // REST API link
     remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );   // oEmbed
+    remove_action( 'wp_head', 'rel_canonical' );                   // WPデフォルトcanonical（seo.phpで出力）
 }
 add_action( 'init', 'knt_seo_cleanup_head' );

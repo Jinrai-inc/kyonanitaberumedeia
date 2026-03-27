@@ -308,48 +308,7 @@ function knt_rest_cors_headers( $value ) {
 }
 add_filter( 'rest_pre_serve_request', 'knt_rest_cors_headers' );
 
-/**
- * Add structured data (JSON-LD)
- */
-function knt_structured_data() {
-    if ( is_singular( 'post' ) ) {
-        global $post;
-        $image = get_the_post_thumbnail_url( $post->ID, 'full' );
-        $data = array(
-            '@context'      => 'https://schema.org',
-            '@type'         => 'Article',
-            'headline'      => get_the_title(),
-            'datePublished' => get_the_date( 'c' ),
-            'dateModified'  => get_the_modified_date( 'c' ),
-            'author'        => array(
-                '@type' => 'Organization',
-                'name'  => get_theme_mod( 'knt_company_name', '株式会社仁頼' ),
-            ),
-            'publisher'     => array(
-                '@type' => 'Organization',
-                'name'  => get_theme_mod( 'knt_company_name', '株式会社仁頼' ),
-            ),
-        );
-        if ( $image ) {
-            $data['image'] = $image;
-        }
-        echo '<script type="application/ld+json">' . wp_json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>';
-    }
-
-    // Organization (all pages)
-    $org = array(
-        '@context' => 'https://schema.org',
-        '@type'    => 'Organization',
-        'name'     => get_theme_mod( 'knt_company_name', '株式会社仁頼' ),
-        'url'      => home_url( '/' ),
-    );
-    $logo_id = get_theme_mod( 'custom_logo' );
-    if ( $logo_id ) {
-        $org['logo'] = wp_get_attachment_image_url( $logo_id, 'full' );
-    }
-    echo '<script type="application/ld+json">' . wp_json_encode( $org, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) . '</script>';
-}
-add_action( 'wp_head', 'knt_structured_data' );
+// 構造化データは inc/seo.php に統合済み
 
 /**
  * Breadcrumb helper
@@ -896,11 +855,10 @@ if ( ! defined( 'WP_POST_REVISIONS' ) ) {
 }
 
 /**
- * ホットペッパーグルメ APIキー（wp_optionsが優先、未設定時のフォールバック）
+ * ホットペッパーグルメ APIキー
+ * wp-config.php に define('KNT_HOTPEPPER_API_KEY', 'xxx'); を設定するか、
+ * 管理画面 > 記事生成 > API設定 から設定してください。
  */
-if ( ! defined( 'KNT_HOTPEPPER_API_KEY' ) ) {
-    define( 'KNT_HOTPEPPER_API_KEY', 'acffba006a6824d4' );
-}
 
 /**
  * 記事自動生成機能の読み込み（管理画面のみ）

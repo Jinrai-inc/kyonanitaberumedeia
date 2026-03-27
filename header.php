@@ -26,7 +26,6 @@
         <?php endif; ?>
     <?php endif; ?>
     <meta property="og:site_name" content="<?php bloginfo( 'name' ); ?>">
-    <meta property="og:locale" content="ja_JP">
 
     <?php // Twitter Card ?>
     <meta name="twitter:card" content="summary_large_image">
