@@ -3,6 +3,11 @@
 
     var SCENES = (typeof kntGenerator !== 'undefined' && kntGenerator.scenes) ? kntGenerator.scenes : {};
 
+    // ページロード時に前回の結果表示を非表示
+    $('#knt-generator-result').hide();
+    $('#knt-generator-error').hide();
+    $('#knt-generator-loading').hide();
+
     // ジャンル選択時にジャンル名を自動更新
     $('#knt-genre').on('change', function() {
         var selected = $(this).find(':selected');
