@@ -1157,9 +1157,18 @@ h4 {
   gap: 8px;
   padding: 48px 0;
 }
+.pagination .nav-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .pagination a,
-.pagination span {
+.pagination span,
+.pagination .nav-links a,
+.pagination .nav-links span {
   display: flex;
   align-items: center;
   justify-content: center;

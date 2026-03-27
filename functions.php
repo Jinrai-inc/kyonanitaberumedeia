@@ -165,6 +165,21 @@ function knt_mime_types( $mimes ) {
 add_filter( 'upload_mimes', 'knt_mime_types' );
 
 /**
+ * 検索結果・アーカイブの表示件数を増やす
+ */
+function knt_adjust_query( $query ) {
+    if ( ! is_admin() && $query->is_main_query() ) {
+        if ( $query->is_search() ) {
+            $query->set( 'posts_per_page', 12 );
+        }
+        if ( $query->is_category() || $query->is_tag() ) {
+            $query->set( 'posts_per_page', 12 );
+        }
+    }
+}
+add_action( 'pre_get_posts', 'knt_adjust_query' );
+
+/**
  * Output custom CSS from Customizer settings
  */
 function knt_customizer_css() {
