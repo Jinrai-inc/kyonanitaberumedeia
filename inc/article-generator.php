@@ -20,11 +20,15 @@ class KNT_Article_Generator {
 
     /**
      * スラッグまたはタイトルで重複チェック
+     * $allow_update = true の場合、既存記事のIDを返す（差し替え用）
      */
-    private function check_duplicate( $slug, $title ) {
+    private function check_duplicate( $slug, $title, $allow_update = false ) {
         // スラッグで検索
         $existing = get_page_by_path( $slug, OBJECT, 'post' );
         if ( $existing ) {
+            if ( $allow_update ) {
+                return $existing->ID; // 差し替え対象のIDを返す
+            }
             return new WP_Error( 'duplicate_post',
                 sprintf( '同じスラッグの記事が既に存在します（ID: %d「%s」）。スキップしました。',
                     $existing->ID, $existing->post_title )
@@ -38,12 +42,41 @@ class KNT_Article_Generator {
             'numberposts' => 1,
         ) );
         if ( ! empty( $title_check ) ) {
+            if ( $allow_update ) {
+                return $title_check[0]->ID;
+            }
             return new WP_Error( 'duplicate_post',
                 sprintf( '同じタイトルの記事が既に存在します（ID: %d）。スキップしました。',
                     $title_check[0]->ID )
             );
         }
-        return true;
+        return $allow_update ? 0 : true; // 0 = 新規作成
+    }
+
+    /**
+     * 記事を差し替え更新（既存IDのコンテンツを新しいデータで上書き）
+     */
+    private function update_or_create_post( $post_data, $allow_update, $slug, $title ) {
+        if ( $allow_update ) {
+            $existing_id = $this->check_duplicate( $slug, $title, true );
+            if ( $existing_id && ! is_wp_error( $existing_id ) ) {
+                // 既存記事を更新
+                $post_data['ID'] = $existing_id;
+                unset( $post_data['post_status'] ); // ステータスは変更しない
+                $post_id = wp_update_post( $post_data, true );
+                if ( ! is_wp_error( $post_id ) ) {
+                    update_post_meta( $post_id, '_knt_refreshed_at', current_time( 'mysql' ) );
+                }
+                return $post_id;
+            }
+        } else {
+            // 重複チェック
+            $dup = $this->check_duplicate( $slug, $title );
+            if ( is_wp_error( $dup ) ) return $dup;
+        }
+
+        // 新規作成
+        return wp_insert_post( $post_data, true );
     }
 
     public function generate( $area, $genre_name, $genre_code = '', $count = 5, $category_ids = array() ) {
@@ -79,10 +112,6 @@ class KNT_Article_Generator {
             $area, $genre_name, count( $shops )
         );
 
-        // 重複チェック
-        $dup = $this->check_duplicate( $slug, $title );
-        if ( is_wp_error( $dup ) ) return $dup;
-
         $post_data = array(
             'post_title'   => $title,
             'post_content' => $content,
@@ -95,7 +124,7 @@ class KNT_Article_Generator {
             $post_data['post_category'] = $category_ids;
         }
 
-        $post_id = wp_insert_post( $post_data, true );
+        $post_id = $this->update_or_create_post( $post_data, false, $slug, $title );
         if ( is_wp_error( $post_id ) ) {
             return $post_id;
         }
@@ -668,7 +697,7 @@ class KNT_Article_Generator {
     // シーン別記事生成
     // ========================================
 
-    public function generate_by_scene( $area, $scene_key, $count = 5, $category_ids = array() ) {
+    public function generate_by_scene( $area, $scene_key, $count = 5, $category_ids = array(), $params = array() ) {
         if ( ! isset( KNT_SCENES[ $scene_key ] ) ) {
             return new WP_Error( 'invalid_scene', '無効なシーンが指定されました。' );
         }
@@ -704,9 +733,7 @@ class KNT_Article_Generator {
         $content = $this->build_scene_content( $shops, $area, $scene_key );
         $excerpt = sprintf( '%sで%sにぴったりのお店を厳選！%s 予約リンクあり。', $area, $scene['label'], $scene['description'] );
 
-        // 重複チェック
-        $dup = $this->check_duplicate( $slug, $title );
-        if ( is_wp_error( $dup ) ) return $dup;
+        $allow_update = ! empty( $params['allow_update'] );
 
         $post_data = array(
             'post_title' => $title, 'post_content' => $content, 'post_status' => 'draft',
@@ -714,7 +741,7 @@ class KNT_Article_Generator {
         );
         if ( ! empty( $category_ids ) ) $post_data['post_category'] = $category_ids;
 
-        $post_id = wp_insert_post( $post_data, true );
+        $post_id = $this->update_or_create_post( $post_data, $allow_update, $slug, $title );
         if ( is_wp_error( $post_id ) ) return $post_id;
 
         update_post_meta( $post_id, '_knt_generated', true );
@@ -1064,9 +1091,7 @@ class KNT_Article_Generator {
             ? sprintf( '%s周辺で美味しい%sを厳選！%d店舗を写真・予算・営業時間付きで紹介。予約リンクあり。', $station, $genre_name, count( $shops ) )
             : sprintf( '%sで%sを食べるならここ！厳選%d店舗を紹介。予約リンクあり。', $area, $genre_name, count( $shops ) );
 
-        // 重複チェック
-        $dup = $this->check_duplicate( $slug, $title );
-        if ( is_wp_error( $dup ) ) return $dup;
+        $allow_update = ! empty( $params['allow_update'] );
 
         $post_data = array(
             'post_title' => $title, 'post_content' => $content, 'post_status' => 'draft',
@@ -1074,7 +1099,7 @@ class KNT_Article_Generator {
         );
         if ( ! empty( $category_ids ) ) $post_data['post_category'] = $category_ids;
 
-        $post_id = wp_insert_post( $post_data, true );
+        $post_id = $this->update_or_create_post( $post_data, $allow_update, $slug, $title );
         if ( is_wp_error( $post_id ) ) return $post_id;
 
         update_post_meta( $post_id, '_knt_generated', true );

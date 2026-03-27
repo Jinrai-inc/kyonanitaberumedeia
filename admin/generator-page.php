@@ -268,6 +268,13 @@ function knt_render_generator_page() {
                 </tr>
             </table>
 
+            <p style="margin-bottom: 12px;">
+                <label>
+                    <input type="checkbox" id="knt-allow-update" name="allow_update" value="1">
+                    <strong>既存記事を差し替え更新する</strong>
+                    <span style="color:#646970; font-size:12px;">（同じスラッグ/タイトルの記事が存在する場合、内容を上書き）</span>
+                </label>
+            </p>
             <p class="submit">
                 <button type="submit" id="knt-generate-btn" class="button button-primary button-hero">
                     記事を生成する
@@ -364,6 +371,7 @@ function knt_ajax_generate_article() {
         'genre_code'     => sanitize_text_field( $_POST['genre_code'] ?? '' ),
         'scene'          => sanitize_text_field( $_POST['scene'] ?? '' ),
         'count'          => intval( $_POST['count'] ?? 5 ),
+        'allow_update'   => ! empty( $_POST['allow_update'] ),
     ) );
 
     if ( is_wp_error( $result ) ) {

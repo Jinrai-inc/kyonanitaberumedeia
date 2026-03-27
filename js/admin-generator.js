@@ -78,6 +78,7 @@
             station_name: selectedStation.val() || '',
             station_lat: selectedStation.data('lat') || '',
             station_lng: selectedStation.data('lng') || '',
+            allow_update: $('#knt-allow-update').is(':checked') ? 1 : 0,
         };
 
         if (data.mode === 'scene') {
