@@ -493,6 +493,11 @@ add_filter( 'wp_is_application_passwords_available', '__return_true' );
 require_once KNT_DIR . '/inc/seo.php';
 
 /**
+ * Include Auto Refresh (月1回記事自動更新)
+ */
+require_once KNT_DIR . '/inc/auto-refresh.php';
+
+/**
  * Include Customizer settings
  */
 require_once KNT_DIR . '/inc/customizer.php';

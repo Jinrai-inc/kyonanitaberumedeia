@@ -327,6 +327,8 @@ function knt_render_generator_page() {
             <p>ホットペッパーAPIから店舗情報を取得中...</p>
             <div class="spinner is-active" style="float:none;"></div>
         </div>
+
+        <?php knt_auto_refresh_admin_section(); ?>
     </div>
     <?php
 }
