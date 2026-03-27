@@ -489,6 +489,11 @@ add_filter( 'the_content', 'knt_generate_toc', 1 );
 add_filter( 'wp_is_application_passwords_available', '__return_true' );
 
 /**
+ * Include SEO
+ */
+require_once KNT_DIR . '/inc/seo.php';
+
+/**
  * Include Customizer settings
  */
 require_once KNT_DIR . '/inc/customizer.php';
