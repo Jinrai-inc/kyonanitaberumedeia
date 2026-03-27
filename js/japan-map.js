@@ -509,6 +509,70 @@
     { code: '40', name: '福岡県', lat: 33.59, lng: 130.42 },
   ];
 
+  // 主要市区町村の代表座標（東京23区 + 主要都市）
+  var CITY_COORDS = {
+    '13': [
+      { name: '千代田区', lat: 35.694, lng: 139.754 }, { name: '中央区', lat: 35.671, lng: 139.772 },
+      { name: '港区', lat: 35.658, lng: 139.751 }, { name: '新宿区', lat: 35.694, lng: 139.703 },
+      { name: '文京区', lat: 35.708, lng: 139.752 }, { name: '台東区', lat: 35.713, lng: 139.780 },
+      { name: '墨田区', lat: 35.711, lng: 139.801 }, { name: '江東区', lat: 35.673, lng: 139.817 },
+      { name: '品川区', lat: 35.609, lng: 139.730 }, { name: '目黒区', lat: 35.634, lng: 139.698 },
+      { name: '大田区', lat: 35.561, lng: 139.716 }, { name: '世田谷区', lat: 35.646, lng: 139.653 },
+      { name: '渋谷区', lat: 35.664, lng: 139.698 }, { name: '中野区', lat: 35.707, lng: 139.664 },
+      { name: '杉並区', lat: 35.700, lng: 139.636 }, { name: '豊島区', lat: 35.733, lng: 139.716 },
+      { name: '北区', lat: 35.753, lng: 139.734 }, { name: '荒川区', lat: 35.736, lng: 139.783 },
+      { name: '板橋区', lat: 35.751, lng: 139.709 }, { name: '練馬区', lat: 35.735, lng: 139.652 },
+      { name: '足立区', lat: 35.775, lng: 139.805 }, { name: '葛飾区', lat: 35.744, lng: 139.847 },
+      { name: '江戸川区', lat: 35.707, lng: 139.868 },
+      { name: '八王子市', lat: 35.656, lng: 139.339 }, { name: '立川市', lat: 35.698, lng: 139.414 },
+      { name: '武蔵野市', lat: 35.703, lng: 139.580 }, { name: '三鷹市', lat: 35.683, lng: 139.560 },
+      { name: '町田市', lat: 35.542, lng: 139.446 }, { name: '調布市', lat: 35.652, lng: 139.544 },
+      { name: '府中市', lat: 35.669, lng: 139.478 },
+    ],
+    '14': [
+      { name: '横浜市', lat: 35.466, lng: 139.623 }, { name: '川崎市', lat: 35.531, lng: 139.697 },
+      { name: '相模原市', lat: 35.571, lng: 139.373 }, { name: '藤沢市', lat: 35.339, lng: 139.487 },
+      { name: '鎌倉市', lat: 35.319, lng: 139.550 },
+    ],
+    '27': [
+      { name: '大阪市', lat: 34.694, lng: 135.502 }, { name: '堺市', lat: 34.573, lng: 135.483 },
+      { name: '東大阪市', lat: 34.680, lng: 135.601 }, { name: '豊中市', lat: 34.784, lng: 135.470 },
+      { name: '枚方市', lat: 34.814, lng: 135.651 }, { name: '高槻市', lat: 34.847, lng: 135.617 },
+    ],
+    '26': [
+      { name: '京都市', lat: 35.012, lng: 135.768 },
+    ],
+    '28': [
+      { name: '神戸市', lat: 34.690, lng: 135.196 }, { name: '姫路市', lat: 34.826, lng: 134.692 },
+      { name: '尼崎市', lat: 34.733, lng: 135.428 }, { name: '西宮市', lat: 34.737, lng: 135.342 },
+    ],
+    '23': [
+      { name: '名古屋市', lat: 35.181, lng: 136.907 },
+    ],
+    '11': [
+      { name: 'さいたま市', lat: 35.862, lng: 139.645 },
+    ],
+    '12': [
+      { name: '千葉市', lat: 35.608, lng: 140.106 }, { name: '船橋市', lat: 35.695, lng: 139.983 },
+      { name: '松戸市', lat: 35.787, lng: 139.904 },
+    ],
+    '40': [
+      { name: '福岡市', lat: 33.590, lng: 130.402 }, { name: '北九州市', lat: 33.883, lng: 130.875 },
+    ],
+  };
+
+  function findNearestCity(lat, lng, prefCode) {
+    var cities = CITY_COORDS[prefCode];
+    if (!cities || !cities.length) return null;
+    var nearest = null;
+    var minDist = Infinity;
+    cities.forEach(function(c) {
+      var d = Math.sqrt(Math.pow(c.lat - lat, 2) + Math.pow(c.lng - lng, 2));
+      if (d < minDist) { minDist = d; nearest = c.name; }
+    });
+    return nearest;
+  }
+
   function findNearestPref(lat, lng) {
     var nearest = null;
     var minDist = Infinity;
@@ -544,18 +608,21 @@
           geoBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg> 現在地で探す';
 
           if (pref) {
-            geoStatus.textContent = pref.name + ' 周辺のお店を表示します';
             // 都道府県を自動選択
             selectPref(pref.code);
 
-            // 少し待ってからボタンURLを検索に変更
+            // 市区町村を自動選択（municipalities JSONから最寄りを検索）
+            var nearestCity = findNearestCity(lat, lng, pref.code);
+            if (nearestCity) {
+              selectCity(nearestCity);
+              geoStatus.textContent = pref.name + ' ' + nearestCity + ' 周辺のお店を表示します';
+            } else {
+              geoStatus.textContent = pref.name + ' 周辺のお店を表示します';
+            }
+
+            // ボタンURLを更新
             setTimeout(function() {
-              var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
-              var searchBtn = document.getElementById('area-search-btn');
-              if (searchBtn) {
-                searchBtn.classList.remove('is-disabled');
-                searchBtn.href = base + '/?category_name=area-' + pref.code;
-              }
+              updateButton();
             }, 300);
           } else {
             geoStatus.textContent = '近くのエリアが見つかりませんでした';
