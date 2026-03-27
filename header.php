@@ -55,7 +55,7 @@
     <script type="text/javascript">var vc_pid = "892570587";</script>
     <script type="text/javascript" src="//aml.valuecommerce.com/vcdal.js" async></script>
 
-    <?php // Google Translate ?>
+    <?php // Google Translate（ブラウザ言語で自動翻訳） ?>
     <script type="text/javascript">
     function googleTranslateElementInit() {
         new google.translate.TranslateElement({
@@ -65,6 +65,28 @@
             autoDisplay: false
         }, 'google_translate_element');
     }
+    // ブラウザ言語が日本語以外の場合、自動翻訳を実行
+    (function() {
+        var lang = (navigator.language || navigator.userLanguage || 'ja').toLowerCase();
+        if (lang.indexOf('ja') !== 0) {
+            // 翻訳先言語を判定
+            var targetLang = 'en';
+            var langMap = {
+                'zh': 'zh-CN', 'zh-cn': 'zh-CN', 'zh-tw': 'zh-TW', 'zh-hk': 'zh-TW',
+                'ko': 'ko', 'th': 'th', 'vi': 'vi', 'id': 'id',
+                'fr': 'fr', 'es': 'es', 'pt': 'pt'
+            };
+            for (var key in langMap) {
+                if (lang.indexOf(key) === 0) { targetLang = langMap[key]; break; }
+            }
+            // Cookieで自動翻訳を設定（Google翻訳はCookieベースで動作）
+            var existingCookie = document.cookie.match(/googtrans=([^;]+)/);
+            if (!existingCookie) {
+                document.cookie = 'googtrans=/ja/' + targetLang + ';path=/;';
+                document.cookie = 'googtrans=/ja/' + targetLang + ';path=/;domain=.' + location.hostname + ';';
+            }
+        }
+    })();
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
 
