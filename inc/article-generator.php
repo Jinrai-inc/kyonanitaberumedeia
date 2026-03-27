@@ -1025,7 +1025,12 @@ class KNT_Article_Generator {
         $lead  = knt_generate_lead( $lead_type, $lead_vars );
 
         // スラッグ
-        $area_slug = $this->get_area_slug( $station ?: $area );
+        // スラッグ生成（駅記事は -eki サフィックスで市区町村と区別）
+        if ( $station ) {
+            $area_slug = $this->get_area_slug( $station ) . '-eki';
+        } else {
+            $area_slug = $this->get_area_slug( $area );
+        }
         if ( $mode === 'scene' && $scene_key ) {
             $slug = $area_slug . '-' . ( KNT_SCENES[ $scene_key ]['slug'] ?? $scene_key ) . '-osusume';
         } else {
