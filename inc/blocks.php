@@ -69,12 +69,11 @@ add_action( 'enqueue_block_editor_assets', 'knt_enqueue_block_editor_assets' );
    ────────────────────────────────────────────── */
 
 function knt_enqueue_block_assets() {
-    if ( ! is_admin() ) {
-        wp_enqueue_style( 'knt-blocks-style', KNT_URI . '/css/blocks.css', array(), KNT_VERSION );
-        wp_enqueue_style( 'knt-blocks-extra-style', KNT_URI . '/css/blocks-extra.css', array(), KNT_VERSION );
-    }
+    // フロントエンド + エディタiframe内の両方でCSSを読み込む（API v3対応）
+    wp_enqueue_style( 'knt-blocks-style', KNT_URI . '/css/blocks.css', array(), KNT_VERSION );
+    wp_enqueue_style( 'knt-blocks-extra-style', KNT_URI . '/css/blocks-extra.css', array(), KNT_VERSION );
 }
-add_action( 'wp_enqueue_scripts', 'knt_enqueue_block_assets' );
+add_action( 'enqueue_block_assets', 'knt_enqueue_block_assets' );
 
 /* ──────────────────────────────────────────────
    4. Register All Blocks
@@ -84,7 +83,7 @@ function knt_register_blocks() {
 
     /* --- knt/section --- */
     register_block_type( 'knt/section', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'backgroundColor'   => array( 'type' => 'string', 'default' => '' ),
             'backgroundImage'   => array( 'type' => 'string', 'default' => '' ),
@@ -97,7 +96,7 @@ function knt_register_blocks() {
 
     /* --- knt/button --- */
     register_block_type( 'knt/button', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'text'   => array( 'type' => 'string',  'default' => 'ボタン' ),
             'url'    => array( 'type' => 'string',  'default' => '' ),
@@ -110,7 +109,7 @@ function knt_register_blocks() {
 
     /* --- knt/faq (server-side rendered) --- */
     register_block_type( 'knt/faq', array(
-        'api_version'     => 2,
+        'api_version'     => 3,
         'render_callback' => 'knt_render_faq_block',
         'attributes'      => array(
             'items' => array(
@@ -123,7 +122,7 @@ function knt_register_blocks() {
 
     /* --- knt/callout --- */
     register_block_type( 'knt/callout', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'type'    => array( 'type' => 'string', 'default' => 'info' ),
             'title'   => array( 'type' => 'string', 'default' => '' ),
@@ -133,7 +132,7 @@ function knt_register_blocks() {
 
     /* --- knt/profile --- */
     register_block_type( 'knt/profile', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'imageUrl'    => array( 'type' => 'string', 'default' => '' ),
             'imageId'     => array( 'type' => 'number', 'default' => 0 ),
@@ -149,7 +148,7 @@ function knt_register_blocks() {
 
     /* --- knt/rating --- */
     register_block_type( 'knt/rating', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'label'  => array( 'type' => 'string', 'default' => '味' ),
             'rating' => array( 'type' => 'number', 'default' => 3 ),
@@ -158,7 +157,7 @@ function knt_register_blocks() {
 
     /* --- knt/steps --- */
     register_block_type( 'knt/steps', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'steps' => array(
                 'type'    => 'array',
@@ -170,7 +169,7 @@ function knt_register_blocks() {
 
     /* --- knt/price-table --- */
     register_block_type( 'knt/price-table', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'plans' => array(
                 'type'    => 'array',
@@ -182,7 +181,7 @@ function knt_register_blocks() {
 
     /* --- knt/app-cta --- */
     register_block_type( 'knt/app-cta', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'title'       => array( 'type' => 'string', 'default' => '今日なに食べる？で迷わない。' ),
             'description' => array( 'type' => 'string', 'default' => 'AIがあなたの気分にぴったりのお店を提案します。' ),
@@ -193,7 +192,7 @@ function knt_register_blocks() {
 
     /* --- knt/restaurant-card --- */
     register_block_type( 'knt/restaurant-card', array(
-        'api_version' => 2,
+        'api_version' => 3,
         'attributes'  => array(
             'imageUrl'    => array( 'type' => 'string', 'default' => '' ),
             'imageId'     => array( 'type' => 'number', 'default' => 0 ),
@@ -293,7 +292,7 @@ document.addEventListener("click",function(e){
 
 function knt_register_blog_card_block() {
     register_block_type( 'knt/blog-card', array(
-        'api_version'     => 2,
+        'api_version'     => 3,
         'render_callback' => 'knt_render_blog_card_block',
         'attributes'      => array(
             'url'    => array( 'type' => 'string', 'default' => '' ),

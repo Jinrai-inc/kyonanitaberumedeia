@@ -17,6 +17,7 @@
     // 1. メニューリストブロック (knt/menu-list)
     // ========================================
     registerBlockType('knt/menu-list', {
+    apiVersion: 3,
         title: 'メニューリスト',
         icon: 'clipboard',
         category: CATEGORY,
@@ -70,6 +71,7 @@
     // 2. 吹き出しブロック (knt/balloon)
     // ========================================
     registerBlockType('knt/balloon', {
+    apiVersion: 3,
         title: '吹き出しブロック',
         icon: 'format-chat',
         category: CATEGORY,
@@ -134,6 +136,7 @@
     // 3. ボックスブロック (knt/box)
     // ========================================
     registerBlockType('knt/box', {
+    apiVersion: 3,
         title: 'ボックスブロック',
         icon: 'editor-table',
         category: CATEGORY,
@@ -179,6 +182,7 @@
     // 4. ブログカード (knt/blog-card) — server-side rendered
     // ========================================
     registerBlockType('knt/blog-card', {
+    apiVersion: 3,
         title: 'ブログカード',
         icon: 'admin-links',
         category: CATEGORY,
@@ -200,6 +204,7 @@
     // 5. CTAセクション (knt/cta-section)
     // ========================================
     registerBlockType('knt/cta-section', {
+    apiVersion: 3,
         title: 'CTAセクション',
         icon: 'megaphone',
         category: CATEGORY,
@@ -247,6 +252,7 @@
     // 6. アラートボックス (knt/alert)
     // ========================================
     registerBlockType('knt/alert', {
+    apiVersion: 3,
         title: 'アラートボックス',
         icon: 'warning',
         category: CATEGORY,
@@ -286,6 +292,7 @@
     // 7. セクションヘッダー (knt/section-header)
     // ========================================
     registerBlockType('knt/section-header', {
+    apiVersion: 3,
         title: 'セクションヘッダー',
         icon: 'heading',
         category: CATEGORY,
@@ -315,6 +322,7 @@
     // 8. 特徴ボックス (knt/feature-box)
     // ========================================
     registerBlockType('knt/feature-box', {
+    apiVersion: 3,
         title: '特徴ボックス',
         icon: 'star-filled',
         category: CATEGORY,
@@ -348,6 +356,7 @@
     // 9. 仕切り線 (knt/divider)
     // ========================================
     registerBlockType('knt/divider', {
+    apiVersion: 3,
         title: '仕切り線',
         icon: 'minus',
         category: CATEGORY,
@@ -377,6 +386,7 @@
     // 10. 見出しブロック 高機能 (knt/heading-decorated)
     // ========================================
     registerBlockType('knt/heading-decorated', {
+    apiVersion: 3,
         title: '見出しブロック（高機能）',
         icon: 'heading',
         category: CATEGORY,

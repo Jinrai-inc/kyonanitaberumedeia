@@ -33,6 +33,7 @@
      1. KNT Section Block
      ======================================== */
   registerBlockType('knt/section', {
+    apiVersion: 3,
     title: 'セクション',
     description: '背景色・画像付きのセクションラッパー',
     icon: 'layout',
@@ -117,6 +118,7 @@
      2. KNT Button Block
      ======================================== */
   registerBlockType('knt/button', {
+    apiVersion: 3,
     title: 'ボタン',
     description: 'テーマスタイルのCTAボタン',
     icon: 'button',
@@ -180,6 +182,7 @@
      3. KNT FAQ Block
      ======================================== */
   registerBlockType('knt/faq', {
+    apiVersion: 3,
     title: 'FAQ（よくある質問）',
     description: 'アコーディオン式FAQ。FAQPage構造化データを自動出力',
     icon: 'editor-help',
@@ -246,6 +249,7 @@
      4. KNT Callout Block
      ======================================== */
   registerBlockType('knt/callout', {
+    apiVersion: 3,
     title: 'コールアウト',
     description: '注意・ヒント・情報ボックス',
     icon: 'info-outline',
@@ -295,6 +299,7 @@
      5. KNT Profile Block
      ======================================== */
   registerBlockType('knt/profile', {
+    apiVersion: 3,
     title: 'プロフィール',
     description: '執筆者・スタッフ紹介カード',
     icon: 'admin-users',
@@ -360,6 +365,7 @@
      6. KNT Star Rating Block
      ======================================== */
   registerBlockType('knt/rating', {
+    apiVersion: 3,
     title: '星レーティング',
     description: 'レストランの味・コスパなどの星評価',
     icon: 'star-filled',
@@ -400,6 +406,7 @@
      7. KNT Steps Block
      ======================================== */
   registerBlockType('knt/steps', {
+    apiVersion: 3,
     title: 'ステップ・手順',
     description: '番号付きのタイムライン形式の手順ガイド',
     icon: 'editor-ol',
@@ -462,6 +469,7 @@
      8. KNT Price Table Block
      ======================================== */
   registerBlockType('knt/price-table', {
+    apiVersion: 3,
     title: '料金表',
     description: 'プラン比較の料金テーブル',
     icon: 'money-alt',
@@ -532,6 +540,7 @@
      9. KNT App CTA Block
      ======================================== */
   registerBlockType('knt/app-cta', {
+    apiVersion: 3,
     title: 'アプリ訴求CTA',
     description: 'アプリへの誘導バナーブロック',
     icon: 'smartphone',
@@ -573,6 +582,7 @@
      10. KNT Restaurant Card Block
      ======================================== */
   registerBlockType('knt/restaurant-card', {
+    apiVersion: 3,
     title: 'レストランカード',
     description: 'お店紹介カード（画像・ジャンル・評価付き）',
     icon: 'store',
