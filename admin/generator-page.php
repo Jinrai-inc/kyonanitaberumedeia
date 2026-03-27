@@ -420,11 +420,20 @@ function knt_ajax_generate_bulk() {
     require_once KNT_DIR . '/inc/article-generator.php';
     $generator = new KNT_Article_Generator();
 
-    if ( $mode === 'scene' && $scene_key ) {
-        $result = $generator->generate_by_scene( $area, $scene_key, $count, $category_ids );
-    } else {
-        $result = $generator->generate( $area, $genre_name, $genre_code, $count, $category_ids );
-    }
+    $result = $generator->generate_smart( array(
+        'area'           => $area,
+        'city_id'        => $city_id,
+        'prefecture_id'  => $pref_id,
+        'station_name'   => sanitize_text_field( $_POST['station_name'] ?? '' ),
+        'station_lat'    => sanitize_text_field( $_POST['station_lat'] ?? '' ),
+        'station_lng'    => sanitize_text_field( $_POST['station_lng'] ?? '' ),
+        'mode'           => $mode,
+        'genre_name'     => $genre_name,
+        'genre_code'     => $genre_code,
+        'scene'          => $scene_key,
+        'count'          => $count,
+        'allow_update'   => ! empty( $_POST['allow_update'] ),
+    ) );
 
     if ( is_wp_error( $result ) ) {
         wp_send_json_error( $area . ': ' . $result->get_error_message() );

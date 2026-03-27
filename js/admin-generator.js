@@ -216,7 +216,8 @@
                     genre_name: genreName,
                     genre_code: genreCode,
                     scene: sceneKey,
-                    count: count
+                    count: count,
+                    allow_update: $('#knt-allow-update').is(':checked') ? 1 : 0
                 },
                 success: function(response) {
                     if (response.success) {
@@ -314,7 +315,8 @@
                     station_lat: st.lat,
                     station_lng: st.lng,
                     category_1: prefId,
-                    category_2: cityId
+                    category_2: cityId,
+                    allow_update: $('#knt-allow-update').is(':checked') ? 1 : 0
                 },
                 success: function(response) {
                     if (response.success) {
