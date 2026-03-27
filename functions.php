@@ -165,6 +165,24 @@ function knt_mime_types( $mimes ) {
 add_filter( 'upload_mimes', 'knt_mime_types' );
 
 /**
+ * Mixed Content防止: 全出力をHTTPS強制
+ */
+function knt_force_https_urls( $content ) {
+    if ( is_ssl() ) {
+        $content = str_replace( 'http://media.kyou-nani-taberu.app', 'https://media.kyou-nani-taberu.app', $content );
+    }
+    return $content;
+}
+add_filter( 'the_content', 'knt_force_https_urls' );
+add_filter( 'wp_get_attachment_url', 'knt_force_https_urls' );
+add_filter( 'wp_get_attachment_image_src', function( $image ) {
+    if ( is_array( $image ) && isset( $image[0] ) ) {
+        $image[0] = str_replace( 'http://', 'https://', $image[0] );
+    }
+    return $image;
+} );
+
+/**
  * 検索結果・アーカイブの表示件数を増やす
  */
 function knt_adjust_query( $query ) {

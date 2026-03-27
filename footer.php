@@ -105,8 +105,8 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
         <!-- API クレジット + コピーライト -->
         <div class="footer__bottom" <?php if ( $is_light ) : ?>style="border-top-color: var(--color-border);"<?php endif; ?>>
             <div class="footer__credits">
-                <a href="http://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">
-                    <img src="http://webservice.recruit.co.jp/banner/hotpepper-s.gif"
+                <a href="https://webservice.recruit.co.jp/" target="_blank" rel="noopener noreferrer">
+                    <img src="https://webservice.recruit.co.jp/banner/hotpepper-s.gif"
                          alt="ホットペッパーグルメ Webサービス"
                          width="135" height="17"
                          loading="lazy"
