@@ -299,3 +299,34 @@ function knt_seo_cleanup_head() {
     remove_action( 'wp_head', 'rel_canonical' );                   // WPデフォルトcanonical（seo.phpで出力）
 }
 add_action( 'init', 'knt_seo_cleanup_head' );
+
+/**
+ * 多言語SEO: hreflang + 国際対応メタタグ
+ */
+function knt_seo_international() {
+    $current_url = home_url( add_query_arg( array() ) );
+
+    // hreflang タグ（検索エンジンに言語バージョンを通知）
+    $languages = array(
+        'ja'    => $current_url,
+        'en'    => $current_url, // Google翻訳で動的翻訳
+        'zh-CN' => $current_url,
+        'zh-TW' => $current_url,
+        'ko'    => $current_url,
+    );
+    foreach ( $languages as $lang => $url ) {
+        echo '<link rel="alternate" hreflang="' . esc_attr( $lang ) . '" href="' . esc_url( $url ) . '">' . "\n";
+    }
+    echo '<link rel="alternate" hreflang="x-default" href="' . esc_url( $current_url ) . '">' . "\n";
+
+    // Content-Language
+    echo '<meta http-equiv="content-language" content="ja">' . "\n";
+
+    // geo メタタグ（日本の飲食メディアであることを明示）
+    echo '<meta name="geo.region" content="JP">' . "\n";
+    echo '<meta name="geo.placename" content="Japan">' . "\n";
+
+    // Google に対する国際ターゲティング
+    echo '<meta name="google" content="notranslate" />' . "\n"; // 自動翻訳バーを抑制（ウィジェットで対応）
+}
+add_action( 'wp_head', 'knt_seo_international', 2 );

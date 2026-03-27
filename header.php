@@ -55,6 +55,19 @@
     <script type="text/javascript">var vc_pid = "892570587";</script>
     <script type="text/javascript" src="//aml.valuecommerce.com/vcdal.js" async></script>
 
+    <?php // Google Translate ?>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'ja',
+            includedLanguages: 'en,zh-CN,zh-TW,ko,th,vi,id,fr,es,pt',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
+
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -104,6 +117,7 @@
         </nav>
 
         <div class="site-header__actions">
+            <div id="google_translate_element" class="header-translate"></div>
             <?php if ( get_theme_mod( 'knt_header_cta_show', true ) ) : ?>
                 <a href="<?php echo esc_url( get_theme_mod( 'knt_header_cta_url', 'https://kyou-nani-taberu.app' ) ); ?>"
                    class="btn btn--primary btn--small"
