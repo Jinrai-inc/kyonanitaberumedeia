@@ -1011,12 +1011,11 @@ class KNT_Article_Generator {
         $title_vars['suffix'] = $mode === 'scene' && $scene_key ? ( KNT_SCENES[ $scene_key ]['title_suffix'] ?? '' ) : '';
 
         if ( $station ) {
+            // 駅指定記事 → 駅名入りタイトル
             $title_type = $mode === 'scene' ? 'station_scene' : 'station_genre';
             $lead_type  = 'station';
-        } elseif ( $station_text ) {
-            $title_type = $mode === 'scene' ? 'scene' : 'genre';
-            $lead_type  = $mode === 'scene' ? 'scene' : 'genre';
         } else {
+            // 市区町村記事 → 駅名なし（駅は駅記事で別途作成）
             $title_type = $mode === 'scene' ? 'scene_no_st' : 'genre_no_st';
             $lead_type  = $mode === 'scene' ? 'scene' : 'genre';
         }
