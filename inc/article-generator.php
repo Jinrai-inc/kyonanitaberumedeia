@@ -23,34 +23,37 @@ class KNT_Article_Generator {
      * $allow_update = true の場合、既存記事のIDを返す（差し替え用）
      */
     private function check_duplicate( $slug, $title, $allow_update = false ) {
-        // スラッグで検索
-        $existing = get_page_by_path( $slug, OBJECT, 'post' );
-        if ( $existing ) {
+        // スラッグで検索（全ステータス対象）
+        $slug_check = get_posts( array(
+            'name'        => $slug,
+            'post_type'   => 'post',
+            'post_status' => array( 'publish', 'draft', 'pending', 'private' ),
+            'numberposts' => 1,
+        ) );
+        if ( ! empty( $slug_check ) ) {
             if ( $allow_update ) {
-                return $existing->ID; // 差し替え対象のIDを返す
+                return $slug_check[0]->ID;
             }
             return new WP_Error( 'duplicate_post',
                 sprintf( '同じスラッグの記事が既に存在します（ID: %d「%s」）。スキップしました。',
-                    $existing->ID, $existing->post_title )
+                    $slug_check[0]->ID, $slug_check[0]->post_title )
             );
         }
-        // タイトルで検索（下書き含む）
-        $title_check = get_posts( array(
-            'post_type'   => 'post',
-            'post_status' => array( 'publish', 'draft', 'pending' ),
-            'title'       => $title,
-            'numberposts' => 1,
+        // タイトルで検索（完全一致）
+        global $wpdb;
+        $existing_id = $wpdb->get_var( $wpdb->prepare(
+            "SELECT ID FROM {$wpdb->posts} WHERE post_title = %s AND post_type = 'post' AND post_status IN ('publish','draft','pending','private') LIMIT 1",
+            $title
         ) );
-        if ( ! empty( $title_check ) ) {
+        if ( $existing_id ) {
             if ( $allow_update ) {
-                return $title_check[0]->ID;
+                return intval( $existing_id );
             }
             return new WP_Error( 'duplicate_post',
-                sprintf( '同じタイトルの記事が既に存在します（ID: %d）。スキップしました。',
-                    $title_check[0]->ID )
+                sprintf( '同じタイトルの記事が既に存在します（ID: %d）。スキップしました。', $existing_id )
             );
         }
-        return $allow_update ? 0 : true; // 0 = 新規作成
+        return $allow_update ? 0 : true;
     }
 
     /**
