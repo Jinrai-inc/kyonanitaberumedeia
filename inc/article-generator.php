@@ -49,7 +49,7 @@ class KNT_Article_Generator {
     public function generate( $area, $genre_name, $genre_code = '', $count = 5, $category_ids = array() ) {
         $search_args = array(
             'keyword' => $area . ' ' . $genre_name,
-            'count'   => $count,
+            'count'   => min( $count * 2, 20 ),
             'order'   => 4,
         );
         if ( $genre_code ) {
@@ -676,7 +676,7 @@ class KNT_Article_Generator {
 
         $search_args = array(
             'keyword' => $area . ' ' . $scene['label'],
-            'count'   => $count + 5,
+            'count'   => min( $count * 3, 30 ),
             'order'   => 4,
         );
         // 有効なAPIフィルターのみ追加
@@ -909,23 +909,23 @@ class KNT_Article_Generator {
             $station_text = knt_format_station_names( $city_id, 3 );
         }
 
-        // API検索パラメータ構築
-        $search_args = array( 'count' => $count + 5, 'order' => 4 );
+        // API検索パラメータ構築（多めに取得してフィルタリング）
+        $search_args = array( 'count' => min( $count * 3, 30 ), 'order' => 4 );
 
         if ( $station && $lat && $lng ) {
             // 駅指定 → 緯度経度ベース検索
             $search_args['lat']   = floatval( $lat );
             $search_args['lng']   = floatval( $lng );
-            $search_args['range'] = 3; // 1000m
+            $search_args['range'] = 4; // 2000m（1000mだと少なすぎる場合がある）
 
-            if ( $mode === 'genre' && $genre_name ) {
+            if ( $mode === 'genre' && $genre_name && $genre_name !== 'グルメ' ) {
                 $search_args['keyword'] = $genre_name;
             }
             if ( $genre_code ) {
                 $search_args['genre'] = $genre_code;
             }
         } else {
-            // キーワード検索
+            // キーワード検索（rangeは不要）
             $search_args['keyword'] = $area . ' ' . $genre_name;
             if ( $genre_code ) {
                 $search_args['genre'] = $genre_code;
