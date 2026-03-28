@@ -11,15 +11,13 @@ $post_id = get_the_ID();
 $categories = wp_get_post_categories( $post_id, array( 'fields' => 'all' ) );
 
 $city_cat = null;
-$genre_names_list = array( 'ラーメン','焼肉','和食','中華','イタリアン・フレンチ','カフェ・スイーツ','カレー','居酒屋','韓国料理','ハンバーガー','ステーキ','エスニック','バー','洋食' );
-
+$pref_cat = null;
 foreach ( $categories as $cat ) {
-    if ( $cat->parent > 0 && ! in_array( $cat->name, $genre_names_list, true ) ) {
-        $parent = get_category( $cat->parent );
-        if ( $parent && ! in_array( $parent->name, $genre_names_list, true ) ) {
-            $city_cat = $cat;
-            break;
-        }
+    if ( $cat->parent > 0 && preg_match( '/^area-\d{2}/', $cat->slug ) ) {
+        $city_cat = $cat;
+        $pref_cat = get_category( $cat->parent );
+    } elseif ( $cat->parent === 0 && preg_match( '/^area-\d{2}$/', $cat->slug ) ) {
+        $pref_cat = $cat;
     }
 }
 ?>
@@ -42,7 +40,13 @@ foreach ( $categories as $cat ) {
     <div class="sidebar-widget">
         <h3 class="sidebar-widget__title">人気記事</h3>
         <?php
-        $popular = knt_get_popular_posts( 5 );
+        $popular = new WP_Query( array(
+            'posts_per_page' => 5,
+            'post_type' => 'post',
+            'post_status' => 'publish',
+            'orderby' => 'date',
+            'order' => 'DESC',
+        ) );
         if ( $popular->have_posts() ) :
             $rank = 1;
         ?>
@@ -87,24 +91,41 @@ foreach ( $categories as $cat ) {
     </div>
     <?php endif; ?>
 
+    <!-- カテゴリ（アコーディオン式） -->
     <div class="sidebar-widget">
-        <h3 class="sidebar-widget__title">ジャンルから探す</h3>
-        <ul class="sidebar-genre-list">
-            <?php
-            foreach ( get_categories( array( 'parent' => 0, 'hide_empty' => true, 'exclude' => array(1), 'orderby' => 'count', 'order' => 'DESC', 'number' => 10 ) ) as $gc ) :
-                if ( in_array( $gc->name, $genre_names_list, true ) ) :
+        <h3 class="sidebar-widget__title">エリアから探す</h3>
+        <?php
+        $pref_cats = get_categories( array(
+            'parent' => 0, 'hide_empty' => true,
+            'orderby' => 'count', 'order' => 'DESC', 'number' => 15,
+        ) );
+        ?>
+        <div class="sidebar-accordion">
+            <?php foreach ( $pref_cats as $pc ) :
+                if ( ! preg_match( '/^area-\d{2}$/', $pc->slug ) ) continue;
+                $children = get_categories( array( 'parent' => $pc->term_id, 'hide_empty' => true, 'orderby' => 'name' ) );
             ?>
-            <li><a href="<?php echo esc_url( get_category_link( $gc->term_id ) ); ?>"><?php echo esc_html( $gc->name ); ?> <span class="sidebar-genre-count">(<?php echo $gc->count; ?>)</span></a></li>
-            <?php endif; endforeach; ?>
-        </ul>
+            <details class="sidebar-accordion__item">
+                <summary>
+                    <a href="<?php echo esc_url( get_category_link( $pc->term_id ) ); ?>" onclick="event.stopPropagation();"><?php echo esc_html( $pc->name ); ?></a>
+                    <span class="sidebar-accordion__count">(<?php echo $pc->count; ?>)</span>
+                </summary>
+                <?php if ( $children ) : ?>
+                <ul class="sidebar-accordion__children">
+                    <?php foreach ( $children as $ch ) : ?>
+                    <li><a href="<?php echo esc_url( get_category_link( $ch->term_id ) ); ?>"><?php echo esc_html( $ch->name ); ?> <span>(<?php echo $ch->count; ?>)</span></a></li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
+            </details>
+            <?php endforeach; ?>
+        </div>
     </div>
 
+    <!-- 検索（1つだけ） -->
     <div class="sidebar-widget">
         <h3 class="sidebar-widget__title">記事を検索</h3>
         <?php get_search_form(); ?>
     </div>
 
-    <?php if ( is_active_sidebar( 'sidebar-1' ) ) : ?>
-        <?php dynamic_sidebar( 'sidebar-1' ); ?>
-    <?php endif; ?>
 </div>
