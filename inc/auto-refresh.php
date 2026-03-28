@@ -43,6 +43,13 @@ add_action( 'switch_theme', 'knt_unschedule_auto_refresh' );
  * 自動更新メイン処理
  */
 function knt_run_auto_refresh() {
+    // ON/OFFチェック
+    $settings = get_option( 'knt_settings', array() );
+    $enabled = isset( $settings['auto_refresh_enabled'] ) ? $settings['auto_refresh_enabled'] : '1';
+    if ( $enabled === '0' || $enabled === false ) {
+        return;
+    }
+
     // 自動生成記事を取得（_knt_generated メタが true の記事）
     $posts = get_posts( array(
         'post_type'   => 'post',

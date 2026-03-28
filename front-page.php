@@ -67,7 +67,10 @@ endif;
     // ========================================
     // 2.5 食べたいもの診断
     // ========================================
-    get_template_part( 'template-parts/food-quiz' );
+    $knt_s = get_option( 'knt_settings', array() );
+    if ( ! isset( $knt_s['fp_food_quiz_show'] ) || $knt_s['fp_food_quiz_show'] !== '0' ) :
+        get_template_part( 'template-parts/food-quiz' );
+    endif;
     ?>
 
     <?php
@@ -202,7 +205,9 @@ endif;
     // ========================================
     // 5.5 実績カウンター
     // ========================================
-    get_template_part( 'template-parts/stats-counter' );
+    if ( ! isset( $knt_s['fp_stats_counter_show'] ) || $knt_s['fp_stats_counter_show'] !== '0' ) :
+        get_template_part( 'template-parts/stats-counter' );
+    endif;
     ?>
 
     <?php
