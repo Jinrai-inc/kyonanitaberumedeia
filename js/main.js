@@ -44,6 +44,34 @@
   initFadeUp();
 
   // ========================================
+  // Stats Counter Animation
+  // ========================================
+  var counterEls = document.querySelectorAll('.stats-counter__number[data-target]');
+  if (counterEls.length > 0 && 'IntersectionObserver' in window) {
+    var counterObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var el = entry.target;
+          var target = parseInt(el.getAttribute('data-target'), 10);
+          var duration = 1500;
+          var start = 0;
+          var startTime = null;
+          function animate(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(eased * target).toLocaleString();
+            if (progress < 1) requestAnimationFrame(animate);
+          }
+          requestAnimationFrame(animate);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+    counterEls.forEach(function(el) { counterObserver.observe(el); });
+  }
+
+  // ========================================
   // Table of Contents Toggle
   // ========================================
   var tocToggle = document.getElementById('toc-toggle');
