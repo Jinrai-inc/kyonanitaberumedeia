@@ -1,15 +1,11 @@
 <?php
 /**
- * Card template part - Enhanced with bookmark, reading time, area badge
+ * Card template part
  *
  * @package KNT_Media
  */
 
 $post_id = get_the_ID();
-// Reading time estimate
-$content   = get_the_content();
-$word_count = mb_strlen( wp_strip_all_tags( $content ) );
-$read_time  = max( 1, ceil( $word_count / 600 ) );
 ?>
 <div class="card__image-wrapper">
     <?php if ( has_post_thumbnail() ) : ?>
@@ -24,17 +20,16 @@ $read_time  = max( 1, ceil( $word_count / 600 ) );
     </button>
 </div>
 <div class="card__body">
-    <div class="card__meta-row">
-        <?php
-        $cats = get_the_category();
-        if ( $cats ) :
-        ?>
+    <?php
+    $cats = get_the_category();
+    if ( $cats ) :
+    ?>
+        <div class="card__cat">
             <a href="<?php echo esc_url( get_category_link( $cats[0]->term_id ) ); ?>" class="cat-tag">
                 <?php echo esc_html( $cats[0]->name ); ?>
             </a>
-        <?php endif; ?>
-        <span class="card__read-time"><?php echo esc_html( $read_time ); ?>分で読める</span>
-    </div>
+        </div>
+    <?php endif; ?>
     <div class="card__meta">
         <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'Y.m.d' ) ); ?></time>
     </div>
