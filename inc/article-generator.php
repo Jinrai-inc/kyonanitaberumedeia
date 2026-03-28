@@ -711,15 +711,29 @@ class KNT_Article_Generator {
             'count'   => min( $count * 3, 60 ),
             'order'   => 4,
         );
-        // ジャンル絞り込みのみ（設備フィルターは結果が減りすぎるため除外）
+
+        // ジャンルを複数試行して十分な結果を確保
+        $shops = array();
         if ( ! empty( $scene['allowed_genres'] ) ) {
-            $search_args['genre'] = $scene['allowed_genres'][0];
+            foreach ( $scene['allowed_genres'] as $genre_code ) {
+                $try_args = $search_args;
+                $try_args['genre'] = $genre_code;
+                $result = $this->api->search_shops( $try_args );
+                if ( ! is_wp_error( $result ) && is_array( $result ) ) {
+                    $existing_ids = array_column( $shops, 'id' );
+                    foreach ( $result as $s ) {
+                        if ( ! in_array( $s['id'], $existing_ids ) ) {
+                            $shops[] = $s;
+                        }
+                    }
+                }
+                if ( count( $shops ) >= $count * 2 ) break; // 十分な数が集まったら停止
+                sleep( 1 ); // API負荷軽減
+            }
         }
 
-        $shops = $this->api->search_shops( $search_args );
-
-        // フォールバック: ジャンル絞りで結果が少ない場合、外して再検索
-        if ( is_wp_error( $shops ) || ( is_array( $shops ) && count( $shops ) < $count ) ) {
+        // フォールバック: まだ足りなければジャンルなしで検索
+        if ( count( $shops ) < $count ) {
             $fb_args = array( 'keyword' => $area, 'count' => min( $count * 3, 60 ), 'order' => 4 );
             $fb = $this->api->search_shops( $fb_args );
             if ( ! is_wp_error( $fb ) && is_array( $fb ) ) {
@@ -1046,6 +1060,17 @@ class KNT_Article_Generator {
         if ( empty( $shops ) ) {
             return new WP_Error( 'no_shops', '該当する店舗が見つかりませんでした。' );
         }
+
+        // 駅記事の場合、駅名が店名に含まれる店舗を優先（例: 「渋谷駅」→「○○ 渋谷駅店」が上位に）
+        if ( $station ) {
+            $st_name = str_replace( '駅', '', $station ); // 「渋谷駅」→「渋谷」
+            usort( $shops, function( $a, $b ) use ( $st_name, $station ) {
+                $a_match = ( mb_strpos( $a['name'], $station ) !== false || mb_strpos( $a['name'], $st_name . '店' ) !== false ) ? 1 : 0;
+                $b_match = ( mb_strpos( $b['name'], $station ) !== false || mb_strpos( $b['name'], $st_name . '店' ) !== false ) ? 1 : 0;
+                return $b_match - $a_match; // マッチする方を上位に
+            } );
+        }
+
         $shops = array_slice( $shops, 0, $count );
 
         // リード文変数
