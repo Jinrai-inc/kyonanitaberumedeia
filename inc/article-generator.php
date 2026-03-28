@@ -707,20 +707,31 @@ class KNT_Article_Generator {
         $scene = KNT_SCENES[ $scene_key ];
 
         $search_args = array(
-            'keyword' => $area . ' ' . $scene['label'],
+            'keyword' => $area,
             'count'   => min( $count * 3, 60 ),
             'order'   => 4,
         );
-        // 有効なAPIフィルターのみ追加
-        foreach ( $scene['api_filters'] as $key => $value ) {
-            $search_args[ $key ] = $value;
-        }
-        // ジャンル絞り込み
+        // ジャンル絞り込みのみ（設備フィルターは結果が減りすぎるため除外）
         if ( ! empty( $scene['allowed_genres'] ) ) {
             $search_args['genre'] = $scene['allowed_genres'][0];
         }
 
         $shops = $this->api->search_shops( $search_args );
+
+        // フォールバック: ジャンル絞りで結果が少ない場合、外して再検索
+        if ( is_wp_error( $shops ) || ( is_array( $shops ) && count( $shops ) < $count ) ) {
+            $fb_args = array( 'keyword' => $area, 'count' => min( $count * 3, 60 ), 'order' => 4 );
+            $fb = $this->api->search_shops( $fb_args );
+            if ( ! is_wp_error( $fb ) && is_array( $fb ) ) {
+                $existing_ids = is_array( $shops ) ? array_column( $shops, 'id' ) : array();
+                foreach ( $fb as $s ) {
+                    if ( ! in_array( $s['id'], $existing_ids ) ) {
+                        $shops[] = $s;
+                    }
+                }
+            }
+        }
+
         if ( is_wp_error( $shops ) ) return $shops;
 
         $shops = $this->filter_shops_by_scene( $shops, $scene_key );
