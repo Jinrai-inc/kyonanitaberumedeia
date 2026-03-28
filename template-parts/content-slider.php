@@ -12,21 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $slider_count = 10;
 
-// 東京都カテゴリ（area-13）を優先表示
-$tokyo_cat = get_term_by( 'slug', 'area-13', 'category' );
-$slider_args = array(
+// ランダムで全国から記事を取得（毎回異なる記事が表示される）
+$slider_query = new WP_Query( array(
     'posts_per_page' => $slider_count,
     'post_type'      => 'post',
     'post_status'    => 'publish',
-    'orderby'        => 'date',
-    'order'          => 'DESC',
-);
-if ( $tokyo_cat ) {
-    $slider_args['cat'] = $tokyo_cat->term_id;
-}
-$slider_query = new WP_Query( $slider_args );
+    'orderby'        => 'rand',
+    'meta_key'       => '_knt_generated',
+    'meta_value'     => '1',
+) );
 
-// 東京都の記事が足りなければ全体から補充
+// 自動生成記事が足りなければ全記事からランダム補充
 if ( $slider_query->post_count < $slider_count ) {
     $exclude_ids = wp_list_pluck( $slider_query->posts, 'ID' );
     $extra = new WP_Query( array(
@@ -34,8 +30,7 @@ if ( $slider_query->post_count < $slider_count ) {
         'post_type'      => 'post',
         'post_status'    => 'publish',
         'post__not_in'   => $exclude_ids,
-        'orderby'        => 'date',
-        'order'          => 'DESC',
+        'orderby'        => 'rand',
     ) );
     if ( $extra->have_posts() ) {
         $slider_query->posts = array_merge( $slider_query->posts, $extra->posts );

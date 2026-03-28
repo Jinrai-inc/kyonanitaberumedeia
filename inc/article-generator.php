@@ -956,13 +956,13 @@ class KNT_Article_Generator {
         if ( $station && $lat && $lng ) {
             $search_args['lat']   = floatval( $lat );
             $search_args['lng']   = floatval( $lng );
-            $search_args['range'] = 5; // 3000m（広めに検索）
+            $search_args['range'] = 3; // 1000m（駅周辺に限定）
 
-            if ( $mode === 'genre' && $genre_name && $genre_name !== 'グルメ' ) {
-                $search_args['keyword'] = $genre_name;
-            }
+            // ジャンルコードがあればジャンルで絞り込み（キーワードは不要、座標で検索）
             if ( $genre_code ) {
                 $search_args['genre'] = $genre_code;
+            } elseif ( $mode === 'genre' && $genre_name && $genre_name !== 'グルメ' ) {
+                $search_args['keyword'] = $genre_name;
             }
         } else {
             // キーワード検索（genre_codeがあればジャンル絞りのみ、keywordはエリア名のみ）
@@ -990,11 +990,28 @@ class KNT_Article_Generator {
         // API検索（段階的フォールバック）
         $shops = $this->api->search_shops( $search_args );
 
-        // フォールバック1: 結果が少なすぎる場合、genre絞りを外す
+        // フォールバック1: 駅検索で結果が少ない場合、範囲を2000mに拡大
+        if ( $station && $lat && $lng && is_array( $shops ) && count( $shops ) < $count ) {
+            $fb_range = $search_args;
+            $fb_range['range'] = 4; // 2000m
+            $fb_r = $this->api->search_shops( $fb_range );
+            if ( ! is_wp_error( $fb_r ) && is_array( $fb_r ) ) {
+                $existing_ids = array_column( $shops, 'id' );
+                foreach ( $fb_r as $s ) {
+                    if ( ! in_array( $s['id'], $existing_ids ) ) $shops[] = $s;
+                }
+            }
+        }
+
+        // フォールバック2: genre絞りを外す
         if ( is_wp_error( $shops ) || ( is_array( $shops ) && count( $shops ) < $count ) ) {
             $fallback_args = $search_args;
             unset( $fallback_args['genre'] );
-            $fallback_args['keyword'] = $area . ' ' . $genre_name;
+            if ( $station && $lat && $lng ) {
+                $fallback_args['range'] = 3; // 駅の場合は1000mに戻す
+            } else {
+                $fallback_args['keyword'] = $area . ' ' . $genre_name;
+            }
             $fb1 = $this->api->search_shops( $fallback_args );
             if ( ! is_wp_error( $fb1 ) && is_array( $fb1 ) ) {
                 $existing_ids = is_array( $shops ) ? array_column( $shops, 'id' ) : array();
