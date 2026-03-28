@@ -20,9 +20,9 @@ $total_shops = $wpdb->get_var(
 );
 $total_shops = intval( $total_shops ) ?: $article_count * 8;
 
-// 都道府県数（area-XXカテゴリの登録数、記事有無問わず）
+// 都道府県数（area-XXカテゴリで記事があるもののみ）
 $pref_count = 0;
-$area_cats = get_categories( array( 'parent' => 0, 'hide_empty' => false ) );
+$area_cats = get_categories( array( 'parent' => 0, 'hide_empty' => true ) );
 foreach ( $area_cats as $c ) {
     if ( preg_match( '/^area-\d{2}$/', $c->slug ) ) {
         $pref_count++;
