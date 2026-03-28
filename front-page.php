@@ -28,6 +28,16 @@ endif;
 
     <?php
     // ========================================
+    // 1.8 実績カウンター
+    // ========================================
+    $knt_s = get_option( 'knt_settings', array() );
+    if ( ! isset( $knt_s['fp_stats_counter_show'] ) || $knt_s['fp_stats_counter_show'] !== '0' ) :
+        get_template_part( 'template-parts/stats-counter' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
     // 2. 人気記事
     // ========================================
     if ( get_theme_mod( 'knt_popular_show', true ) ) :
@@ -198,15 +208,6 @@ endif;
             endif;
             wp_reset_postdata();
         endforeach;
-    endif;
-    ?>
-
-    <?php
-    // ========================================
-    // 5.5 実績カウンター
-    // ========================================
-    if ( ! isset( $knt_s['fp_stats_counter_show'] ) || $knt_s['fp_stats_counter_show'] !== '0' ) :
-        get_template_part( 'template-parts/stats-counter' );
     endif;
     ?>
 

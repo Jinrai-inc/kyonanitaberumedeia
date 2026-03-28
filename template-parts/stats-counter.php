@@ -38,8 +38,7 @@ if ( $pref_count === 0 ) $pref_count = 47;
         </div>
         <div class="stats-counter__divider"></div>
         <div class="stats-counter__item">
-            <span class="stats-counter__number" data-target="<?php echo esc_attr( $total_shops ); ?>">0</span>
-            <span class="stats-counter__unit">+</span>
+            <span class="stats-counter__number" data-target="<?php echo esc_attr( $total_shops ); ?>">0</span><span class="stats-counter__unit">+</span>
             <span class="stats-counter__label">掲載店舗数</span>
         </div>
         <div class="stats-counter__divider"></div>

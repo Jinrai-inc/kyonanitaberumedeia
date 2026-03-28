@@ -3074,7 +3074,7 @@ body > .skiptranslate { display: none !important; }
   color: #fff;
 }
 .stats-counter__number {
-  display: block;
+  display: inline;
   font-family: var(--font-heading);
   font-size: 2.4rem;
   font-weight: 700;
@@ -3086,7 +3086,6 @@ body > .skiptranslate { display: none !important; }
   font-size: 1.4rem;
   font-weight: 700;
   color: rgba(255,255,255,0.8);
-  vertical-align: top;
 }
 .stats-counter__label {
   display: block;
@@ -3103,9 +3102,9 @@ body > .skiptranslate { display: none !important; }
   flex-shrink: 0;
 }
 @media (max-width: 767px) {
-  .stats-counter { padding: 28px 16px; margin: 0 16px 32px; }
-  .stats-counter__number { font-size: 1.8rem; }
-  .stats-counter__unit { font-size: 1rem; }
-  .stats-counter__label { font-size: 0.7rem; }
-  .stats-counter__divider { height: 36px; }
+  .stats-counter { padding: 20px 12px; margin: 0 16px 24px; }
+  .stats-counter__number { font-size: 1.3rem; }
+  .stats-counter__unit { font-size: 0.85rem; }
+  .stats-counter__label { font-size: 0.65rem; }
+  .stats-counter__divider { height: 28px; }
 }
