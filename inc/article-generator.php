@@ -956,9 +956,8 @@ class KNT_Article_Generator {
         if ( $station && $lat && $lng ) {
             $search_args['lat']   = floatval( $lat );
             $search_args['lng']   = floatval( $lng );
-            $search_args['range'] = 3; // 1000m（駅周辺に限定）
+            $search_args['range'] = 4; // 2000m
 
-            // ジャンルコードがあればジャンルで絞り込み（キーワードは不要、座標で検索）
             if ( $genre_code ) {
                 $search_args['genre'] = $genre_code;
             } elseif ( $mode === 'genre' && $genre_name && $genre_name !== 'グルメ' ) {
