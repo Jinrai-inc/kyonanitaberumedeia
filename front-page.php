@@ -56,7 +56,7 @@ endif;
     <section class="section">
         <div class="section__header">
             <h2 class="section__title"><?php echo esc_html( $popular_title ); ?></h2>
-            <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' ) ); ?>" class="section__more">一覧 →</a>
+            <a href="<?php echo esc_url( home_url( '/?s=おすすめ&orderby=date' ) ); ?>" class="section__more">一覧 →</a>
         </div>
 
         <div class="grid grid--3">
@@ -154,7 +154,7 @@ endif;
     <section class="section">
         <div class="section__header">
             <h2 class="section__title"><?php echo esc_html( $latest_title ); ?></h2>
-            <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ?: home_url( '/?post_type=post' ) ); ?>" class="section__more">すべて見る →</a>
+            <a href="<?php echo esc_url( home_url( '/?s=' ) ); ?>" class="section__more">すべて見る →</a>
         </div>
         <div class="grid grid--3">
             <?php while ( $latest_query->have_posts() ) : $latest_query->the_post(); ?>
