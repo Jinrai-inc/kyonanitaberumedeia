@@ -55,6 +55,36 @@ function knt_get_all_station_data() {
         'area-11-春日部市' => array(
             array( 'name' => '春日部駅', 'lat' => 35.9762, 'lng' => 139.7524, 'lines' => '東武スカイツリーライン・野田線' ),
         ),
+        'area-11-草加市' => array(
+            array( 'name' => '草加駅', 'lat' => 35.8266, 'lng' => 139.8053, 'lines' => '東武スカイツリーライン' ),
+        ),
+        'area-11-上尾市' => array(
+            array( 'name' => '上尾駅', 'lat' => 35.9770, 'lng' => 139.5934, 'lines' => 'JR高崎線' ),
+        ),
+        'area-11-熊谷市' => array(
+            array( 'name' => '熊谷駅', 'lat' => 36.1469, 'lng' => 139.3888, 'lines' => 'JR高崎線・新幹線・秩父鉄道' ),
+        ),
+        'area-11-新座市' => array(
+            array( 'name' => '志木駅', 'lat' => 35.8334, 'lng' => 139.5805, 'lines' => '東武東上線' ),
+        ),
+        'area-11-朝霞市' => array(
+            array( 'name' => '朝霞台駅', 'lat' => 35.8184, 'lng' => 139.5889, 'lines' => '東武東上線・JR武蔵野線' ),
+        ),
+        'area-11-富士見市' => array(
+            array( 'name' => 'ふじみ野駅', 'lat' => 35.8575, 'lng' => 139.5250, 'lines' => '東武東上線' ),
+        ),
+        'area-11-戸田市' => array(
+            array( 'name' => '戸田駅', 'lat' => 35.8068, 'lng' => 139.6780, 'lines' => 'JR埼京線' ),
+        ),
+        'area-11-蕨市' => array(
+            array( 'name' => '蕨駅', 'lat' => 35.8245, 'lng' => 139.6852, 'lines' => 'JR京浜東北線' ),
+        ),
+        'area-11-大宮区' => array(
+            array( 'name' => '大宮駅', 'lat' => 35.9063, 'lng' => 139.6237, 'lines' => 'JR各線・新幹線・東武野田線・ニューシャトル' ),
+        ),
+        'area-11-浦和区' => array(
+            array( 'name' => '浦和駅', 'lat' => 35.8585, 'lng' => 139.6572, 'lines' => 'JR各線' ),
+        ),
 
         // ===== 千葉県 =====
         'area-12-千葉市' => array(
@@ -69,6 +99,37 @@ function knt_get_all_station_data() {
         ),
         'area-12-柏市' => array(
             array( 'name' => '柏駅', 'lat' => 35.8580, 'lng' => 139.9723, 'lines' => 'JR常磐線・東武野田線' ),
+            array( 'name' => '南柏駅', 'lat' => 35.8445, 'lng' => 139.9581, 'lines' => 'JR常磐線' ),
+        ),
+        'area-12-市川市' => array(
+            array( 'name' => '市川駅', 'lat' => 35.7316, 'lng' => 139.9099, 'lines' => 'JR総武線' ),
+            array( 'name' => '本八幡駅', 'lat' => 35.7239, 'lng' => 139.9287, 'lines' => 'JR総武線・都営新宿線・京成線' ),
+        ),
+        'area-12-市原市' => array(
+            array( 'name' => '五井駅', 'lat' => 35.5199, 'lng' => 140.0876, 'lines' => 'JR内房線・小湊鉄道' ),
+        ),
+        'area-12-八千代市' => array(
+            array( 'name' => '八千代台駅', 'lat' => 35.7237, 'lng' => 140.0916, 'lines' => '京成本線' ),
+            array( 'name' => '八千代中央駅', 'lat' => 35.7270, 'lng' => 140.1007, 'lines' => '東葉高速鉄道' ),
+        ),
+        'area-12-流山市' => array(
+            array( 'name' => '流山おおたかの森駅', 'lat' => 35.8722, 'lng' => 139.9270, 'lines' => 'つくばエクスプレス・東武野田線' ),
+        ),
+        'area-12-浦安市' => array(
+            array( 'name' => '浦安駅', 'lat' => 35.6638, 'lng' => 139.8918, 'lines' => '東西線' ),
+            array( 'name' => '新浦安駅', 'lat' => 35.6443, 'lng' => 139.8942, 'lines' => 'JR京葉線' ),
+        ),
+        'area-12-習志野市' => array(
+            array( 'name' => '津田沼駅', 'lat' => 35.6814, 'lng' => 140.0243, 'lines' => 'JR総武線' ),
+        ),
+        'area-12-我孫子市' => array(
+            array( 'name' => '我孫子駅', 'lat' => 35.8646, 'lng' => 140.0262, 'lines' => 'JR常磐線・成田線' ),
+        ),
+        'area-12-成田市' => array(
+            array( 'name' => '成田駅', 'lat' => 35.7761, 'lng' => 140.3154, 'lines' => 'JR成田線・京成線' ),
+        ),
+        'area-12-木更津市' => array(
+            array( 'name' => '木更津駅', 'lat' => 35.3823, 'lng' => 139.9264, 'lines' => 'JR内房線・久留里線' ),
         ),
 
         // ===== 東京都（既存 + 追加） =====
@@ -411,11 +472,36 @@ function knt_get_all_station_data() {
         ),
         'area-08-つくば市' => array(
             array( 'name' => 'つくば駅', 'lat' => 36.0826, 'lng' => 140.1116, 'lines' => 'つくばエクスプレス' ),
+            array( 'name' => '研究学園駅', 'lat' => 36.0770, 'lng' => 140.0756, 'lines' => 'つくばエクスプレス' ),
+        ),
+        'area-08-日立市' => array(
+            array( 'name' => '日立駅', 'lat' => 36.5986, 'lng' => 140.6508, 'lines' => 'JR常磐線' ),
+        ),
+        'area-08-ひたちなか市' => array(
+            array( 'name' => '勝田駅', 'lat' => 36.3955, 'lng' => 140.5217, 'lines' => 'JR常磐線・ひたちなか海浜鉄道' ),
+        ),
+        'area-08-古河市' => array(
+            array( 'name' => '古河駅', 'lat' => 36.1932, 'lng' => 139.7167, 'lines' => 'JR宇都宮線' ),
+        ),
+        'area-08-土浦市' => array(
+            array( 'name' => '土浦駅', 'lat' => 36.0777, 'lng' => 140.2024, 'lines' => 'JR常磐線' ),
+        ),
+        'area-08-取手市' => array(
+            array( 'name' => '取手駅', 'lat' => 35.9117, 'lng' => 140.0510, 'lines' => 'JR常磐線・関東鉄道' ),
         ),
 
         // ===== 栃木県 =====
         'area-09-宇都宮市' => array(
             array( 'name' => '宇都宮駅', 'lat' => 36.5594, 'lng' => 139.8982, 'lines' => 'JR各線・新幹線' ),
+        ),
+        'area-09-小山市' => array(
+            array( 'name' => '小山駅', 'lat' => 36.3142, 'lng' => 139.8016, 'lines' => 'JR各線・新幹線' ),
+        ),
+        'area-09-足利市' => array(
+            array( 'name' => '足利駅', 'lat' => 36.3363, 'lng' => 139.4528, 'lines' => 'JR両毛線' ),
+        ),
+        'area-09-那須塩原市' => array(
+            array( 'name' => '那須塩原駅', 'lat' => 36.9621, 'lng' => 139.9460, 'lines' => 'JR東北本線・新幹線' ),
         ),
 
         // ===== 群馬県 =====
@@ -424,6 +510,12 @@ function knt_get_all_station_data() {
         ),
         'area-10-高崎市' => array(
             array( 'name' => '高崎駅', 'lat' => 36.3222, 'lng' => 139.0127, 'lines' => 'JR各線・新幹線' ),
+        ),
+        'area-10-太田市' => array(
+            array( 'name' => '太田駅', 'lat' => 36.2926, 'lng' => 139.3714, 'lines' => '東武伊勢崎線・桐生線・小泉線' ),
+        ),
+        'area-10-伊勢崎市' => array(
+            array( 'name' => '伊勢崎駅', 'lat' => 36.3219, 'lng' => 139.1947, 'lines' => 'JR両毛線・東武伊勢崎線' ),
         ),
 
         // ===== 神奈川県（追加分） =====
