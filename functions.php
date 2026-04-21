@@ -79,6 +79,9 @@ function knt_enqueue_assets() {
     // Theme stylesheet
     wp_enqueue_style( 'knt-style', get_stylesheet_uri(), array( 'knt-google-fonts' ), KNT_VERSION );
 
+    // Redesign layer (additive brush-up; overrides knt-style where needed)
+    wp_enqueue_style( 'knt-redesign', KNT_URI . '/css/redesign.css', array( 'knt-style' ), KNT_VERSION );
+
     // Theme script
     wp_enqueue_script( 'knt-script', KNT_URI . '/js/main.js', array(), KNT_VERSION, true );
 

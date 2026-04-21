@@ -1,0 +1,751 @@
+/* ==========================================================================
+   Redesign Layer (additive brush-up)
+   トップ & アーカイブの視覚を刷新する上書きレイヤー。
+   既存のマークアップ／JS／Customizerロジックは一切変更しないため、
+   ここで指定するのはすべて「上書き」または「追加ユーティリティ」。
+   ========================================================================== */
+
+:root {
+  /* Redesign palette — 既存テラコッタ＋ベージュを温かく刷新 */
+  --rd-paper:        #FBF6EE;
+  --rd-warm-bg:      #F4ECDC;
+  --rd-ink:          #2A2420;
+  --rd-ink-sub:      #5C5148;
+  --rd-ink-mute:     #8D8075;
+  --rd-tomato:       #C9553E;
+  --rd-tomato-dark:  #A8432F;
+  --rd-tomato-soft:  #F7E3DC;
+  --rd-peach:        #F2C1A3;
+  --rd-sun:          #F2B33E;
+  --rd-moss:         #6B9A5F;
+  --rd-line:         rgba(42, 36, 32, 0.08);
+  --rd-line-strong:  rgba(42, 36, 32, 0.14);
+  --rd-card-bg:      #FFFFFF;
+  --rd-card-bg-soft: #FDF9F2;
+
+  /* Region accents（47都道府県 × 8地方） */
+  --rd-region-hokkaido: #5FA8D3;
+  --rd-region-tohoku:   #6B9A5F;
+  --rd-region-kanto:    #C9553E;
+  --rd-region-chubu:    #D49A3A;
+  --rd-region-kansai:   #B54A84;
+  --rd-region-chugoku:  #4E8C7E;
+  --rd-region-shikoku:  #E3943C;
+  --rd-region-kyushu:   #D86B5A;
+
+  /* Shape tokens */
+  --rd-radius-xl: 28px;
+  --rd-radius-lg: 22px;
+  --rd-radius-md: 16px;
+  --rd-radius-sm: 12px;
+  --rd-radius-pill: 999px;
+
+  /* Shadow — 柔らかい影 */
+  --rd-shadow-xs: 0 1px 2px rgba(42, 36, 32, 0.05);
+  --rd-shadow-sm: 0 2px 6px rgba(42, 36, 32, 0.06), 0 1px 2px rgba(42, 36, 32, 0.04);
+  --rd-shadow-md: 0 8px 24px rgba(42, 36, 32, 0.08), 0 2px 6px rgba(42, 36, 32, 0.04);
+  --rd-shadow-lg: 0 18px 48px rgba(42, 36, 32, 0.12), 0 4px 12px rgba(42, 36, 32, 0.06);
+
+  /* Typography refinement */
+  --rd-mono: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+}
+
+/* --------------------------------------------------------------------------
+   Base refresh — 温かみのあるペーパー背景へ微調整
+   -------------------------------------------------------------------------- */
+body {
+  background-color: var(--rd-paper);
+  background-image:
+    radial-gradient(1200px 400px at 50% -10%, rgba(242, 193, 163, 0.25), transparent 60%),
+    radial-gradient(800px 300px at 100% 100%, rgba(201, 85, 62, 0.06), transparent 55%);
+  background-attachment: fixed;
+}
+
+/* --------------------------------------------------------------------------
+   Header — よりクリーンなステッチ
+   -------------------------------------------------------------------------- */
+.site-header {
+  background-color: rgba(251, 246, 238, 0.92);
+  backdrop-filter: saturate(1.2) blur(8px);
+  -webkit-backdrop-filter: saturate(1.2) blur(8px);
+  border-bottom: 1px solid var(--rd-line);
+}
+.site-header__inner {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.site-header__nav a {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--rd-ink-sub);
+  transition: color 0.18s ease;
+}
+.site-header__nav a:hover {
+  color: var(--rd-tomato);
+}
+
+/* Header CTA — tomato pill */
+.site-header .btn--primary.btn--small,
+.site-header__actions .btn--primary {
+  background: var(--rd-tomato);
+  color: #fff;
+  border: 1px solid var(--rd-tomato-dark);
+  border-radius: var(--rd-radius-pill);
+  box-shadow: var(--rd-shadow-sm);
+  padding: 8px 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.site-header .btn--primary.btn--small:hover,
+.site-header__actions .btn--primary:hover {
+  background: var(--rd-tomato-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--rd-shadow-md);
+}
+
+/* --------------------------------------------------------------------------
+   Section headings — 手描きアクセント
+   -------------------------------------------------------------------------- */
+.section {
+  margin-top: 56px;
+}
+.section__header {
+  position: relative;
+  align-items: baseline;
+  margin-bottom: 20px;
+}
+.section__title {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--rd-ink);
+  position: relative;
+  padding-left: 14px;
+}
+.section__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 26px;
+  background: linear-gradient(180deg, var(--rd-tomato), var(--rd-peach));
+  border-radius: 3px;
+}
+.section__more {
+  color: var(--rd-tomato);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.18s;
+  padding: 6px 12px;
+  border-radius: var(--rd-radius-pill);
+}
+.section__more:hover {
+  background: var(--rd-tomato-soft);
+  color: var(--rd-tomato-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Content Slider — hero carousel polish
+   -------------------------------------------------------------------------- */
+.content-slider {
+  margin: 0 0 40px;
+  padding: 20px 0 8px;
+}
+.content-slider__slide {
+  border-radius: var(--rd-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--rd-shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.content-slider__slide:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--rd-shadow-lg);
+}
+.content-slider__overlay {
+  background: linear-gradient(180deg, transparent 0%, rgba(42, 36, 32, 0.82) 100%);
+  padding: 18px;
+}
+.content-slider__cat {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--rd-tomato);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--rd-radius-pill);
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.content-slider__title {
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.45;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   Cards — 柔らかく、温かみを増す
+   -------------------------------------------------------------------------- */
+.card {
+  background: var(--rd-card-bg);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-lg);
+  box-shadow: var(--rd-shadow-sm);
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--rd-shadow-md);
+  border-color: var(--rd-line-strong);
+}
+.card__image {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.card__image-overlay {
+  background: linear-gradient(180deg, transparent 40%, rgba(42, 36, 32, 0.72) 100%);
+}
+.card__title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--rd-ink);
+  padding: 14px 16px 4px;
+}
+.card__title a {
+  color: inherit;
+}
+.card__title a:hover {
+  color: var(--rd-tomato);
+}
+.card__meta {
+  padding: 0 16px 14px;
+  color: var(--rd-ink-mute);
+  font-size: 12px;
+}
+.cat-tag {
+  background: var(--rd-tomato-soft);
+  color: var(--rd-tomato-dark);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: var(--rd-radius-pill);
+  border: none;
+}
+
+/* Bookmark button refinement */
+.card__bookmark {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow: var(--rd-shadow-xs);
+}
+.card__bookmark:hover {
+  background: #fff;
+  box-shadow: var(--rd-shadow-sm);
+}
+
+/* Grid tweak — gap and layout */
+.grid {
+  gap: 24px;
+}
+.grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .grid--3 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Stats counter — コーヒースタンプ風
+   -------------------------------------------------------------------------- */
+.stats-counter {
+  background: linear-gradient(135deg, #fff 0%, var(--rd-card-bg-soft) 100%);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-xl);
+  box-shadow: var(--rd-shadow-md);
+  padding: 28px 24px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+.stats-counter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(201, 85, 62, 0.05) 0, transparent 30%),
+    radial-gradient(circle at 80% 80%, rgba(242, 179, 62, 0.05) 0, transparent 30%);
+  pointer-events: none;
+}
+.stats-counter__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 20px;
+}
+.stats-counter__item {
+  text-align: center;
+  flex: 1;
+}
+.stats-counter__number {
+  display: inline-block;
+  font-family: var(--rd-mono), var(--font-heading);
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--rd-tomato);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stats-counter__unit {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--rd-tomato);
+  margin-left: 2px;
+}
+.stats-counter__label {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rd-ink-sub);
+  letter-spacing: 0.04em;
+}
+.stats-counter__divider {
+  width: 1px;
+  height: 56px;
+  background: var(--rd-line-strong);
+  align-self: center;
+}
+@media (max-width: 640px) {
+  .stats-counter__number { font-size: 32px; }
+  .stats-counter__unit { font-size: 18px; }
+  .stats-counter__label { font-size: 11px; }
+  .stats-counter__divider { height: 40px; }
+}
+
+/* --------------------------------------------------------------------------
+   Japan map — タイトル＆UI調整
+   -------------------------------------------------------------------------- */
+.japan-map {
+  background: linear-gradient(180deg, var(--rd-card-bg-soft) 0%, #fff 100%);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-xl);
+  box-shadow: var(--rd-shadow-md);
+}
+.japan-map__title {
+  font-family: var(--font-heading);
+  color: var(--rd-ink);
+  font-weight: 700;
+}
+.japan-map__subtitle {
+  color: var(--rd-ink-sub);
+}
+
+/* --------------------------------------------------------------------------
+   Food Quiz — 診断セクション
+   -------------------------------------------------------------------------- */
+.food-quiz {
+  background: linear-gradient(135deg, var(--rd-tomato-soft) 0%, #FFF8EF 100%);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-xl);
+  box-shadow: var(--rd-shadow-md);
+}
+.food-quiz__title {
+  font-family: var(--font-heading);
+  color: var(--rd-ink);
+}
+.food-quiz__option {
+  background: #fff;
+  border: 2px solid transparent;
+  border-radius: var(--rd-radius-md);
+  transition: all 0.18s;
+}
+.food-quiz__option:hover {
+  border-color: var(--rd-tomato);
+  transform: translateY(-2px);
+  box-shadow: var(--rd-shadow-sm);
+}
+.food-quiz__option.is-selected {
+  border-color: var(--rd-tomato);
+  background: var(--rd-tomato-soft);
+}
+
+/* --------------------------------------------------------------------------
+   App showcase — ブラッシュアップ
+   -------------------------------------------------------------------------- */
+.app-showcase {
+  background: linear-gradient(135deg, var(--rd-tomato) 0%, var(--rd-tomato-dark) 100%);
+  border-radius: var(--rd-radius-xl);
+  box-shadow: var(--rd-shadow-lg);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.app-showcase::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(242, 179, 62, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.app-showcase__title {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+.app-showcase__features li {
+  color: rgba(255, 255, 255, 0.96);
+}
+.app-showcase__features li strong {
+  color: #fff;
+  font-weight: 700;
+}
+.app-showcase .btn--primary {
+  background: #fff;
+  color: var(--rd-tomato);
+  border: none;
+  border-radius: var(--rd-radius-pill);
+  padding: 14px 28px;
+  font-weight: 700;
+  font-size: 15px;
+  box-shadow: var(--rd-shadow-md);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.app-showcase .btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--rd-shadow-lg);
+  background: #fff;
+  color: var(--rd-tomato-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Archive page — カテゴリ・タグアーカイブ
+   -------------------------------------------------------------------------- */
+.archive-header {
+  padding: 32px 0 20px;
+  text-align: center;
+  position: relative;
+}
+.archive-header__label {
+  display: inline-block;
+  background: var(--rd-tomato-soft);
+  color: var(--rd-tomato-dark);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 5px 14px;
+  border-radius: var(--rd-radius-pill);
+  margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.archive-header__title {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--rd-ink);
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+.archive-header__desc {
+  color: var(--rd-ink-sub);
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+/* Archive search bar */
+.archive-search {
+  margin: 20px 0 28px;
+}
+.archive-search__form {
+  position: relative;
+}
+.archive-search__input {
+  width: 100%;
+  padding: 14px 20px 14px 48px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-pill);
+  font-family: var(--font-body);
+  font-size: 15px;
+  box-shadow: var(--rd-shadow-xs);
+  transition: all 0.18s;
+}
+.archive-search__input:focus {
+  outline: none;
+  border-color: var(--rd-tomato);
+  box-shadow: 0 0 0 4px var(--rd-tomato-soft);
+}
+.archive-search__form::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%235C5148' stroke-width='2'><circle cx='11' cy='11' r='7'/><path stroke-linecap='round' d='m20 20-3.5-3.5'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/* Archive category filter tabs */
+.cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 4px;
+}
+.cat-filter__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink-sub);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.18s;
+}
+.cat-filter__tab:hover {
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato);
+  background: #fff;
+}
+.cat-filter__tab--active {
+  background: var(--rd-tomato);
+  color: #fff;
+  border-color: var(--rd-tomato);
+  box-shadow: var(--rd-shadow-sm);
+}
+.cat-filter__count {
+  font-size: 11px;
+  font-family: var(--rd-mono);
+  opacity: 0.8;
+  padding: 1px 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: var(--rd-radius-pill);
+  font-weight: 600;
+}
+.cat-filter__tab--active .cat-filter__count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  opacity: 1;
+}
+
+/* Archive genre chips */
+.archive-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+  padding: 14px 16px;
+  background: var(--rd-card-bg-soft);
+  border: 1px dashed var(--rd-line-strong);
+  border-radius: var(--rd-radius-md);
+}
+.archive-filters__chip {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink-sub);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.16s;
+}
+.archive-filters__chip:hover {
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato);
+}
+.archive-filters__chip.is-active {
+  background: var(--rd-ink);
+  color: #fff;
+  border-color: var(--rd-ink);
+}
+
+/* Load more button */
+.load-more-wrap {
+  text-align: center;
+  margin: 36px 0 20px;
+}
+.load-more-btn {
+  background: #fff;
+  color: var(--rd-tomato);
+  border: 2px solid var(--rd-tomato);
+  border-radius: var(--rd-radius-pill);
+  padding: 12px 32px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--rd-shadow-xs);
+}
+.load-more-btn:hover {
+  background: var(--rd-tomato);
+  color: #fff;
+  box-shadow: var(--rd-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   TOP5 ranking badges (for first 5 cards in archive)
+   -------------------------------------------------------------------------- */
+.grid--3 > .card:nth-child(-n+5) {
+  position: relative;
+}
+.grid--3 > .card:nth-child(-n+5)::before {
+  content: counter(rank);
+  counter-reset: rank;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--rd-mono), var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(42, 36, 32, 0.7);
+  backdrop-filter: blur(4px);
+  box-shadow: var(--rd-shadow-sm);
+  opacity: 0;
+  pointer-events: none;
+}
+/* ランキング表示は .is-ranked クラスを付与したときのみ */
+.grid--3.is-ranked { counter-reset: rank; }
+.grid--3.is-ranked > .card { counter-increment: rank; }
+.grid--3.is-ranked > .card:nth-child(-n+5)::before {
+  opacity: 1;
+}
+.grid--3.is-ranked > .card:nth-child(1)::before { background: linear-gradient(135deg, #F5C34E, #D99620); }
+.grid--3.is-ranked > .card:nth-child(2)::before { background: linear-gradient(135deg, #CDD3D8, #98A2AB); }
+.grid--3.is-ranked > .card:nth-child(3)::before { background: linear-gradient(135deg, #DE9270, #B56A48); }
+
+/* --------------------------------------------------------------------------
+   Breadcrumb refinement
+   -------------------------------------------------------------------------- */
+.breadcrumb, .breadcrumbs {
+  font-size: 12px;
+  color: var(--rd-ink-mute);
+  margin-bottom: 16px;
+}
+.breadcrumb a, .breadcrumbs a {
+  color: var(--rd-ink-sub);
+  text-decoration: none;
+}
+.breadcrumb a:hover, .breadcrumbs a:hover {
+  color: var(--rd-tomato);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   Footer refinement
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background: linear-gradient(180deg, var(--rd-ink) 0%, #1A1614 100%);
+}
+.site-footer--light {
+  background: var(--rd-warm-bg);
+}
+.footer__heading,
+.site-footer h3 {
+  font-family: var(--font-heading);
+}
+
+/* --------------------------------------------------------------------------
+   Sticky app banner polish
+   -------------------------------------------------------------------------- */
+.sticky-app-banner,
+.knt-sticky-banner {
+  box-shadow: var(--rd-shadow-lg);
+  border-radius: var(--rd-radius-lg);
+  border: 1px solid var(--rd-line);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile bottom nav polish
+   -------------------------------------------------------------------------- */
+.mobile-bottom-nav {
+  background: rgba(251, 246, 238, 0.96);
+  backdrop-filter: saturate(1.2) blur(10px);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);
+  border-top: 1px solid var(--rd-line);
+  box-shadow: 0 -2px 20px rgba(42, 36, 32, 0.06);
+}
+.mobile-bottom-nav a {
+  color: var(--rd-ink-sub);
+}
+.mobile-bottom-nav a.is-active {
+  color: var(--rd-tomato);
+}
+
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+.fadeup {
+  animation: rd-fadeup 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes rd-fadeup {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 背景にかすかな和紙テクスチャ（noise） — 軽量SVG */
+.rd-paper-texture {
+  position: relative;
+}
+.rd-paper-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.17 0 0 0 0 0.14 0 0 0 0.04 0'/></filter><rect width='80' height='80' filter='url(%23n)'/></svg>");
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+
+/* Small-screen section spacing */
+@media (max-width: 640px) {
+  .section { margin-top: 40px; }
+  .section__title { font-size: 22px; padding-left: 12px; }
+  .section__title::before { width: 5px; height: 22px; }
+  .archive-header__title { font-size: 26px; }
+  .app-showcase__title { font-size: 22px; }
+}
