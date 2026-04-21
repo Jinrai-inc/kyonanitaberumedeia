@@ -59,7 +59,7 @@ endif;
             <a href="<?php echo esc_url( home_url( '/?s=おすすめ&orderby=date' ) ); ?>" class="section__more">一覧 →</a>
         </div>
 
-        <div class="grid grid--3">
+        <div class="grid grid--3 is-ranked">
             <?php while ( $popular_query->have_posts() ) : $popular_query->the_post(); ?>
                 <article class="card fadeup">
                     <?php get_template_part( 'template-parts/card' ); ?>
