@@ -749,3 +749,319 @@ body {
   .archive-header__title { font-size: 26px; }
   .app-showcase__title { font-size: 22px; }
 }
+
+/* ==========================================================================
+   Redesign template-parts (genre-chips / popular-searches / featured)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Genre Chips — 8 ジャンルクイックフィルタ
+   -------------------------------------------------------------------------- */
+.rd-genre-chips {
+  margin: 36px 0 8px;
+}
+.rd-genre-chips__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.rd-genre-chips__title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--rd-ink);
+  letter-spacing: 0.02em;
+  padding-left: 14px;
+  position: relative;
+}
+.rd-genre-chips__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 22px;
+  background: linear-gradient(180deg, var(--rd-tomato), var(--rd-peach));
+  border-radius: 3px;
+}
+.rd-genre-chips__hint {
+  color: var(--rd-ink-mute);
+  font-size: 12px;
+}
+.rd-genre-chips__grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+}
+.rd-genre-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 6px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-lg);
+  color: var(--rd-ink);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: var(--rd-shadow-xs);
+}
+.rd-genre-chip:hover {
+  transform: translateY(-3px);
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato-dark);
+  box-shadow: var(--rd-shadow-md);
+}
+.rd-genre-chip__emoji {
+  font-size: 26px;
+  line-height: 1;
+  display: block;
+}
+.rd-genre-chip__label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 900px) {
+  .rd-genre-chips__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .rd-genre-chips__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .rd-genre-chip { padding: 12px 4px; }
+  .rd-genre-chip__emoji { font-size: 22px; }
+  .rd-genre-chip__label { font-size: 11px; }
+}
+
+/* --------------------------------------------------------------------------
+   Popular Searches — 人気ワードチップ
+   -------------------------------------------------------------------------- */
+.rd-popular-searches {
+  margin: 28px 0 8px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #FFF8EF 0%, var(--rd-tomato-soft) 100%);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-lg);
+  box-shadow: var(--rd-shadow-xs);
+}
+.rd-popular-searches__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rd-tomato-dark);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.rd-popular-searches__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rd-popular-searches__chip {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(201, 85, 62, 0.15);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.18s;
+}
+.rd-popular-searches__chip:hover {
+  background: var(--rd-tomato);
+  color: #fff;
+  border-color: var(--rd-tomato);
+  transform: translateY(-2px);
+  box-shadow: var(--rd-shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Featured — 1 lead + 3 side
+   -------------------------------------------------------------------------- */
+.rd-featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.rd-featured--lead-only {
+  grid-template-columns: 1fr;
+}
+.rd-featured__lead {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-xl);
+  overflow: hidden;
+  box-shadow: var(--rd-shadow-md);
+  color: var(--rd-ink);
+  text-decoration: none;
+  transition: transform 0.22s, box-shadow 0.22s;
+}
+.rd-featured__lead:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--rd-shadow-lg);
+  color: var(--rd-ink);
+}
+.rd-featured__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--rd-warm-bg);
+}
+.rd-featured__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.rd-featured__lead:hover .rd-featured__img {
+  transform: scale(1.03);
+}
+.rd-featured__img--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  background: linear-gradient(135deg, var(--rd-warm-bg), #fff);
+}
+.rd-featured__body {
+  padding: 22px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rd-featured__badge {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--rd-tomato);
+  color: #fff;
+  font-family: var(--rd-mono), var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  padding: 4px 10px;
+  border-radius: var(--rd-radius-pill);
+  margin-bottom: 4px;
+}
+.rd-featured__cat {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--rd-tomato-soft);
+  color: var(--rd-tomato-dark);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: var(--rd-radius-pill);
+}
+.rd-featured__title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--rd-ink);
+  margin: 2px 0 0;
+}
+.rd-featured__excerpt {
+  color: var(--rd-ink-sub);
+  font-size: 13px;
+  line-height: 1.75;
+  margin: 2px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rd-featured__date {
+  color: var(--rd-ink-mute);
+  font-size: 11px;
+  font-family: var(--rd-mono), var(--font-body);
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+.rd-featured__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rd-featured__item {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-md);
+  overflow: hidden;
+  box-shadow: var(--rd-shadow-xs);
+  color: var(--rd-ink);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.rd-featured__item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--rd-shadow-md);
+  border-color: var(--rd-line-strong);
+  color: var(--rd-ink);
+}
+.rd-featured__item-media {
+  position: relative;
+  background: var(--rd-warm-bg);
+  overflow: hidden;
+}
+.rd-featured__item-media .rd-featured__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rd-featured__item-body {
+  padding: 12px 14px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: center;
+}
+.rd-featured__cat--small {
+  font-size: 10px;
+  padding: 2px 8px;
+  align-self: flex-start;
+}
+.rd-featured__item-title {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--rd-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rd-featured__date--small {
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .rd-featured { grid-template-columns: 1fr; }
+  .rd-featured__side { flex-direction: column; }
+}
+@media (max-width: 520px) {
+  .rd-featured__title { font-size: 18px; }
+  .rd-featured__body { padding: 18px 18px 20px; }
+  .rd-featured__item { grid-template-columns: 100px minmax(0, 1fr); gap: 12px; }
+  .rd-featured__item-body { padding: 10px 12px 10px 0; }
+  .rd-featured__item-title { font-size: 13px; }
+}

@@ -28,11 +28,38 @@ endif;
 
     <?php
     // ========================================
+    // 1.5 ジャンルクイックフィルタ（redesign）
+    // ========================================
+    if ( get_theme_mod( 'knt_genre_chips_show', true ) ) :
+        get_template_part( 'template-parts/genre-chips' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
     // 1.8 実績カウンター
     // ========================================
     $knt_s = get_option( 'knt_settings', array() );
     if ( ! isset( $knt_s['fp_stats_counter_show'] ) || $knt_s['fp_stats_counter_show'] !== '0' ) :
         get_template_part( 'template-parts/stats-counter' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
+    // 1.9 人気シーンチップ（redesign）
+    // ========================================
+    if ( get_theme_mod( 'knt_popular_searches_show', true ) ) :
+        get_template_part( 'template-parts/popular-searches' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
+    // 1.95 注目の特集（redesign: 1 lead + 3 side）
+    // ========================================
+    if ( get_theme_mod( 'knt_featured_show', true ) ) :
+        get_template_part( 'template-parts/featured' );
     endif;
     ?>
 
