@@ -1244,6 +1244,7 @@ body {
   opacity: 0;
   transition: opacity 0.24s ease;
 }
+.rd-area-gate[hidden] { display: none !important; }
 .rd-area-gate.is-visible { opacity: 1; }
 .rd-area-gate__backdrop {
   position: absolute;
