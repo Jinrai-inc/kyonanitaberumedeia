@@ -1054,6 +1054,735 @@ input { font-family: inherit; }
   letter-spacing: 0.08em;
   margin-top: 2px;
 }
+
+/* ========================================
+   FeaturedRow — Lead + side list
+   ======================================== */
+.featured-section { padding: 48px 24px; }
+.featured-section .container { max-width: 1200px; }
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 960px) { .featured-grid { grid-template-columns: 1fr; } }
+
+.lead-card {
+  position: relative;
+  display: block;
+  border-radius: var(--r-20);
+  overflow: hidden;
+  min-height: 460px;
+  box-shadow: var(--shadow-lead);
+  transition: transform .2s, box-shadow .2s;
+}
+.lead-card:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(27,42,74,0.14); }
+.lead-card__photo {
+  position: absolute;
+  inset: 0;
+}
+.lead-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27,42,74,0) 40%, rgba(27,42,74,0.82) 100%);
+}
+.lead-card__badge {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+}
+.lead-card__body {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px;
+  color: #fff;
+}
+.lead-card__kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--peach);
+  margin-bottom: 12px;
+}
+.lead-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 38px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.lead-card__excerpt {
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 14px;
+  max-width: 520px;
+}
+.lead-card__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.06em;
+}
+@media (max-width: 640px) {
+  .lead-card { min-height: 340px; }
+  .lead-card__title { font-size: 26px; }
+  .lead-card__body { padding: 22px; }
+}
+
+.side-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.side-card {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 14px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-16);
+  overflow: hidden;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.side-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tomato);
+  box-shadow: 0 6px 16px rgba(232,93,74,0.15);
+}
+.side-card__photo { aspect-ratio: 1; }
+.side-card__body { padding: 14px 16px 14px 0; display: flex; flex-direction: column; justify-content: center; }
+.side-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.side-card__meta .area-dot { color: var(--tomato); font-weight: 700; letter-spacing: 0.04em; font-family: var(--font-serif); font-size: 12px; }
+.side-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.side-card__read {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+@media (max-width: 640px) {
+  .side-card { grid-template-columns: 100px 1fr; }
+  .side-card__title { font-size: 14px; }
+}
+
+/* ========================================
+   PopularRow — いま読まれている
+   ======================================== */
+.popular-section { padding: 32px 24px 64px; }
+.popular-section .container { max-width: 1200px; }
+
+.popular-tabs {
+  display: inline-flex;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  gap: 2px;
+}
+.popular-tab {
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: transparent;
+  transition: background .15s, color .15s;
+}
+.popular-tab.is-active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+.popular-grid[data-density="4"] { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 960px) {
+  .popular-grid,
+  .popular-grid[data-density="4"] { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+@media (max-width: 640px) {
+  .popular-grid,
+  .popular-grid[data-density="4"] { grid-template-columns: 1fr; }
+}
+
+.pop-card {
+  position: relative;
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.pop-card:hover { transform: translateY(-2px); border-color: var(--tomato); box-shadow: 0 6px 16px rgba(232,93,74,0.15); }
+.pop-card__photo { aspect-ratio: 16 / 11; position: relative; }
+.pop-card__rank {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255,253,247,0.95);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.pop-card__status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,253,247,0.95);
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.pop-card__body { padding: 16px 18px 20px; }
+.pop-card__area {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--tomato);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.pop-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.pop-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.pop-card__meta .dot { color: var(--muted); }
+
+/* Layout B: side-by-side */
+.popular-grid.layout-B .pop-card {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: stretch;
+}
+.popular-grid.layout-B .pop-card__photo { aspect-ratio: auto; height: 100%; }
+.popular-grid.layout-B .pop-card__rank,
+.popular-grid.layout-B .pop-card__status { font-size: 10px; padding: 3px 8px; }
+.popular-grid.layout-B .pop-card__body { padding: 14px; }
+
+/* Layout C: overlay */
+.popular-grid.layout-C .pop-card {
+  min-height: 280px;
+  position: relative;
+}
+.popular-grid.layout-C .pop-card__photo {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+.popular-grid.layout-C .pop-card__photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27,42,74,0) 30%, rgba(27,42,74,0.82) 100%);
+  z-index: 1;
+}
+.popular-grid.layout-C .pop-card__rank,
+.popular-grid.layout-C .pop-card__status { z-index: 2; }
+.popular-grid.layout-C .pop-card__body {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 200px;
+  color: #fff;
+}
+.popular-grid.layout-C .pop-card__title { color: #fff; }
+.popular-grid.layout-C .pop-card__area { color: var(--peach); }
+.popular-grid.layout-C .pop-card__meta { color: rgba(255,255,255,0.85); }
+.popular-grid.layout-C .pop-card__meta .dot { color: rgba(255,255,255,0.5); }
+
+/* ========================================
+   PrefecturePicker
+   ======================================== */
+.pref-section {
+  padding: 56px 24px 72px;
+  background: var(--warm-bg);
+}
+.pref-section .container { max-width: 1200px; }
+.pref-section .section-header { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.pref-section__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  align-self: flex-end;
+}
+
+.pref-top5 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  margin-bottom: 20px;
+}
+.pref-top5__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.pref-top5__label svg { color: var(--tomato); }
+.pref-top5-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 16px 8px 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.pref-top5-chip:hover { border-color: var(--tomato); color: var(--tomato); }
+.pref-top5-chip__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pref-top5-chip__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.pref-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 20px 0;
+}
+.pref-tab {
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.pref-tab:hover { border-color: var(--ink-2); }
+.pref-tab.is-active {
+  color: #fff;
+  border-color: transparent;
+}
+
+.pref-search {
+  position: relative;
+  margin: 8px 0 20px;
+  max-width: 520px;
+}
+.pref-search input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-pill);
+  padding: 0 16px 0 44px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s;
+}
+.pref-search input:focus { border-color: var(--tomato); }
+.pref-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+.pref-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 36px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .pref-layout { grid-template-columns: 1fr; }
+  .pref-map { display: none; }
+}
+
+.pref-map {
+  background: linear-gradient(180deg, #EEF4F8 0%, #E1ECEF 100%);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-20);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.pref-map::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(27,42,74,0.08) 1.2px, transparent 1.2px);
+  background-size: 8px 8px;
+  pointer-events: none;
+}
+.pref-map svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+}
+.region-shape {
+  cursor: pointer;
+  transition: fill .2s, transform .2s, filter .2s;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.region-shape.is-active {
+  filter: drop-shadow(0 6px 12px rgba(27,42,74,0.25));
+  transform: translateY(-1px);
+}
+.region-label {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 9px;
+  fill: var(--ink);
+  paint-order: stroke fill;
+  stroke: #fff;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+.map-compass {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--muted);
+  letter-spacing: 0.1em;
+}
+.map-lat {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--muted);
+  opacity: 0.7;
+}
+
+.pref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.pref-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-14);
+  padding: 14px 16px 14px 20px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+}
+.pref-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 10px; bottom: 10px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--region-color, var(--border));
+}
+.pref-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--region-color, var(--tomato));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--region-color, var(--tomato)) 25%, transparent);
+}
+.pref-card__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pref-card__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.pref-card__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 20px;
+  padding: 0 7px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--r-pill);
+  letter-spacing: 0.04em;
+}
+.pref-card__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+.pref-card__dish {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.pref-card__dish svg { color: var(--muted); }
+
+/* ========================================
+   AppPromo
+   ======================================== */
+.app-promo { padding: 48px 24px 24px; }
+.app-promo__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #FBEFD8 0%, #F5C28B 100%);
+  border-radius: var(--r-24);
+  padding: 44px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(212,133,10,0.12);
+}
+@media (max-width: 960px) {
+  .app-promo__inner { grid-template-columns: 1fr; padding: 32px; gap: 28px; }
+}
+
+.app-promo__kicker { display: block; margin-bottom: 12px; }
+.app-promo__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.app-promo__desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-bottom: 22px;
+  max-width: 460px;
+}
+.app-promo__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-14);
+  padding: 12px 18px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: transform .15s, background .15s;
+}
+.app-store-btn:hover { background: #0F1C36; transform: translateY(-1px); }
+.app-store-btn__small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.7);
+  display: block;
+}
+.app-store-btn__big {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.app-promo__visual { justify-self: center; }
+.app-mini {
+  width: 180px;
+  height: 220px;
+  background: var(--paper);
+  border-radius: var(--r-20);
+  box-shadow: 0 12px 32px rgba(27,42,74,0.15);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: rotate(-2deg);
+  transition: transform .2s;
+}
+.app-mini:hover { transform: rotate(0deg); }
+.app-mini__photo { aspect-ratio: 4/3; border-radius: var(--r-12); }
+.app-mini__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.app-mini__name {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--ink);
+}
+.app-mini__meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-2);
+  margin-top: auto;
+}
+
+/* ========================================
+   Tweaks panel
+   ======================================== */
+.tweaks {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  width: 260px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-16);
+  box-shadow: 0 12px 32px rgba(27,42,74,0.15);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  transform-origin: bottom right;
+  transition: transform .2s, opacity .2s;
+}
+.tweaks.is-collapsed .tweaks__body { display: none; }
+.tweaks__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.tweaks__toggle {
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.tweaks__body { padding: 14px; }
+.tweaks__row { margin-bottom: 14px; }
+.tweaks__row:last-child { margin-bottom: 0; }
+.tweaks__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.tweaks__seg {
+  display: inline-flex;
+  background: var(--warm-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+.tweaks__seg button {
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink-2);
+  background: transparent;
+  transition: background .15s, color .15s;
+}
+.tweaks__seg button.is-active { background: var(--ink); color: #fff; }
+.tweaks__reset {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-14);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--warm-bg);
+  margin-top: 4px;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.tweaks__reset:hover { border-color: var(--tomato); color: var(--tomato); }
+@media (max-width: 640px) {
+  .tweaks { width: calc(100% - 24px); right: 12px; bottom: 12px; }
+}
 </style>
 </head>
 <body>
@@ -1108,6 +1837,34 @@ input { font-family: inherit; }
 <!-- ========================================
      SiteFooter
      ======================================== -->
+<!-- Tweaks panel (fixed) -->
+<aside class="tweaks" id="tweaks" aria-label="Tweaks">
+  <div class="tweaks__head">
+    <span>TWEAKS</span>
+    <button class="tweaks__toggle" id="tweaks-toggle" type="button">−</button>
+  </div>
+  <div class="tweaks__body">
+    <div class="tweaks__row">
+      <span class="tweaks__label">CARD LAYOUT</span>
+      <div class="tweaks__seg" data-tweak="cardLayout">
+        <button data-v="A" type="button">A</button>
+        <button data-v="B" type="button">B</button>
+        <button data-v="C" type="button">C</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span class="tweaks__label">DENSITY</span>
+      <div class="tweaks__seg" data-tweak="density">
+        <button data-v="3" type="button">3列</button>
+        <button data-v="4" type="button">4列</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <button class="tweaks__reset" id="tweaks-reset-area" type="button">エリアをリセット</button>
+    </div>
+  </div>
+</aside>
+
 <footer class="site-footer">
   <div class="container">
     <div class="site-footer__grid">
@@ -1191,6 +1948,94 @@ const QUIZ = [
       { jp: '深夜', en: 'NIGHT',   photo: 'photo-2' }
     ]
   }
+];
+
+/* 8 地方 */
+const REGIONS = [
+  { id: 'hokkaido',  jp: '北海道',   color: '#5B8FB0' },
+  { id: 'tohoku',    jp: '東北',     color: '#7BA05B' },
+  { id: 'kanto',     jp: '関東',     color: '#E85D4A' },
+  { id: 'chubu',     jp: '中部',     color: '#F2A93A' },
+  { id: 'kinki',     jp: '近畿',     color: '#D97757' },
+  { id: 'chugoku',   jp: '中国',     color: '#6B8E4E' },
+  { id: 'shikoku',   jp: '四国',     color: '#8B7DB0' },
+  { id: 'kyushu',    jp: '九州・沖縄', color: '#C5542E' }
+];
+
+/* 47 都道府県 */
+const PREFECTURES = [
+  { jp: '北海道', region: 'hokkaido', count: 184, dish: '味噌ラーメン', rank: 3 },
+  { jp: '青森',   region: 'tohoku',   count:  42, dish: 'せんべい汁' },
+  { jp: '岩手',   region: 'tohoku',   count:  38, dish: 'わんこそば' },
+  { jp: '宮城',   region: 'tohoku',   count:  72, dish: '牛タン' },
+  { jp: '秋田',   region: 'tohoku',   count:  31, dish: 'きりたんぽ鍋' },
+  { jp: '山形',   region: 'tohoku',   count:  34, dish: '芋煮' },
+  { jp: '福島',   region: 'tohoku',   count:  46, dish: '喜多方ラーメン' },
+  { jp: '茨城',   region: 'kanto',    count:  52, dish: '納豆' },
+  { jp: '栃木',   region: 'kanto',    count:  58, dish: '宇都宮餃子' },
+  { jp: '群馬',   region: 'kanto',    count:  44, dish: '水沢うどん' },
+  { jp: '埼玉',   region: 'kanto',    count:  98, dish: '武蔵野うどん' },
+  { jp: '千葉',   region: 'kanto',    count: 112, dish: '房総はまぐり' },
+  { jp: '東京',   region: 'kanto',    count: 842, dish: '江戸前寿司', rank: 1 },
+  { jp: '神奈川', region: 'kanto',    count: 186, dish: '家系ラーメン' },
+  { jp: '新潟',   region: 'chubu',    count:  61, dish: 'へぎそば' },
+  { jp: '富山',   region: 'chubu',    count:  39, dish: '白えび' },
+  { jp: '石川',   region: 'chubu',    count:  88, dish: '治部煮' },
+  { jp: '福井',   region: 'chubu',    count:  32, dish: '越前おろしそば' },
+  { jp: '山梨',   region: 'chubu',    count:  41, dish: 'ほうとう' },
+  { jp: '長野',   region: 'chubu',    count:  72, dish: '信州そば' },
+  { jp: '岐阜',   region: 'chubu',    count:  47, dish: '飛騨牛' },
+  { jp: '静岡',   region: 'chubu',    count:  94, dish: '静岡おでん' },
+  { jp: '愛知',   region: 'chubu',    count: 158, dish: '味噌カツ' },
+  { jp: '三重',   region: 'kinki',    count:  41, dish: '伊勢うどん' },
+  { jp: '滋賀',   region: 'kinki',    count:  38, dish: '鮒ずし' },
+  { jp: '京都',   region: 'kinki',    count: 218, dish: 'おばんざい', rank: 4 },
+  { jp: '大阪',   region: 'kinki',    count: 312, dish: 'たこ焼き', rank: 2 },
+  { jp: '兵庫',   region: 'kinki',    count: 142, dish: '神戸牛' },
+  { jp: '奈良',   region: 'kinki',    count:  44, dish: '柿の葉寿司' },
+  { jp: '和歌山', region: 'kinki',    count:  36, dish: '和歌山ラーメン' },
+  { jp: '鳥取',   region: 'chugoku',  count:  28, dish: '松葉ガニ' },
+  { jp: '島根',   region: 'chugoku',  count:  31, dish: '出雲そば' },
+  { jp: '岡山',   region: 'chugoku',  count:  58, dish: '祭ずし' },
+  { jp: '広島',   region: 'chugoku',  count:  96, dish: 'お好み焼き' },
+  { jp: '山口',   region: 'chugoku',  count:  38, dish: 'ふぐ' },
+  { jp: '徳島',   region: 'shikoku',  count:  32, dish: '徳島ラーメン' },
+  { jp: '香川',   region: 'shikoku',  count:  78, dish: '讃岐うどん' },
+  { jp: '愛媛',   region: 'shikoku',  count:  41, dish: '鯛めし' },
+  { jp: '高知',   region: 'shikoku',  count:  38, dish: 'カツオのたたき' },
+  { jp: '福岡',   region: 'kyushu',   count: 164, dish: '博多ラーメン', rank: 5 },
+  { jp: '佐賀',   region: 'kyushu',   count:  28, dish: '呼子イカ' },
+  { jp: '長崎',   region: 'kyushu',   count:  58, dish: 'ちゃんぽん' },
+  { jp: '熊本',   region: 'kyushu',   count:  54, dish: '馬刺し' },
+  { jp: '大分',   region: 'kyushu',   count:  36, dish: 'とり天' },
+  { jp: '宮崎',   region: 'kyushu',   count:  34, dish: 'チキン南蛮' },
+  { jp: '鹿児島', region: 'kyushu',   count:  52, dish: '黒豚しゃぶ' },
+  { jp: '沖縄',   region: 'kyushu',   count:  74, dish: '沖縄そば' }
+];
+
+const FEATURED = {
+  lead: {
+    kicker: '第1号 · 東京の朝',
+    badge: 'LEAD STORY',
+    title: '築地、朝の音。',
+    excerpt: '場外が開く前の路地と、最初の一杯。',
+    meta: '8 min で読める · 2026年4月更新',
+    photo: 'photo-3'
+  },
+  side: [
+    { area: '代々木上原', hours: '7:00〜20:00',  status: 'open',   title: '朝7時から開く喫茶店、4軒', read: '4 min で読める', photo: 'photo-6' },
+    { area: '浅草',       hours: '5:00〜11:00',  status: 'open',   title: '下町の朝5時、立ち食いそばを巡る', read: '6 min で読める', photo: 'photo-4' },
+    { area: '中目黒',     hours: '本日休',       status: 'closed', title: '一人で入れる寿司屋、5選', read: '5 min で読める', photo: 'photo-7' }
+  ]
+};
+
+const POPULAR = [
+  { rank: '01', status: { type: 'open',   label: '深夜営業中' }, area: '新宿',   title: '深夜3時、新宿でひとりラーメン7軒', price: '¥900〜',   walk: '徒歩1〜5分', read: '7 min', photo: 'photo-1' },
+  { rank: '02', status: { type: 'soon',   label: '22:00まで' },  area: '渋谷',   title: '2026年新店オープン、カフェ11軒',   price: '¥600〜',   walk: '徒歩3〜8分', read: '9 min', photo: 'photo-6' },
+  { rank: '03', status: { type: 'soon',   label: '17:00開店' },  area: '下北沢', title: '昼から開いてる酒場、隠れた6軒',     price: '¥1,500〜', walk: '徒歩2〜6分', read: '5 min', photo: 'photo-2' },
+  { rank: '04', status: { type: 'soon',   label: '21:00まで' },  area: '銀座',   title: '¥3,000以下で行ける寿司、銀座の穴場', price: '¥2,800〜', walk: '徒歩2〜4分', read: '6 min', photo: 'photo-3' },
+  { rank: '05', status: { type: 'closed', label: '月曜休' },     area: '吉祥寺', title: 'パン屋のはしご、日曜ルート',         price: '¥300〜',   walk: '徒歩1〜7分', read: '4 min', photo: 'photo-7' },
+  { rank: '06', status: { type: 'soon',   label: '23:00まで' },  area: '六本木', title: '会食で失敗しない5軒、2026年版',     price: '¥8,000〜', walk: '徒歩3〜5分', read: '8 min', photo: 'photo-5' }
 ];
 
 const GENRES = [
@@ -1458,6 +2303,301 @@ function renderGenreChips() {
 }
 
 /* ========================================
+   Render — FeaturedRow
+   ======================================== */
+function renderFeatured() {
+  const side = FEATURED.side.map(s => `
+    <a class="side-card" href="#">
+      <div class="side-card__photo photo ${s.photo}"></div>
+      <div class="side-card__body">
+        <div class="side-card__meta">
+          <span class="area-dot">${s.area}</span>
+          <span class="status status--${s.status}">${s.hours}</span>
+        </div>
+        <h3 class="side-card__title">${s.title}</h3>
+        <span class="side-card__read">${s.read}</span>
+      </div>
+    </a>
+  `).join('');
+
+  const L = FEATURED.lead;
+  return `
+    <section class="featured-section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">編集部のおすすめ</span>
+            <h2 class="h-section" style="margin-top:6px;">編集部の今週</h2>
+            <p class="h-sub">実際に通って書いた、飾らない一週間の記録。</p>
+          </div>
+          <a class="section-header__more" href="#">すべての特集 ↗</a>
+        </div>
+
+        <div class="featured-grid">
+          <a class="lead-card" href="#">
+            <div class="lead-card__photo photo ${L.photo}"></div>
+            <div class="lead-card__overlay"></div>
+            <span class="lead-card__badge">${L.badge}</span>
+            <div class="lead-card__body">
+              <span class="lead-card__kicker">${L.kicker}</span>
+              <h3 class="lead-card__title">${L.title}</h3>
+              <p class="lead-card__excerpt">${L.excerpt}</p>
+              <span class="lead-card__meta">${L.meta}</span>
+            </div>
+          </a>
+
+          <div class="side-list">${side}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — PopularRow
+   ======================================== */
+function renderPopular() {
+  const layout = state.tweaks.cardLayout || 'A';
+  const density = state.tweaks.density || 3;
+  const cards = POPULAR.map(p => `
+    <a class="pop-card" href="#">
+      <div class="pop-card__photo photo ${p.photo}">
+        <span class="pop-card__rank">${p.rank}</span>
+        <span class="pop-card__status"><span class="status status--${p.status.type}">${p.status.label}</span></span>
+      </div>
+      <div class="pop-card__body">
+        <div class="pop-card__area">${p.area}</div>
+        <h3 class="pop-card__title">${p.title}</h3>
+        <div class="pop-card__meta">
+          <span>${p.price}</span><span class="dot">·</span>
+          <span>${p.walk}</span><span class="dot">·</span>
+          <span>${p.read}</span>
+        </div>
+      </div>
+    </a>
+  `).join('');
+
+  return `
+    <section class="popular-section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">いま話題</span>
+            <h2 class="h-section" style="margin-top:6px;">いま読まれている</h2>
+            <p class="h-sub">過去7日間、最もブックマークされた記事。</p>
+          </div>
+          <div class="popular-tabs" role="tablist">
+            <button class="popular-tab is-active" type="button">今週</button>
+            <button class="popular-tab" type="button">今月</button>
+            <button class="popular-tab" type="button">2026</button>
+          </div>
+        </div>
+
+        <div class="popular-grid layout-${layout}" data-density="${density}">
+          ${cards}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — PrefecturePicker (incl. Japan map SVG)
+   ======================================== */
+const MAP_REGIONS = {
+  hokkaido: 'M 200 22 L 258 32 L 263 78 L 245 96 L 208 92 L 188 66 L 194 38 Z',
+  tohoku:   'M 194 96 L 230 100 L 234 158 L 218 170 L 194 168 L 180 140 L 180 108 Z',
+  kanto:    'M 204 170 L 236 172 L 248 198 L 238 214 L 212 212 L 198 196 Z',
+  chubu:    'M 142 146 L 196 158 L 204 196 L 168 210 L 138 196 L 132 172 Z',
+  kinki:    'M 110 176 L 142 180 L 156 200 L 150 220 L 124 228 L 106 214 L 100 194 Z',
+  chugoku:  'M 58 184 L 104 188 L 108 214 L 82 224 L 58 218 L 48 202 Z',
+  shikoku:  'M 80 232 L 134 236 L 136 252 L 116 262 L 88 258 L 76 246 Z',
+  kyushu:   'M 22 210 L 70 216 L 80 258 L 60 282 L 32 282 L 14 248 Z'
+};
+const OKINAWA_INSET = 'M 14 294 L 52 298 L 54 312 L 16 310 Z';
+
+function renderJapanMap(active) {
+  const shapes = REGIONS.map(r => {
+    const d = MAP_REGIONS[r.id];
+    if (!d) return '';
+    const isActive = r.id === active;
+    const fill = isActive ? r.color : `color-mix(in srgb, ${r.color} 18%, #FFFDF7)`;
+    const stroke = isActive ? r.color : `color-mix(in srgb, ${r.color} 55%, #1B2A4A 20%)`;
+    return `<path class="region-shape ${isActive ? 'is-active' : ''}" data-region="${r.id}" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round" />`;
+  }).join('');
+
+  // inset 沖縄: 九州と同色扱い
+  const okinawaColor = REGIONS.find(r => r.id === 'kyushu').color;
+  const okiFill = active === 'kyushu' ? okinawaColor : `color-mix(in srgb, ${okinawaColor} 18%, #FFFDF7)`;
+
+  // ラベル位置
+  const labels = {
+    hokkaido: [225, 62, '北海道'],
+    tohoku:   [205, 134, '東北'],
+    kanto:    [222, 195, '関東'],
+    chubu:    [168, 182, '中部'],
+    kinki:    [128, 204, '近畿'],
+    chugoku:  [76, 202, '中国'],
+    shikoku:  [108, 248, '四国'],
+    kyushu:   [44, 252, '九州']
+  };
+  const labelsSvg = REGIONS.map(r => {
+    const [x, y, txt] = labels[r.id] || [];
+    if (txt == null) return '';
+    return `<text class="region-label" x="${x}" y="${y}" text-anchor="middle">${txt}</text>`;
+  }).join('');
+
+  // 緯度線
+  const latLines = `
+    <line x1="8" y1="70" x2="268" y2="70" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <line x1="8" y1="140" x2="268" y2="140" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <line x1="8" y1="220" x2="268" y2="220" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <text class="map-lat" x="262" y="68" text-anchor="end">40°N</text>
+    <text class="map-lat" x="262" y="138" text-anchor="end">35°N</text>
+    <text class="map-lat" x="262" y="218" text-anchor="end">30°N</text>
+  `;
+
+  // コンパス
+  const compass = `
+    <g transform="translate(246 22)">
+      <circle r="10" fill="#FFFDF7" stroke="#1B2A4A" stroke-opacity="0.3" stroke-width="0.8"/>
+      <path d="M0 -8 L2 0 L0 8 L-2 0 Z" fill="#E85D4A"/>
+      <text class="map-compass" y="-12" text-anchor="middle">N</text>
+    </g>
+  `;
+
+  // 小島ドット (佐渡, 淡路, 伊豆大島)
+  const dots = `
+    <circle cx="164" cy="168" r="1.2" fill="#1B2A4A" opacity="0.35"/>
+    <circle cx="136" cy="212" r="1.1" fill="#1B2A4A" opacity="0.35"/>
+    <circle cx="238" cy="220" r="0.9" fill="#1B2A4A" opacity="0.35"/>
+  `;
+
+  return `
+    <svg viewBox="0 0 270 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="日本地図 地方セレクタ">
+      ${latLines}
+      ${shapes}
+      <path class="region-shape ${active === 'kyushu' ? 'is-active' : ''}" data-region="kyushu" d="${OKINAWA_INSET}" fill="${okiFill}" stroke="${okinawaColor}" stroke-width="1" stroke-linejoin="round"/>
+      <text class="region-label" x="34" y="308" text-anchor="middle" style="font-size:7px;">沖縄</text>
+      ${dots}
+      ${labelsSvg}
+      ${compass}
+    </svg>
+  `;
+}
+
+function renderPrefecturePicker() {
+  const active = state.region;
+  const query = (state.prefQ || '').trim();
+  const top5 = PREFECTURES.filter(p => p.rank).sort((a, b) => a.rank - b.rank);
+
+  const tabs = REGIONS.map(r => {
+    const isActive = r.id === active;
+    const style = isActive ? `background:${r.color}; color:#fff;` : '';
+    return `<button class="pref-tab ${isActive ? 'is-active' : ''}" data-region="${r.id}" style="${style}">${r.jp}</button>`;
+  }).join('');
+
+  const top5Chips = top5.map(p => `
+    <button class="pref-top5-chip" data-pref="${p.jp}">
+      <span class="pref-top5-chip__rank">${p.rank}</span>
+      <span>${p.jp}</span>
+      <span class="pref-top5-chip__count">${p.count}件</span>
+    </button>
+  `).join('');
+
+  let filtered = PREFECTURES.filter(p => p.region === active);
+  if (query) {
+    filtered = PREFECTURES.filter(p => p.jp.includes(query) || p.dish.includes(query));
+  }
+  const regionColor = REGIONS.find(r => r.id === active).color;
+  const regionColorOfPref = (p) => REGIONS.find(r => r.id === p.region).color;
+
+  const cards = filtered.map(p => `
+    <button class="pref-card" style="--region-color:${regionColorOfPref(p)}" data-pref="${p.jp}">
+      <div class="pref-card__row">
+        <span class="pref-card__jp">${p.jp}</span>
+        ${p.rank ? `<span class="pref-card__rank">${p.rank}位</span>` : ''}
+        <span class="pref-card__count">${p.count}件</span>
+      </div>
+      <span class="pref-card__dish">${icon('chef')} ${p.dish}</span>
+    </button>
+  `).join('');
+
+  return `
+    <section class="pref-section" id="prefecture">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">全国</span>
+            <h2 class="h-section" style="margin-top:6px;">47都道府県から探す</h2>
+            <p class="h-sub">地方でしぼる、地図で選ぶ、名物で探す。</p>
+          </div>
+          <span class="pref-section__count">2,463軒 · 全47都道府県</span>
+        </div>
+
+        <div class="pref-top5">
+          <span class="pref-top5__label">${icon('bookmark')} 人気グルメ都道府県 TOP 5</span>
+          ${top5Chips}
+        </div>
+
+        <div class="pref-tabs">${tabs}</div>
+
+        <div class="pref-search">
+          ${icon('search')}
+          <input type="search" placeholder="都道府県名・名物で検索" value="${query.replace(/"/g,'&quot;')}" data-pref-search>
+        </div>
+
+        <div class="pref-layout">
+          <div class="pref-map">${renderJapanMap(active)}</div>
+          <div class="pref-grid" style="--region-color:${regionColor}">${cards || `<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:12px;">該当する都道府県が見つかりません</div>`}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — AppPromo
+   ======================================== */
+function renderAppPromo() {
+  return `
+    <section class="app-promo">
+      <div class="app-promo__inner">
+        <div>
+          <span class="kicker app-promo__kicker">アプリでもっと便利に</span>
+          <h2 class="app-promo__title">ルーレットと現在地検索で、<br>迷わず決まる。</h2>
+          <p class="app-promo__desc">GPSで近くのお店を一瞬で。気分・予算・ジャンルで絞り込んで、迷ったらルーレット。無料でダウンロードできます。</p>
+          <div class="app-promo__ctas">
+            <a class="app-store-btn" href="https://kyou-nani-taberu.app">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span>
+                <span class="app-store-btn__small">Download on the</span>
+                <span class="app-store-btn__big">App Store</span>
+              </span>
+            </a>
+            <a class="app-store-btn" href="https://kyou-nani-taberu.app">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 3.3v17.4c0 .3.3.5.6.4l10-9-10.3-9.1c-.2.1-.3.2-.3.3zm11.9 8.2 2.7-1.5-9.9-5.5 7.2 7zm2.7 3-2.7-1.5-7.2 7 9.9-5.5zm2.6-1.5-2 1.1-2.4-1.4 2.4-1.4 2 1.1c.5.3.5 1.3 0 1.6z"/></svg>
+              <span>
+                <span class="app-store-btn__small">GET IT ON</span>
+                <span class="app-store-btn__big">Google Play</span>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="app-promo__visual">
+          <div class="app-mini">
+            <div class="app-mini__photo photo photo-1"></div>
+            <span class="app-mini__label">OPEN NOW · 徒歩3分</span>
+            <div class="app-mini__name">${state.area ? state.area.jp : '渋谷'}の人気店</div>
+            <div class="app-mini__meta">¥950〜 · ★4.6</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
    Render — orchestrator
    ======================================== */
 function render() {
@@ -1471,7 +2611,11 @@ function render() {
     app.innerHTML = [
       renderAreaHome(),
       renderSearchHero(),
-      renderGenreChips()
+      renderGenreChips(),
+      renderFeatured(),
+      renderPopular(),
+      renderPrefecturePicker(),
+      renderAppPromo()
     ].join('');
   } else {
     bar.hidden = true;
@@ -1506,6 +2650,19 @@ document.addEventListener('click', (e) => {
     return;
   }
   if (e.target.closest('.search-bar input')) return; // handled by focus events
+  const tab = e.target.closest('.popular-tab');
+  if (tab) {
+    tab.parentElement.querySelectorAll('.popular-tab').forEach(t => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    return;
+  }
+  const prefTab = e.target.closest('[data-region]');
+  if (prefTab) {
+    state.region = prefTab.dataset.region;
+    state.prefQ = '';
+    render();
+    return;
+  }
   const next = e.target.closest('[data-quiz-next]');
   if (next && !next.disabled && next.classList.contains('is-ready')) {
     if (state.quiz.step < QUIZ.length - 1) {
@@ -1517,6 +2674,62 @@ document.addEventListener('click', (e) => {
       render();
     }
     return;
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.matches('[data-pref-search]')) {
+    state.prefQ = e.target.value;
+    // セクションのみ差し替え（フォーカス維持）
+    const sec = document.querySelector('.pref-section');
+    if (!sec) return;
+    const pos = e.target.selectionStart;
+    sec.outerHTML = renderPrefecturePicker();
+    const input = document.querySelector('[data-pref-search]');
+    if (input) { input.focus(); try { input.setSelectionRange(pos, pos); } catch(_) {} }
+  }
+});
+
+function syncTweaksUI() {
+  document.querySelectorAll('[data-tweak]').forEach(seg => {
+    const key = seg.dataset.tweak;
+    seg.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('is-active', String(state.tweaks[key]) === b.dataset.v);
+    });
+  });
+}
+
+document.addEventListener('click', (e) => {
+  const seg = e.target.closest('[data-tweak] button');
+  if (seg) {
+    const key = seg.parentElement.dataset.tweak;
+    let v = seg.dataset.v;
+    if (key === 'density') v = Number(v);
+    state.tweaks[key] = v;
+    saveTweaks();
+    syncTweaksUI();
+    render();
+    return;
+  }
+  if (e.target.closest('#tweaks-toggle')) {
+    const t = document.getElementById('tweaks');
+    const collapsed = t.classList.toggle('is-collapsed');
+    document.getElementById('tweaks-toggle').textContent = collapsed ? '+' : '−';
+    return;
+  }
+  if (e.target.closest('#tweaks-reset-area')) {
+    state.area = null; state.quiz = { step: 0, picks: [] };
+    saveArea();
+    render();
+    return;
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    const input = document.querySelector('.header-search input') || document.querySelector('.search-bar input');
+    if (input) input.focus();
   }
 });
 
@@ -1533,6 +2746,7 @@ document.addEventListener('focusout', (e) => {
 
 loadState();
 render();
+syncTweaksUI();
 </script>
 </body>
 </html>
