@@ -10,7 +10,16 @@ get_header();
 
 <?php
 // ========================================
-// 0. コンテンツスライダー
+// 0. ヒーローバンド（redesign）
+// ========================================
+if ( get_theme_mod( 'knt_hero_band_show', true ) ) :
+    get_template_part( 'template-parts/hero-band' );
+endif;
+?>
+
+<?php
+// ========================================
+// 0.5 コンテンツスライダー
 // ========================================
 get_template_part( 'template-parts/content-slider' );
 ?>

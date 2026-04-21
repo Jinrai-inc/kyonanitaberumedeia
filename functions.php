@@ -80,13 +80,17 @@ function knt_enqueue_assets() {
     wp_enqueue_style( 'knt-style', get_stylesheet_uri(), array( 'knt-google-fonts' ), KNT_VERSION );
 
     // Redesign layer (additive brush-up; overrides knt-style where needed)
-    wp_enqueue_style( 'knt-redesign', KNT_URI . '/css/redesign.css', array( 'knt-style' ), KNT_VERSION );
+    $rd_css_path = KNT_DIR . '/css/redesign.css';
+    $rd_css_ver  = file_exists( $rd_css_path ) ? filemtime( $rd_css_path ) : KNT_VERSION;
+    wp_enqueue_style( 'knt-redesign', KNT_URI . '/css/redesign.css', array( 'knt-style' ), $rd_css_ver );
 
     // Theme script
     wp_enqueue_script( 'knt-script', KNT_URI . '/js/main.js', array(), KNT_VERSION, true );
 
     // Redesign script (area gate / prefecture picker / archive tweaks / header search)
-    wp_enqueue_script( 'knt-redesign', KNT_URI . '/js/redesign.js', array(), KNT_VERSION, true );
+    $rd_js_path = KNT_DIR . '/js/redesign.js';
+    $rd_js_ver  = file_exists( $rd_js_path ) ? filemtime( $rd_js_path ) : KNT_VERSION;
+    wp_enqueue_script( 'knt-redesign', KNT_URI . '/js/redesign.js', array(), $rd_js_ver, true );
 
     // Localize for AJAX if needed
     wp_localize_script( 'knt-script', 'kntData', array(
