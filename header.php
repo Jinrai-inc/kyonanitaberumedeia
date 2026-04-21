@@ -139,6 +139,21 @@
         </nav>
 
         <div class="site-header__actions">
+            <?php if ( get_theme_mod( 'knt_area_gate_show', true ) ) : ?>
+                <button type="button"
+                        class="rd-area-badge"
+                        data-rd-area-gate-open
+                        aria-label="エリアを変更">
+                    <svg class="rd-area-badge__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <span class="rd-area-badge__label" data-rd-area-badge-label>エリアを選ぶ</span>
+                    <svg class="rd-area-badge__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+            <?php endif; ?>
             <?php if ( get_theme_mod( 'knt_header_search_show', true ) ) : ?>
                 <?php get_template_part( 'template-parts/header-search' ); ?>
             <?php endif; ?>

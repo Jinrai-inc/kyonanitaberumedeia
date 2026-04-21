@@ -1333,6 +1333,79 @@ body {
   color: #fff;
   transform: translateY(-2px);
 }
+.rd-area-gate__pref.is-current {
+  background: var(--rd-tomato-soft);
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato-dark);
+  position: relative;
+}
+.rd-area-gate__pref.is-current::after {
+  content: '現在';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--rd-tomato);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--rd-radius-pill);
+  letter-spacing: 0.06em;
+}
+
+/* --------------------------------------------------------------------------
+   Area Badge — ヘッダーの「エリアを選ぶ/現在エリア」トリガー
+   -------------------------------------------------------------------------- */
+.rd-area-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #fff;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink-sub);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  box-shadow: var(--rd-shadow-xs);
+  max-width: 160px;
+}
+.rd-area-badge:hover {
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato);
+  transform: translateY(-1px);
+  box-shadow: var(--rd-shadow-sm);
+}
+.rd-area-badge--set {
+  background: var(--rd-tomato-soft);
+  border-color: rgba(201, 85, 62, 0.25);
+  color: var(--rd-tomato-dark);
+}
+.rd-area-badge--set:hover {
+  background: var(--rd-tomato);
+  color: #fff;
+  border-color: var(--rd-tomato);
+}
+.rd-area-badge__icon { flex: 0 0 auto; }
+.rd-area-badge__label {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rd-area-badge__chevron { flex: 0 0 auto; opacity: 0.7; }
+@media (max-width: 780px) {
+  .rd-area-badge { padding: 7px 10px; max-width: 130px; font-size: 12px; }
+  .rd-area-badge__label { max-width: 80px; }
+}
+@media (max-width: 520px) {
+  .rd-area-badge__label { display: none; }
+  .rd-area-badge { padding: 8px; }
+  .rd-area-badge__chevron { display: none; }
+}
 .rd-area-gate__foot { margin-top: 16px; text-align: center; }
 .rd-area-gate__skip {
   background: transparent;
