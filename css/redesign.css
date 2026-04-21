@@ -1397,14 +1397,14 @@ body {
   box-shadow: var(--rd-shadow-sm);
 }
 .rd-area-badge--set {
-  background: var(--rd-tomato-soft);
-  border-color: rgba(201, 85, 62, 0.25);
-  color: var(--rd-tomato-dark);
+  background: #fff;
+  border-color: var(--rd-line);
+  color: var(--rd-ink);
 }
+.rd-area-badge--set .rd-area-badge__icon { color: var(--rd-tomato); }
 .rd-area-badge--set:hover {
-  background: var(--rd-tomato);
-  color: #fff;
   border-color: var(--rd-tomato);
+  color: var(--rd-tomato);
 }
 .rd-area-badge__icon { flex: 0 0 auto; }
 .rd-area-badge__label {
@@ -1587,7 +1587,7 @@ body.rd-density-4 .grid--3 {
 @media (max-width: 900px) {
   body.rd-density-4 .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* Layout B: タイトルを画像に重ねる */
+/* Layout B: タイトルを画像に重ねる（ボディタイトルはアクセシビリティのため視覚的に隠す） */
 body.rd-layout-b .card .card__image-wrapper { position: relative; }
 body.rd-layout-b .card .card__image-wrapper .card__image-overlay {
   background: linear-gradient(180deg, transparent 30%, rgba(42,36,32,0.82) 100%);
@@ -1607,7 +1607,45 @@ body.rd-layout-b .card .card__image-title {
   text-shadow: 0 1px 3px rgba(0,0,0,0.3);
   z-index: 2;
 }
-body.rd-layout-b .card .card__body .card__title { display: none; }
+/* Layout B: ボディのタイトルは画面上は非表示にするが、リンクは残す */
+body.rd-layout-b .card .card__body .card__title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Card image link overlay — カード画像全体をクリック可能に
+   -------------------------------------------------------------------------- */
+.card__image-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 1;
+  color: inherit;
+  text-decoration: none;
+}
+.card__image-link .card__image,
+.card__image-link .card__image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.card__image-link .card__image-overlay,
+.card__image-link .card__image-title {
+  position: absolute;
+}
+.card__image-link:focus-visible {
+  outline: 2px solid var(--rd-tomato, #C9553E);
+  outline-offset: -4px;
+  border-radius: var(--rd-radius-md, 10px);
+}
 
 /* ==========================================================================
    Header Search (redesign)
@@ -1754,31 +1792,20 @@ body.rd-layout-b .card .card__body .card__title { display: none; }
 .rd-hero-band__blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.5;
-  animation: rd-blob 18s ease-in-out infinite;
+  filter: blur(50px);
+  opacity: 0.35;
 }
 .rd-hero-band__blob--1 {
-  width: 360px; height: 360px;
-  top: -80px; left: -120px;
+  width: 320px; height: 320px;
+  top: -100px; left: -140px;
   background: radial-gradient(circle, var(--rd-tomato-soft), transparent 70%);
 }
 .rd-hero-band__blob--2 {
-  width: 300px; height: 300px;
-  bottom: -60px; right: 10%;
-  background: radial-gradient(circle, rgba(242, 179, 62, 0.35), transparent 70%);
-  animation-delay: -6s;
-}
-.rd-hero-band__blob--3 {
   width: 260px; height: 260px;
-  top: 20%; right: -80px;
-  background: radial-gradient(circle, rgba(107, 154, 95, 0.25), transparent 70%);
-  animation-delay: -12s;
+  bottom: -80px; right: 8%;
+  background: radial-gradient(circle, rgba(242, 179, 62, 0.28), transparent 70%);
 }
-@keyframes rd-blob {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50%     { transform: translate(20px, -30px) scale(1.1); }
-}
+.rd-hero-band__blob--3 { display: none; }
 .rd-hero-band__inner {
   position: relative;
   z-index: 1;
@@ -1962,19 +1989,7 @@ body.rd-layout-b .card .card__body .card__title { display: none; }
   border-color: var(--rd-tomato);
   transform: translateY(-1px);
 }
-.rd-hero-band__stamp {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  color: var(--rd-tomato);
-  opacity: 0.55;
-  animation: rd-spin 18s linear infinite;
-  transform-origin: center;
-  pointer-events: none;
-  z-index: 1;
-}
-.rd-hero-band__stamp svg { display: block; }
-@keyframes rd-spin { to { transform: rotate(360deg); } }
+.rd-hero-band__stamp { display: none; }
 
 @media (max-width: 780px) {
   .rd-hero-band { padding: 40px 16px 28px; }

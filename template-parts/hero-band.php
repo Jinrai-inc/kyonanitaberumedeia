@@ -24,7 +24,6 @@ $rd_hero_quick    = apply_filters( 'knt_hero_quick_picks', array(
     <div class="rd-hero-band__bg" aria-hidden="true">
         <div class="rd-hero-band__blob rd-hero-band__blob--1"></div>
         <div class="rd-hero-band__blob rd-hero-band__blob--2"></div>
-        <div class="rd-hero-band__blob rd-hero-band__blob--3"></div>
     </div>
 
     <div class="rd-hero-band__inner">
@@ -73,20 +72,5 @@ $rd_hero_quick    = apply_filters( 'knt_hero_quick_picks', array(
         </div>
         <?php endif; ?>
 
-        <div class="rd-hero-band__stamp" aria-hidden="true">
-            <svg viewBox="0 0 80 80" width="64" height="64">
-                <circle cx="40" cy="40" r="36" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <text>
-                    <textPath href="#rd-hero-stamp-path" startOffset="0%">
-                        KYOU-NANI-TABERU · MEDIA · 今日何食べる ·
-                    </textPath>
-                </text>
-                <path id="rd-hero-stamp-path" d="M40,40 m-28,0 a28,28 0 1,1 56,0 a28,28 0 1,1 -56,0" fill="none"/>
-                <g transform="translate(40 40)">
-                    <circle r="14" fill="currentColor" opacity="0.1"/>
-                    <text text-anchor="middle" dy="5" font-size="11" font-weight="700" fill="currentColor">🍱</text>
-                </g>
-            </svg>
-        </div>
     </div>
 </section>

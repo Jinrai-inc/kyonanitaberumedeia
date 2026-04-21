@@ -7,13 +7,15 @@
  */
 ?>
 <div class="card__image-wrapper">
-    <?php if ( has_post_thumbnail() ) : ?>
-        <?php the_post_thumbnail( 'knt-card', array( 'class' => 'card__image', 'alt' => get_the_title() ) ); ?>
-    <?php else : ?>
-        <div class="card__image-placeholder">&#127858;</div>
-    <?php endif; ?>
-    <div class="card__image-overlay"></div>
-    <h3 class="card__image-title"><?php the_title(); ?></h3>
+    <a class="card__image-link" href="<?php the_permalink(); ?>" aria-label="<?php echo esc_attr( get_the_title() ); ?>">
+        <?php if ( has_post_thumbnail() ) : ?>
+            <?php the_post_thumbnail( 'knt-card', array( 'class' => 'card__image', 'alt' => get_the_title() ) ); ?>
+        <?php else : ?>
+            <div class="card__image-placeholder">&#127858;</div>
+        <?php endif; ?>
+        <div class="card__image-overlay"></div>
+        <h3 class="card__image-title"><?php the_title(); ?></h3>
+    </a>
     <span class="card__pr-badge">PR</span>
 </div>
 <div class="card__body">
