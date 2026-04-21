@@ -198,6 +198,15 @@ endif;
 
     <?php
     // ========================================
+    // 4.5 都道府県ピッカー（redesign: 47都道府県 + 8地方タブ）
+    // ========================================
+    if ( get_theme_mod( 'knt_pref_picker_show', true ) ) :
+        get_template_part( 'template-parts/prefecture-picker' );
+    endif;
+    ?>
+
+    <?php
+    // ========================================
     // 5. カテゴリ別セクション
     // ========================================
     if ( get_theme_mod( 'knt_category_sections_show', true ) ) :

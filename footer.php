@@ -183,6 +183,22 @@ $light_color  = $is_light ? 'color: var(--color-text-light);' : '';
 <!-- Toast Notification -->
 <div class="toast" id="toast"></div>
 
+<?php
+// ========================================
+// Redesign: エリアゲート（初回訪問オーバーレイ）
+// ========================================
+if ( get_theme_mod( 'knt_area_gate_show', true ) ) {
+    get_template_part( 'template-parts/area-gate' );
+}
+
+// ========================================
+// Redesign: アーカイブTweaksパネル（アーカイブ・ホームでのみJSが表示）
+// ========================================
+if ( ! is_singular() && get_theme_mod( 'knt_tweaks_panel_show', true ) ) {
+    get_template_part( 'template-parts/archive-tweaks' );
+}
+?>
+
 <?php wp_footer(); ?>
 </body>
 </html>

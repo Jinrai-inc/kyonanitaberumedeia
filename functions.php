@@ -85,6 +85,9 @@ function knt_enqueue_assets() {
     // Theme script
     wp_enqueue_script( 'knt-script', KNT_URI . '/js/main.js', array(), KNT_VERSION, true );
 
+    // Redesign script (area gate / prefecture picker / archive tweaks / header search)
+    wp_enqueue_script( 'knt-redesign', KNT_URI . '/js/redesign.js', array(), KNT_VERSION, true );
+
     // Localize for AJAX if needed
     wp_localize_script( 'knt-script', 'kntData', array(
         'ajaxUrl' => admin_url( 'admin-ajax.php' ),
@@ -568,6 +571,11 @@ require_once KNT_DIR . '/inc/restaurant-links.php';
  * Include Area Categories setup tool
  */
 require_once KNT_DIR . '/inc/area-categories.php';
+
+/**
+ * Prefecture data (47都道府県 × 8地方)
+ */
+require_once KNT_DIR . '/inc/prefecture-data.php';
 
 /**
  * Lazy load images - add loading attribute

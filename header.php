@@ -139,6 +139,9 @@
         </nav>
 
         <div class="site-header__actions">
+            <?php if ( get_theme_mod( 'knt_header_search_show', true ) ) : ?>
+                <?php get_template_part( 'template-parts/header-search' ); ?>
+            <?php endif; ?>
             <div id="google_translate_element" class="header-translate"></div>
             <?php if ( get_theme_mod( 'knt_header_cta_show', true ) ) : ?>
                 <a href="<?php echo esc_url( get_theme_mod( 'knt_header_cta_url', 'https://kyou-nani-taberu.app' ) ); ?>"
