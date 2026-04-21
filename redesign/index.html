@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今日何食べる？メディア — ホーム リデザイン</title>
+<meta name="description" content="エリアを選んで、今日食べたいお店と記事に出会う。編集部が選ぶ特集・人気ランキング・47都道府県の名物まで。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   colors_and_type.css — Design Tokens
+   ======================================== */
+:root {
+  /* Paper / background */
+  --paper: #FFFDF7;
+  --warm-bg: #FFF8EE;
+  --warm-bg-2: #FBEFD8;
+  --warm-bg-3: #F5D9A8;
+  --warm-card: #FFFDF7;
+
+  /* Ink / text */
+  --ink: #1B2A4A;
+  --ink-2: #3D4E6E;
+  --muted: #6B7A8F;
+
+  /* Border */
+  --border: #E3DCC9;
+  --border-soft: #F0EADB;
+
+  /* Brand */
+  --amber: #D4850A;
+  --tomato: #E85D4A;
+  --tomato-hover: #CE4A38;
+  --tomato-tint: #FDEAE5;
+  --peach: #F5C28B;
+  --sun: #F2A93A;
+  --moss: #6B8E4E;
+  --red: #C5542E;
+
+  /* Region colors */
+  --r-hokkaido: #5B8FB0;
+  --r-tohoku: #7BA05B;
+  --r-kanto: #E85D4A;
+  --r-chubu: #F2A93A;
+  --r-kinki: #D97757;
+  --r-chugoku: #6B8E4E;
+  --r-shikoku: #8B7DB0;
+  --r-kyushu: #C5542E;
+
+  /* Typography */
+  --font-serif: 'Klee One', 'Zen Maru Gothic', 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+  --font-sans: 'Zen Maru Gothic', 'Hiragino Sans', 'Yu Gothic', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Radii */
+  --r-4: 4px; --r-10: 10px; --r-12: 12px; --r-14: 14px;
+  --r-16: 16px; --r-20: 20px; --r-24: 24px; --r-pill: 999px;
+
+  /* Shadows */
+  --shadow-card-hover: 0 6px 16px rgba(232,93,74,0.15);
+  --shadow-search-ink: 0 4px 0 var(--ink), 0 8px 20px rgba(27,42,74,0.10);
+  --shadow-search-tomato: 0 4px 0 var(--tomato), 0 20px 40px rgba(232,93,74,0.18);
+  --shadow-lead: 0 10px 30px rgba(27,42,74,0.08);
+}
+
+/* ========================================
+   Reset
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--warm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img { max-width: 100%; height: auto; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+input { font-family: inherit; }
+
+/* ========================================
+   Typography utilities
+   ======================================== */
+.serif { font-family: var(--font-serif); }
+.mono { font-family: var(--font-mono); }
+.kicker {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tomato);
+}
+.caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.h-section {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.h-sub {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-top: 8px;
+}
+@media (max-width: 640px) {
+  .h-section { font-size: 22px; }
+}
+
+/* ========================================
+   Layout utilities
+   ======================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.pad-y { padding-top: 56px; padding-bottom: 56px; }
+@media (max-width: 640px) {
+  .pad-y { padding-top: 36px; padding-bottom: 36px; }
+  .container { padding: 0 16px; }
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.section-header__more {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--tomato);
+}
+.section-header__more:hover { color: var(--tomato-hover); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px; }
+
+@media (max-width: 960px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-8 { grid-template-columns: repeat(4, 1fr); }
+  .hide-tablet { display: none !important; }
+}
+@media (max-width: 640px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .grid-8 { grid-template-columns: repeat(3, 1fr); }
+  .hide-mobile { display: none !important; }
+}
+
+/* ========================================
+   SiteHeader
+   ======================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--warm-bg);
+  border-bottom: 1px solid var(--border-soft);
+}
+.site-header__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+}
+.site-header__logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.site-header__logo-jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.site-header__logo-en {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-self: start;
+  margin-left: 16px;
+}
+.site-header__nav a {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink-2);
+  padding: 4px 2px;
+  border-bottom: 2px solid transparent;
+  transition: color .18s, border-color .18s;
+}
+.site-header__nav a:hover { color: var(--ink); }
+.site-header__nav a.is-active {
+  color: var(--tomato);
+  border-bottom-color: var(--tomato);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-search {
+  position: relative;
+  width: 280px;
+}
+.header-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 40px 0 40px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.header-search input::placeholder { color: var(--muted); }
+.header-search input:focus {
+  border-color: var(--tomato);
+  box-shadow: 0 0 0 4px rgba(232,93,74,0.12);
+}
+.header-search .hs-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+.header-search .hs-kbd {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--warm-bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  letter-spacing: 0.12em;
+}
+.lang-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+@media (max-width: 960px) {
+  .site-header__nav { display: none; }
+  .site-header__inner { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 640px) {
+  .header-search { display: none; }
+}
+
+/* ========================================
+   AreaActiveBar (sticky, shown when area set)
+   ======================================== */
+.area-bar {
+  position: sticky;
+  top: 62px;
+  z-index: 9;
+  background: var(--ink);
+  color: #fff;
+}
+.area-bar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.area-bar__kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--peach);
+  letter-spacing: 0.14em;
+}
+.area-bar__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.area-bar__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+}
+.area-bar__spacer { flex: 1; }
+.area-bar__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.area-bar__change:hover { background: rgba(255,255,255,0.08); }
+
+/* ========================================
+   Photo placeholders — radial gradients
+   ======================================== */
+.photo {
+  position: relative;
+  background: var(--warm-bg-2);
+  overflow: hidden;
+}
+.photo-1 { background: radial-gradient(circle at 42% 38%, #F8C8B0 0%, #E8876B 38%, #B5533B 78%, #6D2E1E 100%); }
+.photo-2 { background: radial-gradient(circle at 48% 45%, #C9A079 0%, #8E6845 38%, #5B4028 78%, #2E1E10 100%); }
+.photo-3 { background: radial-gradient(circle at 44% 40%, #F7D994 0%, #E6B347 38%, #9E7420 78%, #4E3810 100%); }
+.photo-4 { background: radial-gradient(circle at 50% 48%, #D4BE82 0%, #8E7945 38%, #5A4A28 78%, #2F2613 100%); }
+.photo-5 { background: radial-gradient(circle at 48% 50%, #E8A690 0%, #BB6448 38%, #80381E 78%, #401C0F 100%); }
+.photo-6 { background: radial-gradient(circle at 50% 46%, #D9CBA5 0%, #A89669 38%, #6F5F3E 78%, #382F1E 100%); }
+.photo-7 { background: radial-gradient(circle at 44% 42%, #F7C548 0%, #DB8F1D 38%, #8F5B12 78%, #402906 100%); }
+.photo-8 { background: radial-gradient(circle at 46% 42%, #F2B5A2 0%, #D57A65 38%, #8F3E2D 78%, #461912 100%); }
+.photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,0.04) 0 2px,
+      transparent 2px 12px);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ========================================
+   Status dots
+   ======================================== */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.status::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.status--open::before { background: var(--moss); }
+.status--soon::before { background: var(--sun); }
+.status--closed::before { background: var(--red); }
+
+/* ========================================
+   SiteFooter
+   ======================================== */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.85);
+  padding: 56px 0 24px;
+  margin-top: 72px;
+}
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+@media (max-width: 960px) {
+  .site-footer__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .site-footer__grid { grid-template-columns: 1fr; gap: 24px; }
+}
+.site-footer h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--peach);
+  margin-bottom: 16px;
+}
+.site-footer ul li { margin-bottom: 10px; }
+.site-footer ul a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+}
+.site-footer ul a:hover { color: #fff; }
+.site-footer__brand-jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.site-footer__brand-en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--peach);
+}
+.site-footer__desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 16px;
+  max-width: 320px;
+}
+.site-footer__copy {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+}
+@media (max-width: 640px) {
+  .site-footer__copy { flex-direction: column; gap: 8px; }
+}
+
+/* ========================================
+   AreaGateHero
+   ======================================== */
+.area-gate {
+  background: linear-gradient(180deg, #FFF8EE 0%, #FBEFD8 60%, #F5D9A8 100%);
+  padding: 64px 24px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.area-gate__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tomato);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+.step-badge--light {
+  background: var(--tomato-tint);
+  color: var(--tomato);
+}
+.step-badge__num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.gate-hero__top {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.gate-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.gate-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  padding: 14px 22px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--ink);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.gate-cta__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--tomato);
+  border-color: var(--tomato);
+  color: var(--tomato);
+}
+.gate-cta__btn svg { color: var(--tomato); }
+.gate-cta__hint {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.06em;
+}
+
+.gate-heading {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.gate-heading .kicker { display: block; margin-bottom: 10px; }
+.gate-heading h1 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.gate-heading .accent { color: var(--tomato); }
+@media (max-width: 640px) {
+  .gate-heading h1 { font-size: 32px; }
+  .area-gate { padding: 40px 16px 48px; }
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+@media (max-width: 960px) { .area-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+@media (max-width: 640px) { .area-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+.area-card {
+  position: relative;
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  text-align: left;
+  width: 100%;
+  padding: 0;
+  font-family: inherit;
+}
+.area-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tomato);
+  box-shadow: 0 6px 16px rgba(232,93,74,0.15);
+}
+.area-card__photo {
+  aspect-ratio: 4 / 3;
+  position: relative;
+}
+.area-card__count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,253,247,0.92);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(4px);
+}
+.area-card__body { padding: 14px 16px 16px; }
+.area-card__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 17px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.area-card__en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.gate-footer {
+  text-align: center;
+  margin-top: 28px;
+}
+.gate-footer a {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-2);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.gate-footer a:hover {
+  color: var(--tomato);
+  border-bottom-color: var(--tomato);
+}
+
+.gate-placeholder {
+  text-align: center;
+  padding: 36px 24px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ========================================
+   AreaHomeHero — quiz + preview
+   ======================================== */
+.area-home {
+  background: var(--warm-bg);
+  padding: 48px 24px 64px;
+}
+.area-home__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+@media (max-width: 960px) {
+  .area-home__inner { grid-template-columns: 1fr; gap: 32px; }
+  .area-home { padding: 36px 16px 48px; }
+}
+
+.quiz-col .step-badge { margin-bottom: 22px; }
+.quiz-col h1 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+.quiz-col h1 .accent { color: var(--tomato); }
+.quiz-col .h-sub { font-size: 15px; max-width: 520px; }
+@media (max-width: 640px) {
+  .quiz-col h1 { font-size: 34px; }
+}
+
+.quiz-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  padding: 22px;
+  margin-top: 28px;
+}
+.quiz-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.quiz-card__label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.08em;
+}
+.quiz-card__progress {
+  display: flex;
+  gap: 6px;
+}
+.quiz-card__progress span {
+  width: 22px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  transition: background .2s;
+}
+.quiz-card__progress span.is-done { background: var(--tomato); }
+
+.quiz-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.quiz-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-14);
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+.quiz-opt:hover { border-color: var(--tomato); }
+.quiz-opt.is-picked {
+  border-color: var(--tomato);
+  background: var(--tomato);
+  color: #fff;
+}
+.quiz-opt.is-picked .quiz-opt__en { color: rgba(255,255,255,0.85); }
+.quiz-opt__photo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(27,42,74,0.12);
+}
+.quiz-opt__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.quiz-opt__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 15px;
+}
+.quiz-opt__en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.quiz-next {
+  margin-top: 16px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--tomato-tint);
+  color: var(--tomato);
+  border-radius: var(--r-14);
+  padding: 14px 20px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  transition: background .15s, color .15s, transform .15s;
+}
+.quiz-next.is-ready {
+  background: var(--tomato);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(232,93,74,0.3);
+}
+.quiz-next.is-ready:hover { background: var(--tomato-hover); transform: translateY(-1px); }
+.quiz-next.is-ready:active { transform: translateY(0); }
+
+/* Preview card */
+.preview-col { position: relative; }
+.preview-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  box-shadow: var(--shadow-lead);
+  transform: rotate(0.4deg);
+  transition: transform .2s;
+}
+.preview-card:hover { transform: rotate(0deg) translateY(-2px); }
+.preview-card__photo {
+  aspect-ratio: 16 / 10;
+  position: relative;
+}
+.preview-card__tag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+}
+.preview-card__match {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(27,42,74,0.92);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+.preview-card__chips {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+.preview-chip {
+  background: rgba(255,253,247,0.95);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.preview-card__body { padding: 20px 22px 22px; }
+.preview-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.preview-card__sub {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+.preview-card__sub .rating { color: var(--amber); }
+.preview-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.preview-card__meta .dot { color: var(--muted); }
+
+/* ========================================
+   SearchHero
+   ======================================== */
+.search-hero {
+  background: linear-gradient(180deg, #FBEFD8 0%, #FFF8EE 100%);
+  padding: 72px 24px;
+}
+.search-hero__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+.search-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+}
+.search-count svg { color: var(--tomato); }
+
+.search-hero h2 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 48px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.search-hero h2 .accent { color: var(--tomato); }
+.search-hero__sub {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-bottom: 28px;
+}
+@media (max-width: 640px) {
+  .search-hero { padding: 48px 16px; }
+  .search-hero h2 { font-size: 28px; }
+}
+
+.search-bar {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-search-ink);
+  transition: border-color .18s, box-shadow .18s;
+}
+.search-bar.is-focus {
+  border-color: var(--tomato);
+  box-shadow: var(--shadow-search-tomato);
+}
+.search-bar__icon {
+  padding: 0 14px 0 22px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+.search-bar.is-focus .search-bar__icon { color: var(--tomato); }
+.search-bar input {
+  flex: 1;
+  height: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+.search-bar input::placeholder { color: var(--muted); }
+.search-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 14px 22px;
+  border-radius: var(--r-pill);
+  margin: 6px;
+  transition: background .15s;
+}
+.search-submit:hover { background: var(--tomato-hover); }
+@media (max-width: 640px) {
+  .search-submit-label { display: none; }
+  .search-submit { padding: 12px 14px; }
+  .search-bar input { height: 52px; font-size: 14px; }
+}
+
+.quick-row {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.quick-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-right: 4px;
+}
+.quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-weight: 500;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.quick-chip:hover { border-color: var(--tomato); color: var(--tomato); }
+.quick-chip svg { color: var(--muted); }
+.quick-chip--outline {
+  border-style: dashed;
+}
+
+/* ========================================
+   GenreChips
+   ======================================== */
+.genre-section { padding: 56px 24px 32px; }
+.genre-section .container { max-width: 1200px; }
+.genre-list {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 20px;
+}
+@media (max-width: 960px) { .genre-list { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+@media (max-width: 640px) { .genre-list { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+
+.genre-chip { display: block; text-align: center; }
+.genre-chip__photo {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--paper);
+  box-shadow: 0 2px 8px rgba(27,42,74,0.08);
+  transition: transform .15s, box-shadow .15s;
+}
+.genre-chip:hover .genre-chip__photo {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(27,42,74,0.15);
+}
+.genre-chip__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: 10px;
+}
+.genre-chip__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- ========================================
+     SiteHeader
+     ======================================== -->
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/">
+      <span class="site-header__logo-jp">今日何食べる？</span>
+      <span class="site-header__logo-en">KYOU NANI TABERU? MEDIA</span>
+    </a>
+
+    <nav class="site-header__nav" role="navigation" aria-label="メイン">
+      <a href="#" class="is-active">ホーム</a>
+      <a href="#area">エリア</a>
+      <a href="#genre">ジャンル</a>
+      <a href="#guide">ガイド</a>
+      <a href="#inbound">Inbound</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <div class="header-search hide-mobile">
+        <svg class="hs-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" placeholder="店・エリア・ジャンル…" aria-label="サイト内検索">
+        <span class="hs-kbd">⌘K</span>
+      </div>
+      <button class="lang-toggle" type="button">JP · EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- AreaActiveBar (shown when area selected) -->
+<div class="area-bar" id="area-bar" hidden>
+  <div class="area-bar__inner">
+    <span class="area-bar__kicker">現在のエリア</span>
+    <span class="area-bar__jp" id="area-bar-jp">—</span>
+    <span class="area-bar__count" id="area-bar-count">—</span>
+    <span class="area-bar__spacer"></span>
+    <button class="area-bar__change" type="button" id="area-change">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      エリア変更
+    </button>
+  </div>
+</div>
+
+<main id="app">
+  <!-- sections injected here by JS -->
+</main>
+
+<!-- ========================================
+     SiteFooter
+     ======================================== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div>
+        <div class="site-footer__brand-jp">今日何食べる？</div>
+        <div class="site-footer__brand-en">KYOU NANI TABERU? MEDIA</div>
+        <p class="site-footer__desc">食べに行く、を迷わない。エリアで探して、気分でしぼる、お店と記事のエディトリアル・ガイド。</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#area">エリアから探す</a></li>
+          <li><a href="#genre">ジャンルから探す</a></li>
+          <li><a href="#guide">ガイド</a></li>
+          <li><a href="#inbound">Inbound</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">このサイトについて</a></li>
+          <li><a href="#">編集方針</a></li>
+          <li><a href="#">お問い合わせ</a></li>
+          <li><a href="#">媒体資料</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>App</h4>
+        <ul>
+          <li><a href="https://kyou-nani-taberu.app">kyou-nani-taberu.app</a></li>
+          <li><a href="#">App Store</a></li>
+          <li><a href="#">Google Play</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__copy">
+      <span>© 2026 Jinrai Inc. / 今日何食べる？メディア</span>
+      <span>Designed in Tokyo.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ========================================
+   Data
+   ======================================== */
+const QUIZ = [
+  {
+    label: '今の気分',
+    options: [
+      { jp: 'がっつり', en: 'HEARTY',  photo: 'photo-1' },
+      { jp: 'さっぱり', en: 'LIGHT',   photo: 'photo-3' },
+      { jp: 'ヘルシー', en: 'HEALTHY', photo: 'photo-6' },
+      { jp: '甘いもの', en: 'SWEET',   photo: 'photo-7' }
+    ]
+  },
+  {
+    label: '一緒に行くのは',
+    options: [
+      { jp: 'ひとりで', en: 'SOLO',    photo: 'photo-4' },
+      { jp: '二人で',   en: 'DATE',    photo: 'photo-5' },
+      { jp: '友人と',   en: 'FRIENDS', photo: 'photo-8' },
+      { jp: '仕事関係', en: 'BIZ',     photo: 'photo-2' }
+    ]
+  },
+  {
+    label: '予算',
+    options: [
+      { jp: '〜¥1,500',   en: 'CASUAL',   photo: 'photo-7' },
+      { jp: '¥1,500〜3,000', en: 'MIDRANGE', photo: 'photo-3' },
+      { jp: '¥3,000〜6,000', en: 'PREMIUM',  photo: 'photo-4' },
+      { jp: '¥6,000〜',   en: 'LUXURY',   photo: 'photo-5' }
+    ]
+  },
+  {
+    label: '時間帯',
+    options: [
+      { jp: '朝',   en: 'MORNING', photo: 'photo-6' },
+      { jp: '昼',   en: 'LUNCH',   photo: 'photo-3' },
+      { jp: '夜',   en: 'DINNER',  photo: 'photo-1' },
+      { jp: '深夜', en: 'NIGHT',   photo: 'photo-2' }
+    ]
+  }
+];
+
+const GENRES = [
+  { jp: 'ラーメン', en: 'RAMEN',    count: 287, photo: 'photo-1' },
+  { jp: '寿司',     en: 'SUSHI',    count: 192, photo: 'photo-7' },
+  { jp: '焼肉',     en: 'YAKINIKU', count: 168, photo: 'photo-5' },
+  { jp: 'カフェ',   en: 'CAFE',     count: 421, photo: 'photo-6' },
+  { jp: '居酒屋',   en: 'IZAKAYA',  count: 356, photo: 'photo-2' },
+  { jp: 'そば',     en: 'SOBA',     count:  94, photo: 'photo-4' },
+  { jp: 'パン',     en: 'BAKERY',   count: 118, photo: 'photo-3' },
+  { jp: '甘味',     en: 'SWEETS',   count: 203, photo: 'photo-8' }
+];
+
+const POPULAR_SEARCHES = ['代々木上原 カフェ', '築地 朝食', '新宿 深夜 ラーメン', '一人 寿司', '会食 銀座', '京都 朝ごはん'];
+const QUICK_FILTERS = [
+  { label: '今営業中',    icon: 'clock' },
+  { label: '現在地から',  icon: 'pin' },
+  { label: '¥2,000以下',  icon: 'bookmark' },
+  { label: '一人OK',      icon: 'user' }
+];
+
+const AREAS = [
+  { id: 'shibuya',    jp: '渋谷',       en: 'Shibuya',       reading: 'しぶや',      count: 186, photo: 'photo-1' },
+  { id: 'shinjuku',   jp: '新宿',       en: 'Shinjuku',      reading: 'しんじゅく',  count: 243, photo: 'photo-2' },
+  { id: 'ginza',      jp: '銀座',       en: 'Ginza',         reading: 'ぎんざ',      count: 154, photo: 'photo-3' },
+  { id: 'asakusa',    jp: '浅草',       en: 'Asakusa',       reading: 'あさくさ',    count: 98,  photo: 'photo-4' },
+  { id: 'nakameguro', jp: '中目黒',     en: 'Nakameguro',    reading: 'なかめぐろ',  count: 72,  photo: 'photo-5' },
+  { id: 'yoyogiuehara', jp: '代々木上原', en: 'Yoyogi-Uehara', reading: 'よよぎうえはら', count: 38, photo: 'photo-6' },
+  { id: 'kichijoji',  jp: '吉祥寺',     en: 'Kichijoji',     reading: 'きちじょうじ', count: 124, photo: 'photo-7' },
+  { id: 'ebisu',      jp: '恵比寿',     en: 'Ebisu',         reading: 'えびす',      count: 108, photo: 'photo-8' }
+];
+
+/* ========================================
+   State + localStorage
+   ======================================== */
+const LS_AREA = 'knt-area';
+const LS_TWEAKS = 'knt-tweaks';
+
+const state = {
+  area: null,
+  tweaks: { cardLayout: 'A', density: 3 },
+  region: 'kanto',
+  searchFocus: false,
+  quiz: { step: 0, picks: [] }
+};
+
+function loadState() {
+  try {
+    const a = JSON.parse(localStorage.getItem(LS_AREA) || 'null');
+    if (a && a.id) state.area = a;
+    const t = JSON.parse(localStorage.getItem(LS_TWEAKS) || 'null');
+    if (t) state.tweaks = Object.assign(state.tweaks, t);
+  } catch (e) {}
+}
+function saveArea() {
+  if (state.area) localStorage.setItem(LS_AREA, JSON.stringify(state.area));
+  else localStorage.removeItem(LS_AREA);
+}
+function saveTweaks() { localStorage.setItem(LS_TWEAKS, JSON.stringify(state.tweaks)); }
+
+/* ========================================
+   Render — orchestrator
+   ======================================== */
+/* ========================================
+   Render — AreaGateHero
+   ======================================== */
+function renderAreaGate() {
+  const cards = AREAS.map(a => `
+    <button class="area-card" data-area-id="${a.id}" aria-label="${a.jp}を選ぶ">
+      <div class="area-card__photo photo ${a.photo}">
+        <span class="area-card__count">${a.count}件</span>
+      </div>
+      <div class="area-card__body">
+        <div class="area-card__jp">${a.jp}</div>
+        <div class="area-card__en">${a.reading}</div>
+      </div>
+    </button>
+  `).join('');
+
+  return `
+    <section class="area-gate">
+      <div class="area-gate__inner">
+        <div class="gate-hero__top">
+          <div class="gate-cta">
+            <button class="gate-cta__btn" type="button" id="geo-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-7-7.5-7-13a7 7 0 1 1 14 0c0 5.5-7 13-7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              現在地から探す
+            </button>
+            <span class="gate-cta__hint">または ↓ エリアを選ぶ</span>
+          </div>
+        </div>
+
+        <div class="gate-heading">
+          <span class="kicker">人気のエリア</span>
+          <h1>エリアを選んでください</h1>
+        </div>
+
+        <div class="area-grid">
+          ${cards}
+        </div>
+
+        <div class="gate-footer">
+          <a href="#prefecture">全国47都道府県から選ぶ ›</a>
+        </div>
+      </div>
+
+      <div class="gate-placeholder">
+        ↑ エリアを選ぶとこの下にお店・特集・ランキングが表示されます
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — AreaHomeHero
+   ======================================== */
+function renderAreaHome() {
+  const step = state.quiz.step;
+  const q = QUIZ[step];
+  const picks = state.quiz.picks;
+  const ready = picks[step] != null;
+
+  const dots = QUIZ.map((_, i) =>
+    `<span class="${i < step || (i === step && ready) ? 'is-done' : ''}"></span>`).join('');
+
+  const opts = q.options.map((o, i) => `
+    <button class="quiz-opt ${picks[step] === i ? 'is-picked' : ''}" data-quiz-opt="${i}">
+      <span class="quiz-opt__photo photo ${o.photo}"></span>
+      <span class="quiz-opt__text">
+        <span class="quiz-opt__jp">${o.jp}</span>
+        <span class="quiz-opt__en">${o.en}</span>
+      </span>
+    </button>
+  `).join('');
+
+  const nextLabel = step >= QUIZ.length - 1 ? '診断結果を見る' : '次の質問へ';
+
+  return `
+    <section class="area-home">
+      <div class="area-home__inner">
+        <div class="quiz-col">
+          <div class="step-badge step-badge--light">
+            <span>ステップ 02</span><span>·</span><span>30秒で診断</span>
+          </div>
+          <h1><span class="accent">${state.area.jp}</span>で<br>今食べたいのは?</h1>
+          <p class="h-sub">4つの気分から、今営業中のお店を編集部がマッチング。</p>
+
+          <div class="quiz-card">
+            <div class="quiz-card__head">
+              <span class="quiz-card__label">Q ${String(step + 1).padStart(2, '0')} / ${String(QUIZ.length).padStart(2, '0')} · ${q.label}</span>
+              <div class="quiz-card__progress">${dots}</div>
+            </div>
+            <div class="quiz-opts">${opts}</div>
+            <button type="button" class="quiz-next ${ready ? 'is-ready' : ''}" data-quiz-next ${ready ? '' : 'disabled'}>
+              ${nextLabel} ↗
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-col hide-mobile">
+          <div class="preview-card">
+            <div class="preview-card__photo photo ${state.area.photo}">
+              <span class="preview-card__match">マッチ94%</span>
+              <span class="preview-card__tag">プレビュー</span>
+              <div class="preview-card__chips">
+                <span class="preview-chip">#${state.area.jp}</span>
+                <span class="preview-chip">#営業中</span>
+              </div>
+            </div>
+            <div class="preview-card__body">
+              <h3 class="preview-card__title">${state.area.jp}の人気店</h3>
+              <p class="preview-card__sub">編集部おすすめ · <span class="rating">4.6 ★</span></p>
+              <div class="preview-card__meta">
+                <span>¥950〜</span><span class="dot">·</span>
+                <span>徒歩3分</span><span class="dot">·</span>
+                <span class="status status--open">営業中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — SearchHero
+   ======================================== */
+function icon(name) {
+  const ICONS = {
+    clock: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    pin:   '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-7-7.5-7-13a7 7 0 1 1 14 0c0 5.5-7 13-7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+    bookmark: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4Z"/></svg>',
+    user:  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 5-6 7-6s6 2 7 6"/></svg>',
+    search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    searchSm:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    arrowUp: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M8 7h9v9"/></svg>',
+    chef:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13a4 4 0 1 1 2-7.5 4 4 0 0 1 8 0 4 4 0 1 1 2 7.5v5H6Z"/><path d="M6 18h12"/></svg>'
+  };
+  return ICONS[name] || '';
+}
+
+function renderSearchHero() {
+  const pops = POPULAR_SEARCHES.map(p =>
+    `<button class="quick-chip" type="button">${icon('searchSm')} ${p}</button>`).join('');
+  const quicks = QUICK_FILTERS.map(q =>
+    `<button class="quick-chip quick-chip--outline" type="button">${icon(q.icon)} ${q.label}</button>`).join('');
+
+  return `
+    <section class="search-hero" id="search">
+      <div class="search-hero__inner">
+        <span class="search-count">${icon('searchSm')} 2,463軒 · 2,400記事を検索</span>
+        <h2><span class="accent">${state.area.jp}</span>で何を?</h2>
+        <p class="search-hero__sub">ジャンル・駅名・気分 — ${state.area.jp}エリア内で検索。</p>
+
+        <form class="search-bar" id="search-bar" onsubmit="return false;">
+          <span class="search-bar__icon">${icon('search')}</span>
+          <input type="search" placeholder="寿司、代々木上原、深夜ラーメン…" aria-label="エリア内検索">
+          <button class="search-submit" type="submit">
+            <span class="search-submit-label">検索</span>
+            ${icon('arrowUp')}
+          </button>
+        </form>
+
+        <div class="quick-row">
+          <span class="quick-label">人気の検索</span>
+          ${pops}
+        </div>
+        <div class="quick-row">
+          ${quicks}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — GenreChips
+   ======================================== */
+function renderGenreChips() {
+  const chips = GENRES.map(g => `
+    <a class="genre-chip" href="#">
+      <div class="genre-chip__photo photo ${g.photo}"></div>
+      <div class="genre-chip__jp">${g.jp}</div>
+      <div class="genre-chip__count">${g.count}件の記事</div>
+    </a>
+  `).join('');
+
+  return `
+    <section class="genre-section" id="genre">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">ジャンル別</span>
+            <h2 class="h-section" style="margin-top:6px;">ジャンルから探す</h2>
+          </div>
+          <a class="section-header__more" href="#">すべてのジャンル ↗</a>
+        </div>
+        <div class="genre-list">
+          ${chips}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — orchestrator
+   ======================================== */
+function render() {
+  const app = document.getElementById('app');
+  const bar = document.getElementById('area-bar');
+  if (state.area) {
+    bar.hidden = false;
+    document.getElementById('area-bar-jp').textContent = state.area.jp;
+    document.getElementById('area-bar-count').textContent =
+      `${state.area.count}件の記事 · ${Math.round(state.area.count * 0.7)}軒の店舗`;
+    app.innerHTML = [
+      renderAreaHome(),
+      renderSearchHero(),
+      renderGenreChips()
+    ].join('');
+  } else {
+    bar.hidden = true;
+    app.innerHTML = renderAreaGate();
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-area-id]');
+  if (card) {
+    const a = AREAS.find(x => x.id === card.dataset.areaId);
+    if (a) { state.area = a; saveArea(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    return;
+  }
+  if (e.target.closest('#area-change')) {
+    state.area = null;
+    saveArea();
+    render();
+    return;
+  }
+  if (e.target.closest('#geo-btn')) {
+    // デモ: 現在地取得の代わりに「渋谷」を仮選択
+    const a = AREAS[0];
+    state.area = a; saveArea(); render();
+    return;
+  }
+  const opt = e.target.closest('[data-quiz-opt]');
+  if (opt) {
+    const i = Number(opt.dataset.quizOpt);
+    state.quiz.picks[state.quiz.step] = i;
+    render();
+    return;
+  }
+  if (e.target.closest('.search-bar input')) return; // handled by focus events
+  const next = e.target.closest('[data-quiz-next]');
+  if (next && !next.disabled && next.classList.contains('is-ready')) {
+    if (state.quiz.step < QUIZ.length - 1) {
+      state.quiz.step++;
+      render();
+    } else {
+      // 最終質問後は再スタート（デモ）
+      state.quiz = { step: 0, picks: [] };
+      render();
+    }
+    return;
+  }
+});
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.matches('.search-bar input')) {
+    e.target.closest('.search-bar').classList.add('is-focus');
+  }
+});
+document.addEventListener('focusout', (e) => {
+  if (e.target.matches('.search-bar input')) {
+    e.target.closest('.search-bar').classList.remove('is-focus');
+  }
+});
+
+loadState();
+render();
+</script>
+</body>
+</html>
