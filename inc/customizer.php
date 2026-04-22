@@ -122,6 +122,106 @@ function knt_customize_register( $wp_customize ) {
         'type'        => 'number',
     ) );
 
+    // --- 日本地図エリア検索 ---
+    $wp_customize->add_section( 'knt_japan_map', array(
+        'title' => '日本地図エリア検索',
+        'panel' => 'knt_frontpage_panel',
+    ) );
+
+    $wp_customize->add_setting( 'knt_japan_map_show', array(
+        'default'           => true,
+        'sanitize_callback' => 'knt_sanitize_checkbox',
+    ) );
+    $wp_customize->add_control( 'knt_japan_map_show', array(
+        'label'   => '日本地図エリア検索を表示する',
+        'section' => 'knt_japan_map',
+        'type'    => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'knt_area_url_pattern', array(
+        'default'           => 'search',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_area_url_pattern', array(
+        'label'       => 'エリアリンクの形式',
+        'description' => 'search: 検索結果ページ / taxonomy: カスタムタクソノミー',
+        'section'     => 'knt_japan_map',
+        'type'        => 'select',
+        'choices'     => array(
+            'search'   => '検索形式（/?s=エリア名+グルメ）',
+            'taxonomy' => 'タクソノミー形式（/area/都道府県/）',
+        ),
+    ) );
+
+    $wp_customize->add_setting( 'knt_japan_map_title', array(
+        'default'           => '食べたいエリアを選んでね',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_japan_map_title', array(
+        'label'   => 'タイトル',
+        'section' => 'knt_japan_map',
+        'type'    => 'text',
+    ) );
+
+    $wp_customize->add_setting( 'knt_japan_map_subtitle', array(
+        'default'           => '地図をタップ or 下のメニューから選択できるよ',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_japan_map_subtitle', array(
+        'label'   => 'サブタイトル',
+        'section' => 'knt_japan_map',
+        'type'    => 'text',
+    ) );
+
+    // --- PR記事（いま人気な店舗） ---
+    $wp_customize->add_section( 'knt_pr_section', array(
+        'title' => 'PR記事（いま人気な店舗）',
+        'panel' => 'knt_frontpage_panel',
+    ) );
+
+    $wp_customize->add_setting( 'knt_pr_title', array(
+        'default'           => 'いま人気な店舗',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_pr_title', array(
+        'label'   => 'セクションタイトル',
+        'section' => 'knt_pr_section',
+        'type'    => 'text',
+    ) );
+
+    $wp_customize->add_setting( 'knt_pr_category_slug', array(
+        'default'           => 'pr',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_pr_category_slug', array(
+        'label'       => 'PR記事のカテゴリ or タグのスラッグ',
+        'description' => 'PR記事を判別するカテゴリまたはタグのスラッグ',
+        'section'     => 'knt_pr_section',
+        'type'        => 'text',
+    ) );
+
+    $wp_customize->add_setting( 'knt_pr_use_tag', array(
+        'default'           => false,
+        'sanitize_callback' => 'knt_sanitize_checkbox',
+    ) );
+    $wp_customize->add_control( 'knt_pr_use_tag', array(
+        'label'       => 'タグで判別する（カテゴリの代わり）',
+        'description' => 'ONにするとカテゴリではなくタグで検索します',
+        'section'     => 'knt_pr_section',
+        'type'        => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'knt_pr_count', array(
+        'default'           => 6,
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'knt_pr_count', array(
+        'label'       => '表示件数',
+        'section'     => 'knt_pr_section',
+        'type'        => 'number',
+        'input_attrs' => array( 'min' => 3, 'max' => 12 ),
+    ) );
+
     // --- 新着記事 ---
     $wp_customize->add_section( 'knt_latest', array(
         'title' => '新着記事セクション',
@@ -281,6 +381,26 @@ function knt_customize_register( $wp_customize ) {
         'section' => 'knt_app_banner',
         'type'    => 'url',
     ) );
+
+    $wp_customize->add_setting( 'knt_app_screenshot', array(
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ) );
+    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'knt_app_screenshot', array(
+        'label'   => 'アプリスクリーンショット画像',
+        'description' => 'トップページのアプリ紹介セクションに表示される端末キャプチャ画像',
+        'section' => 'knt_app_banner',
+    ) ) );
+
+    $wp_customize->add_setting( 'knt_app_logo', array(
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+    ) );
+    $wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'knt_app_logo', array(
+        'label'   => 'アプリロゴ画像',
+        'description' => 'アプリ紹介セクション左上 + 追尾バナーに表示されるロゴ',
+        'section' => 'knt_app_banner',
+    ) ) );
 
     // ========================================
     // 記事ページ設定
@@ -509,6 +629,24 @@ function knt_customize_register( $wp_customize ) {
         'label'       => 'Google Analytics 測定ID',
         'description' => '例: G-XXXXXXXXXX',
         'section'     => 'knt_analytics',
+        'type'        => 'text',
+    ) );
+    // ========================================
+    // API設定
+    // ========================================
+    $wp_customize->add_section( 'knt_api', array(
+        'title'    => 'API設定',
+        'priority' => 195,
+    ) );
+
+    $wp_customize->add_setting( 'knt_hotpepper_api_key', array(
+        'default'           => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ) );
+    $wp_customize->add_control( 'knt_hotpepper_api_key', array(
+        'label'       => 'ホットペッパー APIキー',
+        'description' => 'リクルートWebサービスのAPIキー',
+        'section'     => 'knt_api',
         'type'        => 'text',
     ) );
 }

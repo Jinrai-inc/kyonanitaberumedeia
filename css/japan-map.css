@@ -1,0 +1,357 @@
+/* ========================================
+   Japan Map - First Visual (Kawaii Style)
+   ======================================== */
+
+/* Section */
+.japan-map-section {
+  position: relative;
+  padding: 48px 0 56px;
+  background: linear-gradient(180deg, #FFF9F0 0%, var(--color-bg-main, #F4F0EB) 100%);
+  overflow: hidden;
+}
+
+.japan-map-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle, rgba(201,85,62,0.06) 1px, transparent 1px),
+    radial-gradient(circle, rgba(90,158,111,0.06) 1px, transparent 1px);
+  background-size: 40px 40px, 60px 60px;
+  background-position: 0 0, 20px 30px;
+  pointer-events: none;
+}
+
+.japan-map-section::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  right: 8%;
+  font-size: 24px;
+  color: rgba(245,166,35,0.25);
+  animation: sparkle 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+  50% { opacity: 0.6; transform: scale(1.2) rotate(15deg); }
+}
+
+/* Header */
+.japan-map-section .section__header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.japan-map-section .section__title {
+  font-family: var(--font-heading, 'Klee One', sans-serif);
+  font-size: 1.5rem;
+  color: var(--color-text-main, #2A2622);
+  position: relative;
+  display: inline-block;
+  padding-left: 0;
+}
+
+.japan-map-section .section__title::before {
+  display: none;
+}
+
+.japan-map-section .section__title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 4px;
+  background: linear-gradient(90deg, #F5A623, #C9553E, #5A9E6F);
+  border-radius: 2px;
+  margin: 10px auto 0;
+}
+
+.japan-map-section .section__subtitle {
+  font-family: var(--font-body, 'Zen Maru Gothic', sans-serif);
+  font-size: 0.875rem;
+  color: var(--color-text-light, #9B9389);
+  margin-top: 8px;
+}
+
+/* ========================================
+   Japan Map - Realistic SVG / Stable UI
+   ======================================== */
+.japan-map-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+  gap: 28px;
+  align-items: center;
+}
+.japan-map-visual,
+.japan-map-svg-wrapper,
+.japan-map-svg-wrapper svg {
+  background: transparent !important;
+}
+.japan-map-visual {
+  position: relative;
+  border-radius: 24px;
+  padding: 12px;
+  min-height: 520px;
+}
+.japan-map-svg-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: manipulation;
+  overscroll-behavior: contain;
+}
+.japan-map-svg-wrapper * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
+.japan-map-svg-wrapper svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  overflow: visible;
+  aspect-ratio: 1 / 1;
+}
+.japan-map-svg-wrapper svg [data-code] {
+  pointer-events: all;
+  cursor: pointer;
+}
+.japan-map-svg-wrapper svg [data-code] polygon,
+.japan-map-svg-wrapper svg [data-code] path,
+.japan-map-svg-wrapper svg [data-code] polyline {
+  pointer-events: all;
+}
+.japan-map-controls {
+  position: relative;
+}
+.japan-map-controls-card {
+  position: sticky;
+  top: 20px;
+  border-radius: 24px;
+  padding: 22px 20px;
+  background: #fffdfa;
+  border: 1px solid rgba(201, 85, 62, 0.12);
+  box-shadow: 0 14px 40px rgba(42, 38, 34, 0.08);
+}
+.japan-map-controls-card-title {
+  margin: 0 0 18px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+.japan-map-dropdown-group + .japan-map-dropdown-group {
+  margin-top: 14px;
+}
+.japan-map-dropdown-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+.japan-map-dropdown {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  border: 1px solid rgba(42, 38, 34, 0.14);
+  background: #fff;
+  padding: 0 14px;
+  font-size: 0.96rem;
+  color: var(--color-text-main);
+  appearance: none;
+}
+.japan-map-dropdown:disabled {
+  background: #f7f3ee;
+  color: rgba(42, 38, 34, 0.45);
+}
+.japan-map-city-panel {
+  margin-top: 16px;
+}
+.japan-map-city-panel-title {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+.japan-map-city-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.japan-map-city-tag {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(201, 85, 62, 0.10);
+  color: #8d412f;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.japan-map-city-tag:hover,
+.japan-map-city-tag.is-selected {
+  background: rgba(201, 85, 62, 0.16);
+  color: #7a3727;
+  box-shadow: 0 6px 16px rgba(201, 85, 62, 0.18);
+}
+.japan-map-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  width: 100%;
+  margin-top: 18px;
+  border-radius: 999px;
+  padding: 0 18px;
+  text-decoration: none;
+  font-weight: 700;
+  background: linear-gradient(135deg, #c9553e 0%, #f0b34a 100%);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(201, 85, 62, 0.22);
+  transition: filter 0.18s ease, opacity 0.18s ease;
+}
+.japan-map-btn:hover {
+  filter: brightness(1.04);
+}
+.japan-map-btn.is-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+/* Tooltip */
+.japan-map-tooltip {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  transform: translate(12px, -8px);
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(42, 38, 34, 0.92);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.14s ease, visibility 0.14s ease;
+}
+.japan-map-tooltip.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+/* SVG state */
+.knt-japan-map-svg [data-code] {
+  cursor: pointer;
+}
+.knt-japan-map-svg .prefecture-shape {
+  transition:
+    fill 0.18s ease,
+    stroke 0.18s ease,
+    filter 0.18s ease,
+    opacity 0.18s ease;
+  stroke: rgba(255, 255, 255, 0.86);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+.knt-japan-map-svg [data-code]:hover .prefecture-shape,
+.knt-japan-map-svg [data-code].is-active .prefecture-shape,
+.knt-japan-map-svg .prefecture-shape.is-active {
+  filter: brightness(1.04) drop-shadow(0 6px 10px rgba(42, 38, 34, 0.14));
+  stroke: rgba(255, 255, 255, 0.98);
+}
+.knt-japan-map-svg [data-code].is-active .prefecture-shape,
+.knt-japan-map-svg .prefecture-shape.is-active {
+  stroke-width: 2;
+}
+.knt-japan-map-svg [data-code][data-region="hokkaido"] .prefecture-shape,
+.knt-japan-map-svg [data-code][data-region="tohoku"] .prefecture-shape {
+  opacity: 1 !important;
+}
+/* クリック時にshapeが動かないようにする（g要素のtranslateは維持） */
+.knt-japan-map-svg .prefecture-shape:active {
+  filter: brightness(1.08);
+}
+/* モバイル: 地図が上、UIが下 */
+@media (max-width: 767px) {
+  .japan-map-container {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .japan-map-visual {
+    order: 1;
+    min-height: 0;
+    padding: 0;
+  }
+  .japan-map-controls {
+    order: 2;
+  }
+  .japan-map-controls-card {
+    position: static;
+    top: auto;
+    padding: 18px 16px;
+    border-radius: 20px;
+  }
+  .japan-map-svg-wrapper {
+    max-width: 100%;
+  }
+  /* スマホ: SVGを回転させず、viewBoxで北海道を左上・沖縄を右下に見せる */
+  .japan-map-svg-wrapper svg {
+    aspect-ratio: 3 / 4;
+  }
+  .japan-map-section .section__header {
+    margin-bottom: 16px;
+  }
+  .japan-map-section .section__title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Geolocation Button */
+.japan-map-geo-wrap {
+  margin: 14px 0;
+  text-align: center;
+}
+.japan-map-geo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-accent, #C9553E);
+  background: #fff;
+  color: var(--color-accent, #C9553E);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  justify-content: center;
+}
+.japan-map-geo-btn:hover {
+  background: var(--color-accent, #C9553E);
+  color: #fff;
+}
+.japan-map-geo-btn:hover svg { stroke: #fff; }
+.japan-map-geo-btn.is-loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.japan-map-geo-status {
+  font-size: 0.78rem;
+  color: var(--color-text-light, #9B9389);
+  margin: 6px 0 0;
+  text-align: center;
+  min-height: 18px;
+}

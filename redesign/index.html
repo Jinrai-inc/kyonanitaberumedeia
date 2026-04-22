@@ -1,0 +1,2752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>今日何食べる？メディア — ホーム リデザイン</title>
+<meta name="description" content="エリアを選んで、今日食べたいお店と記事に出会う。編集部が選ぶ特集・人気ランキング・47都道府県の名物まで。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Zen+Maru+Gothic:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   colors_and_type.css — Design Tokens
+   ======================================== */
+:root {
+  /* Paper / background */
+  --paper: #FFFDF7;
+  --warm-bg: #FFF8EE;
+  --warm-bg-2: #FBEFD8;
+  --warm-bg-3: #F5D9A8;
+  --warm-card: #FFFDF7;
+
+  /* Ink / text */
+  --ink: #1B2A4A;
+  --ink-2: #3D4E6E;
+  --muted: #6B7A8F;
+
+  /* Border */
+  --border: #E3DCC9;
+  --border-soft: #F0EADB;
+
+  /* Brand */
+  --amber: #D4850A;
+  --tomato: #E85D4A;
+  --tomato-hover: #CE4A38;
+  --tomato-tint: #FDEAE5;
+  --peach: #F5C28B;
+  --sun: #F2A93A;
+  --moss: #6B8E4E;
+  --red: #C5542E;
+
+  /* Region colors */
+  --r-hokkaido: #5B8FB0;
+  --r-tohoku: #7BA05B;
+  --r-kanto: #E85D4A;
+  --r-chubu: #F2A93A;
+  --r-kinki: #D97757;
+  --r-chugoku: #6B8E4E;
+  --r-shikoku: #8B7DB0;
+  --r-kyushu: #C5542E;
+
+  /* Typography */
+  --font-serif: 'Klee One', 'Zen Maru Gothic', 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+  --font-sans: 'Zen Maru Gothic', 'Hiragino Sans', 'Yu Gothic', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Radii */
+  --r-4: 4px; --r-10: 10px; --r-12: 12px; --r-14: 14px;
+  --r-16: 16px; --r-20: 20px; --r-24: 24px; --r-pill: 999px;
+
+  /* Shadows */
+  --shadow-card-hover: 0 6px 16px rgba(232,93,74,0.15);
+  --shadow-search-ink: 0 4px 0 var(--ink), 0 8px 20px rgba(27,42,74,0.10);
+  --shadow-search-tomato: 0 4px 0 var(--tomato), 0 20px 40px rgba(232,93,74,0.18);
+  --shadow-lead: 0 10px 30px rgba(27,42,74,0.08);
+}
+
+/* ========================================
+   Reset
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--warm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img { max-width: 100%; height: auto; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+input { font-family: inherit; }
+
+/* ========================================
+   Typography utilities
+   ======================================== */
+.serif { font-family: var(--font-serif); }
+.mono { font-family: var(--font-mono); }
+.kicker {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tomato);
+}
+.caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.h-section {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 40px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.h-sub {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-top: 8px;
+}
+@media (max-width: 640px) {
+  .h-section { font-size: 22px; }
+}
+
+/* ========================================
+   Layout utilities
+   ======================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.pad-y { padding-top: 56px; padding-bottom: 56px; }
+@media (max-width: 640px) {
+  .pad-y { padding-top: 36px; padding-bottom: 36px; }
+  .container { padding: 0 16px; }
+}
+
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.section-header__more {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--tomato);
+}
+.section-header__more:hover { color: var(--tomato-hover); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px; }
+
+@media (max-width: 960px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-8 { grid-template-columns: repeat(4, 1fr); }
+  .hide-tablet { display: none !important; }
+}
+@media (max-width: 640px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .grid-8 { grid-template-columns: repeat(3, 1fr); }
+  .hide-mobile { display: none !important; }
+}
+
+/* ========================================
+   SiteHeader
+   ======================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--warm-bg);
+  border-bottom: 1px solid var(--border-soft);
+}
+.site-header__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+}
+.site-header__logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.site-header__logo-jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.site-header__logo-en {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-self: start;
+  margin-left: 16px;
+}
+.site-header__nav a {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ink-2);
+  padding: 4px 2px;
+  border-bottom: 2px solid transparent;
+  transition: color .18s, border-color .18s;
+}
+.site-header__nav a:hover { color: var(--ink); }
+.site-header__nav a.is-active {
+  color: var(--tomato);
+  border-bottom-color: var(--tomato);
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-search {
+  position: relative;
+  width: 280px;
+}
+.header-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 40px 0 40px;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.header-search input::placeholder { color: var(--muted); }
+.header-search input:focus {
+  border-color: var(--tomato);
+  box-shadow: 0 0 0 4px rgba(232,93,74,0.12);
+}
+.header-search .hs-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+.header-search .hs-kbd {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--warm-bg-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  letter-spacing: 0.12em;
+}
+.lang-toggle:hover { border-color: var(--ink); color: var(--ink); }
+
+@media (max-width: 960px) {
+  .site-header__nav { display: none; }
+  .site-header__inner { grid-template-columns: 1fr auto; }
+}
+@media (max-width: 640px) {
+  .header-search { display: none; }
+}
+
+/* ========================================
+   AreaActiveBar (sticky, shown when area set)
+   ======================================== */
+.area-bar {
+  position: sticky;
+  top: 62px;
+  z-index: 9;
+  background: var(--ink);
+  color: #fff;
+}
+.area-bar__inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.area-bar__kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--peach);
+  letter-spacing: 0.14em;
+}
+.area-bar__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.area-bar__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+}
+.area-bar__spacer { flex: 1; }
+.area-bar__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.area-bar__change:hover { background: rgba(255,255,255,0.08); }
+
+/* ========================================
+   Photo placeholders — radial gradients
+   ======================================== */
+.photo {
+  position: relative;
+  background: var(--warm-bg-2);
+  overflow: hidden;
+}
+.photo-1 { background: radial-gradient(circle at 42% 38%, #F8C8B0 0%, #E8876B 38%, #B5533B 78%, #6D2E1E 100%); }
+.photo-2 { background: radial-gradient(circle at 48% 45%, #C9A079 0%, #8E6845 38%, #5B4028 78%, #2E1E10 100%); }
+.photo-3 { background: radial-gradient(circle at 44% 40%, #F7D994 0%, #E6B347 38%, #9E7420 78%, #4E3810 100%); }
+.photo-4 { background: radial-gradient(circle at 50% 48%, #D4BE82 0%, #8E7945 38%, #5A4A28 78%, #2F2613 100%); }
+.photo-5 { background: radial-gradient(circle at 48% 50%, #E8A690 0%, #BB6448 38%, #80381E 78%, #401C0F 100%); }
+.photo-6 { background: radial-gradient(circle at 50% 46%, #D9CBA5 0%, #A89669 38%, #6F5F3E 78%, #382F1E 100%); }
+.photo-7 { background: radial-gradient(circle at 44% 42%, #F7C548 0%, #DB8F1D 38%, #8F5B12 78%, #402906 100%); }
+.photo-8 { background: radial-gradient(circle at 46% 42%, #F2B5A2 0%, #D57A65 38%, #8F3E2D 78%, #461912 100%); }
+.photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,0.04) 0 2px,
+      transparent 2px 12px);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* ========================================
+   Status dots
+   ======================================== */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+}
+.status::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.status--open::before { background: var(--moss); }
+.status--soon::before { background: var(--sun); }
+.status--closed::before { background: var(--red); }
+
+/* ========================================
+   SiteFooter
+   ======================================== */
+.site-footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.85);
+  padding: 56px 0 24px;
+  margin-top: 72px;
+}
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+@media (max-width: 960px) {
+  .site-footer__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .site-footer__grid { grid-template-columns: 1fr; gap: 24px; }
+}
+.site-footer h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--peach);
+  margin-bottom: 16px;
+}
+.site-footer ul li { margin-bottom: 10px; }
+.site-footer ul a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+}
+.site-footer ul a:hover { color: #fff; }
+.site-footer__brand-jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 22px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.site-footer__brand-en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--peach);
+}
+.site-footer__desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 16px;
+  max-width: 320px;
+}
+.site-footer__copy {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.08em;
+}
+@media (max-width: 640px) {
+  .site-footer__copy { flex-direction: column; gap: 8px; }
+}
+
+/* ========================================
+   AreaGateHero
+   ======================================== */
+.area-gate {
+  background: linear-gradient(180deg, #FFF8EE 0%, #FBEFD8 60%, #F5D9A8 100%);
+  padding: 64px 24px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.area-gate__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tomato);
+  color: #fff;
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+.step-badge--light {
+  background: var(--tomato-tint);
+  color: var(--tomato);
+}
+.step-badge__num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.gate-hero__top {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.gate-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.gate-cta__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  padding: 14px 22px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--ink);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.gate-cta__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 var(--tomato);
+  border-color: var(--tomato);
+  color: var(--tomato);
+}
+.gate-cta__btn svg { color: var(--tomato); }
+.gate-cta__hint {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.06em;
+}
+
+.gate-heading {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.gate-heading .kicker { display: block; margin-bottom: 10px; }
+.gate-heading h1 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 52px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.gate-heading .accent { color: var(--tomato); }
+@media (max-width: 640px) {
+  .gate-heading h1 { font-size: 32px; }
+  .area-gate { padding: 40px 16px 48px; }
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+@media (max-width: 960px) { .area-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; } }
+@media (max-width: 640px) { .area-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+.area-card {
+  position: relative;
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+  text-align: left;
+  width: 100%;
+  padding: 0;
+  font-family: inherit;
+}
+.area-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tomato);
+  box-shadow: 0 6px 16px rgba(232,93,74,0.15);
+}
+.area-card__photo {
+  aspect-ratio: 4 / 3;
+  position: relative;
+}
+.area-card__count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,253,247,0.92);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(4px);
+}
+.area-card__body { padding: 14px 16px 16px; }
+.area-card__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 17px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.area-card__en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.gate-footer {
+  text-align: center;
+  margin-top: 28px;
+}
+.gate-footer a {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-2);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+.gate-footer a:hover {
+  color: var(--tomato);
+  border-bottom-color: var(--tomato);
+}
+
+.gate-placeholder {
+  text-align: center;
+  padding: 36px 24px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+}
+
+/* ========================================
+   AreaHomeHero — quiz + preview
+   ======================================== */
+.area-home {
+  background: var(--warm-bg);
+  padding: 48px 24px 64px;
+}
+.area-home__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+@media (max-width: 960px) {
+  .area-home__inner { grid-template-columns: 1fr; gap: 32px; }
+  .area-home { padding: 36px 16px 48px; }
+}
+
+.quiz-col .step-badge { margin-bottom: 22px; }
+.quiz-col h1 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+.quiz-col h1 .accent { color: var(--tomato); }
+.quiz-col .h-sub { font-size: 15px; max-width: 520px; }
+@media (max-width: 640px) {
+  .quiz-col h1 { font-size: 34px; }
+}
+
+.quiz-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  padding: 22px;
+  margin-top: 28px;
+}
+.quiz-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+.quiz-card__label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.08em;
+}
+.quiz-card__progress {
+  display: flex;
+  gap: 6px;
+}
+.quiz-card__progress span {
+  width: 22px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  transition: background .2s;
+}
+.quiz-card__progress span.is-done { background: var(--tomato); }
+
+.quiz-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.quiz-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-14);
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+.quiz-opt:hover { border-color: var(--tomato); }
+.quiz-opt.is-picked {
+  border-color: var(--tomato);
+  background: var(--tomato);
+  color: #fff;
+}
+.quiz-opt.is-picked .quiz-opt__en { color: rgba(255,255,255,0.85); }
+.quiz-opt__photo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(27,42,74,0.12);
+}
+.quiz-opt__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.quiz-opt__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 15px;
+}
+.quiz-opt__en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+.quiz-next {
+  margin-top: 16px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--tomato-tint);
+  color: var(--tomato);
+  border-radius: var(--r-14);
+  padding: 14px 20px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  transition: background .15s, color .15s, transform .15s;
+}
+.quiz-next.is-ready {
+  background: var(--tomato);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(232,93,74,0.3);
+}
+.quiz-next.is-ready:hover { background: var(--tomato-hover); transform: translateY(-1px); }
+.quiz-next.is-ready:active { transform: translateY(0); }
+
+/* Preview card */
+.preview-col { position: relative; }
+.preview-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  box-shadow: var(--shadow-lead);
+  transform: rotate(0.4deg);
+  transition: transform .2s;
+}
+.preview-card:hover { transform: rotate(0deg) translateY(-2px); }
+.preview-card__photo {
+  aspect-ratio: 16 / 10;
+  position: relative;
+}
+.preview-card__tag {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+}
+.preview-card__match {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(27,42,74,0.92);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+}
+.preview-card__chips {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+.preview-chip {
+  background: rgba(255,253,247,0.95);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.preview-card__body { padding: 20px 22px 22px; }
+.preview-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.preview-card__sub {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+.preview-card__sub .rating { color: var(--amber); }
+.preview-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.preview-card__meta .dot { color: var(--muted); }
+
+/* ========================================
+   SearchHero
+   ======================================== */
+.search-hero {
+  background: linear-gradient(180deg, #FBEFD8 0%, #FFF8EE 100%);
+  padding: 72px 24px;
+}
+.search-hero__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+.search-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+}
+.search-count svg { color: var(--tomato); }
+
+.search-hero h2 {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 48px;
+  line-height: 1.15;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.search-hero h2 .accent { color: var(--tomato); }
+.search-hero__sub {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-bottom: 28px;
+}
+@media (max-width: 640px) {
+  .search-hero { padding: 48px 16px; }
+  .search-hero h2 { font-size: 28px; }
+}
+
+.search-bar {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-search-ink);
+  transition: border-color .18s, box-shadow .18s;
+}
+.search-bar.is-focus {
+  border-color: var(--tomato);
+  box-shadow: var(--shadow-search-tomato);
+}
+.search-bar__icon {
+  padding: 0 14px 0 22px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+.search-bar.is-focus .search-bar__icon { color: var(--tomato); }
+.search-bar input {
+  flex: 1;
+  height: 60px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+.search-bar input::placeholder { color: var(--muted); }
+.search-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 14px 22px;
+  border-radius: var(--r-pill);
+  margin: 6px;
+  transition: background .15s;
+}
+.search-submit:hover { background: var(--tomato-hover); }
+@media (max-width: 640px) {
+  .search-submit-label { display: none; }
+  .search-submit { padding: 12px 14px; }
+  .search-bar input { height: 52px; font-size: 14px; }
+}
+
+.quick-row {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.quick-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-right: 4px;
+}
+.quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-weight: 500;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.quick-chip:hover { border-color: var(--tomato); color: var(--tomato); }
+.quick-chip svg { color: var(--muted); }
+.quick-chip--outline {
+  border-style: dashed;
+}
+
+/* ========================================
+   GenreChips
+   ======================================== */
+.genre-section { padding: 56px 24px 32px; }
+.genre-section .container { max-width: 1200px; }
+.genre-list {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 20px;
+}
+@media (max-width: 960px) { .genre-list { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+@media (max-width: 640px) { .genre-list { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+
+.genre-chip { display: block; text-align: center; }
+.genre-chip__photo {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--paper);
+  box-shadow: 0 2px 8px rgba(27,42,74,0.08);
+  transition: transform .15s, box-shadow .15s;
+}
+.genre-chip:hover .genre-chip__photo {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(27,42,74,0.15);
+}
+.genre-chip__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--ink);
+  margin-top: 10px;
+}
+.genre-chip__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+}
+
+/* ========================================
+   FeaturedRow — Lead + side list
+   ======================================== */
+.featured-section { padding: 48px 24px; }
+.featured-section .container { max-width: 1200px; }
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 960px) { .featured-grid { grid-template-columns: 1fr; } }
+
+.lead-card {
+  position: relative;
+  display: block;
+  border-radius: var(--r-20);
+  overflow: hidden;
+  min-height: 460px;
+  box-shadow: var(--shadow-lead);
+  transition: transform .2s, box-shadow .2s;
+}
+.lead-card:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(27,42,74,0.14); }
+.lead-card__photo {
+  position: absolute;
+  inset: 0;
+}
+.lead-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27,42,74,0) 40%, rgba(27,42,74,0.82) 100%);
+}
+.lead-card__badge {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  padding: 7px 14px;
+  border-radius: var(--r-pill);
+}
+.lead-card__body {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 28px;
+  color: #fff;
+}
+.lead-card__kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--peach);
+  margin-bottom: 12px;
+}
+.lead-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 38px;
+  line-height: 1.15;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.lead-card__excerpt {
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 14px;
+  max-width: 520px;
+}
+.lead-card__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.06em;
+}
+@media (max-width: 640px) {
+  .lead-card { min-height: 340px; }
+  .lead-card__title { font-size: 26px; }
+  .lead-card__body { padding: 22px; }
+}
+
+.side-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.side-card {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 14px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-16);
+  overflow: hidden;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.side-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tomato);
+  box-shadow: 0 6px 16px rgba(232,93,74,0.15);
+}
+.side-card__photo { aspect-ratio: 1; }
+.side-card__body { padding: 14px 16px 14px 0; display: flex; flex-direction: column; justify-content: center; }
+.side-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.side-card__meta .area-dot { color: var(--tomato); font-weight: 700; letter-spacing: 0.04em; font-family: var(--font-serif); font-size: 12px; }
+.side-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+.side-card__read {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+@media (max-width: 640px) {
+  .side-card { grid-template-columns: 100px 1fr; }
+  .side-card__title { font-size: 14px; }
+}
+
+/* ========================================
+   PopularRow — いま読まれている
+   ======================================== */
+.popular-section { padding: 32px 24px 64px; }
+.popular-section .container { max-width: 1200px; }
+
+.popular-tabs {
+  display: inline-flex;
+  padding: 4px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  gap: 2px;
+}
+.popular-tab {
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: transparent;
+  transition: background .15s, color .15s;
+}
+.popular-tab.is-active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.popular-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+.popular-grid[data-density="4"] { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 960px) {
+  .popular-grid,
+  .popular-grid[data-density="4"] { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+@media (max-width: 640px) {
+  .popular-grid,
+  .popular-grid[data-density="4"] { grid-template-columns: 1fr; }
+}
+
+.pop-card {
+  position: relative;
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  overflow: hidden;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.pop-card:hover { transform: translateY(-2px); border-color: var(--tomato); box-shadow: 0 6px 16px rgba(232,93,74,0.15); }
+.pop-card__photo { aspect-ratio: 16 / 11; position: relative; }
+.pop-card__rank {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(255,253,247,0.95);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.pop-card__status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255,253,247,0.95);
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+}
+.pop-card__body { padding: 16px 18px 20px; }
+.pop-card__area {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--tomato);
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.pop-card__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.35;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+.pop-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.pop-card__meta .dot { color: var(--muted); }
+
+/* Layout B: side-by-side */
+.popular-grid.layout-B .pop-card {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  align-items: stretch;
+}
+.popular-grid.layout-B .pop-card__photo { aspect-ratio: auto; height: 100%; }
+.popular-grid.layout-B .pop-card__rank,
+.popular-grid.layout-B .pop-card__status { font-size: 10px; padding: 3px 8px; }
+.popular-grid.layout-B .pop-card__body { padding: 14px; }
+
+/* Layout C: overlay */
+.popular-grid.layout-C .pop-card {
+  min-height: 280px;
+  position: relative;
+}
+.popular-grid.layout-C .pop-card__photo {
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
+}
+.popular-grid.layout-C .pop-card__photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(27,42,74,0) 30%, rgba(27,42,74,0.82) 100%);
+  z-index: 1;
+}
+.popular-grid.layout-C .pop-card__rank,
+.popular-grid.layout-C .pop-card__status { z-index: 2; }
+.popular-grid.layout-C .pop-card__body {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 200px;
+  color: #fff;
+}
+.popular-grid.layout-C .pop-card__title { color: #fff; }
+.popular-grid.layout-C .pop-card__area { color: var(--peach); }
+.popular-grid.layout-C .pop-card__meta { color: rgba(255,255,255,0.85); }
+.popular-grid.layout-C .pop-card__meta .dot { color: rgba(255,255,255,0.5); }
+
+/* ========================================
+   PrefecturePicker
+   ======================================== */
+.pref-section {
+  padding: 56px 24px 72px;
+  background: var(--warm-bg);
+}
+.pref-section .container { max-width: 1200px; }
+.pref-section .section-header { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+.pref-section__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+  align-self: flex-end;
+}
+
+.pref-top5 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  margin-bottom: 20px;
+}
+.pref-top5__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.pref-top5__label svg { color: var(--tomato); }
+.pref-top5-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 8px 16px 8px 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.pref-top5-chip:hover { border-color: var(--tomato); color: var(--tomato); }
+.pref-top5-chip__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pref-top5-chip__count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.pref-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 20px 0;
+}
+.pref-tab {
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  border: 1px solid var(--border);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.pref-tab:hover { border-color: var(--ink-2); }
+.pref-tab.is-active {
+  color: #fff;
+  border-color: transparent;
+}
+
+.pref-search {
+  position: relative;
+  margin: 8px 0 20px;
+  max-width: 520px;
+}
+.pref-search input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  border-radius: var(--r-pill);
+  padding: 0 16px 0 44px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s;
+}
+.pref-search input:focus { border-color: var(--tomato); }
+.pref-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+
+.pref-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 36px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .pref-layout { grid-template-columns: 1fr; }
+  .pref-map { display: none; }
+}
+
+.pref-map {
+  background: linear-gradient(180deg, #EEF4F8 0%, #E1ECEF 100%);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-20);
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.pref-map::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(27,42,74,0.08) 1.2px, transparent 1.2px);
+  background-size: 8px 8px;
+  pointer-events: none;
+}
+.pref-map svg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+}
+.region-shape {
+  cursor: pointer;
+  transition: fill .2s, transform .2s, filter .2s;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.region-shape.is-active {
+  filter: drop-shadow(0 6px 12px rgba(27,42,74,0.25));
+  transform: translateY(-1px);
+}
+.region-label {
+  font-family: 'Zen Maru Gothic', sans-serif;
+  font-weight: 900;
+  font-size: 9px;
+  fill: var(--ink);
+  paint-order: stroke fill;
+  stroke: #fff;
+  stroke-width: 3px;
+  pointer-events: none;
+}
+.map-compass {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  fill: var(--muted);
+  letter-spacing: 0.1em;
+}
+.map-lat {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--muted);
+  opacity: 0.7;
+}
+
+.pref-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.pref-card {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-14);
+  padding: 14px 16px 14px 20px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+}
+.pref-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 10px; bottom: 10px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--region-color, var(--border));
+}
+.pref-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--region-color, var(--tomato));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--region-color, var(--tomato)) 25%, transparent);
+}
+.pref-card__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pref-card__jp {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.pref-card__rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 20px;
+  padding: 0 7px;
+  background: var(--tomato);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: var(--r-pill);
+  letter-spacing: 0.04em;
+}
+.pref-card__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+.pref-card__dish {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.pref-card__dish svg { color: var(--muted); }
+
+/* ========================================
+   AppPromo
+   ======================================== */
+.app-promo { padding: 48px 24px 24px; }
+.app-promo__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #FBEFD8 0%, #F5C28B 100%);
+  border-radius: var(--r-24);
+  padding: 44px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(212,133,10,0.12);
+}
+@media (max-width: 960px) {
+  .app-promo__inner { grid-template-columns: 1fr; padding: 32px; gap: 28px; }
+}
+
+.app-promo__kicker { display: block; margin-bottom: 12px; }
+.app-promo__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.app-promo__desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  margin-bottom: 22px;
+  max-width: 460px;
+}
+.app-promo__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.app-store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-14);
+  padding: 12px 18px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  transition: transform .15s, background .15s;
+}
+.app-store-btn:hover { background: #0F1C36; transform: translateY(-1px); }
+.app-store-btn__small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.7);
+  display: block;
+}
+.app-store-btn__big {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+
+.app-promo__visual { justify-self: center; }
+.app-mini {
+  width: 180px;
+  height: 220px;
+  background: var(--paper);
+  border-radius: var(--r-20);
+  box-shadow: 0 12px 32px rgba(27,42,74,0.15);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: rotate(-2deg);
+  transition: transform .2s;
+}
+.app-mini:hover { transform: rotate(0deg); }
+.app-mini__photo { aspect-ratio: 4/3; border-radius: var(--r-12); }
+.app-mini__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.app-mini__name {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--ink);
+}
+.app-mini__meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-2);
+  margin-top: auto;
+}
+
+/* ========================================
+   Tweaks panel
+   ======================================== */
+.tweaks {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 20;
+  width: 260px;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: var(--r-16);
+  box-shadow: 0 12px 32px rgba(27,42,74,0.15);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  transform-origin: bottom right;
+  transition: transform .2s, opacity .2s;
+}
+.tweaks.is-collapsed .tweaks__body { display: none; }
+.tweaks__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+.tweaks__toggle {
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.tweaks__body { padding: 14px; }
+.tweaks__row { margin-bottom: 14px; }
+.tweaks__row:last-child { margin-bottom: 0; }
+.tweaks__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.tweaks__seg {
+  display: inline-flex;
+  background: var(--warm-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+.tweaks__seg button {
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink-2);
+  background: transparent;
+  transition: background .15s, color .15s;
+}
+.tweaks__seg button.is-active { background: var(--ink); color: #fff; }
+.tweaks__reset {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-14);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--ink-2);
+  background: var(--warm-bg);
+  margin-top: 4px;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.tweaks__reset:hover { border-color: var(--tomato); color: var(--tomato); }
+@media (max-width: 640px) {
+  .tweaks { width: calc(100% - 24px); right: 12px; bottom: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========================================
+     SiteHeader
+     ======================================== -->
+<header class="site-header" role="banner">
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/">
+      <span class="site-header__logo-jp">今日何食べる？</span>
+      <span class="site-header__logo-en">KYOU NANI TABERU? MEDIA</span>
+    </a>
+
+    <nav class="site-header__nav" role="navigation" aria-label="メイン">
+      <a href="#" class="is-active">ホーム</a>
+      <a href="#area">エリア</a>
+      <a href="#genre">ジャンル</a>
+      <a href="#guide">ガイド</a>
+      <a href="#inbound">Inbound</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <div class="header-search hide-mobile">
+        <svg class="hs-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input type="search" placeholder="店・エリア・ジャンル…" aria-label="サイト内検索">
+        <span class="hs-kbd">⌘K</span>
+      </div>
+      <button class="lang-toggle" type="button">JP · EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- AreaActiveBar (shown when area selected) -->
+<div class="area-bar" id="area-bar" hidden>
+  <div class="area-bar__inner">
+    <span class="area-bar__kicker">現在のエリア</span>
+    <span class="area-bar__jp" id="area-bar-jp">—</span>
+    <span class="area-bar__count" id="area-bar-count">—</span>
+    <span class="area-bar__spacer"></span>
+    <button class="area-bar__change" type="button" id="area-change">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      エリア変更
+    </button>
+  </div>
+</div>
+
+<main id="app">
+  <!-- sections injected here by JS -->
+</main>
+
+<!-- ========================================
+     SiteFooter
+     ======================================== -->
+<!-- Tweaks panel (fixed) -->
+<aside class="tweaks" id="tweaks" aria-label="Tweaks">
+  <div class="tweaks__head">
+    <span>TWEAKS</span>
+    <button class="tweaks__toggle" id="tweaks-toggle" type="button">−</button>
+  </div>
+  <div class="tweaks__body">
+    <div class="tweaks__row">
+      <span class="tweaks__label">CARD LAYOUT</span>
+      <div class="tweaks__seg" data-tweak="cardLayout">
+        <button data-v="A" type="button">A</button>
+        <button data-v="B" type="button">B</button>
+        <button data-v="C" type="button">C</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <span class="tweaks__label">DENSITY</span>
+      <div class="tweaks__seg" data-tweak="density">
+        <button data-v="3" type="button">3列</button>
+        <button data-v="4" type="button">4列</button>
+      </div>
+    </div>
+    <div class="tweaks__row">
+      <button class="tweaks__reset" id="tweaks-reset-area" type="button">エリアをリセット</button>
+    </div>
+  </div>
+</aside>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div>
+        <div class="site-footer__brand-jp">今日何食べる？</div>
+        <div class="site-footer__brand-en">KYOU NANI TABERU? MEDIA</div>
+        <p class="site-footer__desc">食べに行く、を迷わない。エリアで探して、気分でしぼる、お店と記事のエディトリアル・ガイド。</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#area">エリアから探す</a></li>
+          <li><a href="#genre">ジャンルから探す</a></li>
+          <li><a href="#guide">ガイド</a></li>
+          <li><a href="#inbound">Inbound</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>About</h4>
+        <ul>
+          <li><a href="#">このサイトについて</a></li>
+          <li><a href="#">編集方針</a></li>
+          <li><a href="#">お問い合わせ</a></li>
+          <li><a href="#">媒体資料</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>App</h4>
+        <ul>
+          <li><a href="https://kyou-nani-taberu.app">kyou-nani-taberu.app</a></li>
+          <li><a href="#">App Store</a></li>
+          <li><a href="#">Google Play</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__copy">
+      <span>© 2026 Jinrai Inc. / 今日何食べる？メディア</span>
+      <span>Designed in Tokyo.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ========================================
+   Data
+   ======================================== */
+const QUIZ = [
+  {
+    label: '今の気分',
+    options: [
+      { jp: 'がっつり', en: 'HEARTY',  photo: 'photo-1' },
+      { jp: 'さっぱり', en: 'LIGHT',   photo: 'photo-3' },
+      { jp: 'ヘルシー', en: 'HEALTHY', photo: 'photo-6' },
+      { jp: '甘いもの', en: 'SWEET',   photo: 'photo-7' }
+    ]
+  },
+  {
+    label: '一緒に行くのは',
+    options: [
+      { jp: 'ひとりで', en: 'SOLO',    photo: 'photo-4' },
+      { jp: '二人で',   en: 'DATE',    photo: 'photo-5' },
+      { jp: '友人と',   en: 'FRIENDS', photo: 'photo-8' },
+      { jp: '仕事関係', en: 'BIZ',     photo: 'photo-2' }
+    ]
+  },
+  {
+    label: '予算',
+    options: [
+      { jp: '〜¥1,500',   en: 'CASUAL',   photo: 'photo-7' },
+      { jp: '¥1,500〜3,000', en: 'MIDRANGE', photo: 'photo-3' },
+      { jp: '¥3,000〜6,000', en: 'PREMIUM',  photo: 'photo-4' },
+      { jp: '¥6,000〜',   en: 'LUXURY',   photo: 'photo-5' }
+    ]
+  },
+  {
+    label: '時間帯',
+    options: [
+      { jp: '朝',   en: 'MORNING', photo: 'photo-6' },
+      { jp: '昼',   en: 'LUNCH',   photo: 'photo-3' },
+      { jp: '夜',   en: 'DINNER',  photo: 'photo-1' },
+      { jp: '深夜', en: 'NIGHT',   photo: 'photo-2' }
+    ]
+  }
+];
+
+/* 8 地方 */
+const REGIONS = [
+  { id: 'hokkaido',  jp: '北海道',   color: '#5B8FB0' },
+  { id: 'tohoku',    jp: '東北',     color: '#7BA05B' },
+  { id: 'kanto',     jp: '関東',     color: '#E85D4A' },
+  { id: 'chubu',     jp: '中部',     color: '#F2A93A' },
+  { id: 'kinki',     jp: '近畿',     color: '#D97757' },
+  { id: 'chugoku',   jp: '中国',     color: '#6B8E4E' },
+  { id: 'shikoku',   jp: '四国',     color: '#8B7DB0' },
+  { id: 'kyushu',    jp: '九州・沖縄', color: '#C5542E' }
+];
+
+/* 47 都道府県 */
+const PREFECTURES = [
+  { jp: '北海道', region: 'hokkaido', count: 184, dish: '味噌ラーメン', rank: 3 },
+  { jp: '青森',   region: 'tohoku',   count:  42, dish: 'せんべい汁' },
+  { jp: '岩手',   region: 'tohoku',   count:  38, dish: 'わんこそば' },
+  { jp: '宮城',   region: 'tohoku',   count:  72, dish: '牛タン' },
+  { jp: '秋田',   region: 'tohoku',   count:  31, dish: 'きりたんぽ鍋' },
+  { jp: '山形',   region: 'tohoku',   count:  34, dish: '芋煮' },
+  { jp: '福島',   region: 'tohoku',   count:  46, dish: '喜多方ラーメン' },
+  { jp: '茨城',   region: 'kanto',    count:  52, dish: '納豆' },
+  { jp: '栃木',   region: 'kanto',    count:  58, dish: '宇都宮餃子' },
+  { jp: '群馬',   region: 'kanto',    count:  44, dish: '水沢うどん' },
+  { jp: '埼玉',   region: 'kanto',    count:  98, dish: '武蔵野うどん' },
+  { jp: '千葉',   region: 'kanto',    count: 112, dish: '房総はまぐり' },
+  { jp: '東京',   region: 'kanto',    count: 842, dish: '江戸前寿司', rank: 1 },
+  { jp: '神奈川', region: 'kanto',    count: 186, dish: '家系ラーメン' },
+  { jp: '新潟',   region: 'chubu',    count:  61, dish: 'へぎそば' },
+  { jp: '富山',   region: 'chubu',    count:  39, dish: '白えび' },
+  { jp: '石川',   region: 'chubu',    count:  88, dish: '治部煮' },
+  { jp: '福井',   region: 'chubu',    count:  32, dish: '越前おろしそば' },
+  { jp: '山梨',   region: 'chubu',    count:  41, dish: 'ほうとう' },
+  { jp: '長野',   region: 'chubu',    count:  72, dish: '信州そば' },
+  { jp: '岐阜',   region: 'chubu',    count:  47, dish: '飛騨牛' },
+  { jp: '静岡',   region: 'chubu',    count:  94, dish: '静岡おでん' },
+  { jp: '愛知',   region: 'chubu',    count: 158, dish: '味噌カツ' },
+  { jp: '三重',   region: 'kinki',    count:  41, dish: '伊勢うどん' },
+  { jp: '滋賀',   region: 'kinki',    count:  38, dish: '鮒ずし' },
+  { jp: '京都',   region: 'kinki',    count: 218, dish: 'おばんざい', rank: 4 },
+  { jp: '大阪',   region: 'kinki',    count: 312, dish: 'たこ焼き', rank: 2 },
+  { jp: '兵庫',   region: 'kinki',    count: 142, dish: '神戸牛' },
+  { jp: '奈良',   region: 'kinki',    count:  44, dish: '柿の葉寿司' },
+  { jp: '和歌山', region: 'kinki',    count:  36, dish: '和歌山ラーメン' },
+  { jp: '鳥取',   region: 'chugoku',  count:  28, dish: '松葉ガニ' },
+  { jp: '島根',   region: 'chugoku',  count:  31, dish: '出雲そば' },
+  { jp: '岡山',   region: 'chugoku',  count:  58, dish: '祭ずし' },
+  { jp: '広島',   region: 'chugoku',  count:  96, dish: 'お好み焼き' },
+  { jp: '山口',   region: 'chugoku',  count:  38, dish: 'ふぐ' },
+  { jp: '徳島',   region: 'shikoku',  count:  32, dish: '徳島ラーメン' },
+  { jp: '香川',   region: 'shikoku',  count:  78, dish: '讃岐うどん' },
+  { jp: '愛媛',   region: 'shikoku',  count:  41, dish: '鯛めし' },
+  { jp: '高知',   region: 'shikoku',  count:  38, dish: 'カツオのたたき' },
+  { jp: '福岡',   region: 'kyushu',   count: 164, dish: '博多ラーメン', rank: 5 },
+  { jp: '佐賀',   region: 'kyushu',   count:  28, dish: '呼子イカ' },
+  { jp: '長崎',   region: 'kyushu',   count:  58, dish: 'ちゃんぽん' },
+  { jp: '熊本',   region: 'kyushu',   count:  54, dish: '馬刺し' },
+  { jp: '大分',   region: 'kyushu',   count:  36, dish: 'とり天' },
+  { jp: '宮崎',   region: 'kyushu',   count:  34, dish: 'チキン南蛮' },
+  { jp: '鹿児島', region: 'kyushu',   count:  52, dish: '黒豚しゃぶ' },
+  { jp: '沖縄',   region: 'kyushu',   count:  74, dish: '沖縄そば' }
+];
+
+const FEATURED = {
+  lead: {
+    kicker: '第1号 · 東京の朝',
+    badge: 'LEAD STORY',
+    title: '築地、朝の音。',
+    excerpt: '場外が開く前の路地と、最初の一杯。',
+    meta: '8 min で読める · 2026年4月更新',
+    photo: 'photo-3'
+  },
+  side: [
+    { area: '代々木上原', hours: '7:00〜20:00',  status: 'open',   title: '朝7時から開く喫茶店、4軒', read: '4 min で読める', photo: 'photo-6' },
+    { area: '浅草',       hours: '5:00〜11:00',  status: 'open',   title: '下町の朝5時、立ち食いそばを巡る', read: '6 min で読める', photo: 'photo-4' },
+    { area: '中目黒',     hours: '本日休',       status: 'closed', title: '一人で入れる寿司屋、5選', read: '5 min で読める', photo: 'photo-7' }
+  ]
+};
+
+const POPULAR = [
+  { rank: '01', status: { type: 'open',   label: '深夜営業中' }, area: '新宿',   title: '深夜3時、新宿でひとりラーメン7軒', price: '¥900〜',   walk: '徒歩1〜5分', read: '7 min', photo: 'photo-1' },
+  { rank: '02', status: { type: 'soon',   label: '22:00まで' },  area: '渋谷',   title: '2026年新店オープン、カフェ11軒',   price: '¥600〜',   walk: '徒歩3〜8分', read: '9 min', photo: 'photo-6' },
+  { rank: '03', status: { type: 'soon',   label: '17:00開店' },  area: '下北沢', title: '昼から開いてる酒場、隠れた6軒',     price: '¥1,500〜', walk: '徒歩2〜6分', read: '5 min', photo: 'photo-2' },
+  { rank: '04', status: { type: 'soon',   label: '21:00まで' },  area: '銀座',   title: '¥3,000以下で行ける寿司、銀座の穴場', price: '¥2,800〜', walk: '徒歩2〜4分', read: '6 min', photo: 'photo-3' },
+  { rank: '05', status: { type: 'closed', label: '月曜休' },     area: '吉祥寺', title: 'パン屋のはしご、日曜ルート',         price: '¥300〜',   walk: '徒歩1〜7分', read: '4 min', photo: 'photo-7' },
+  { rank: '06', status: { type: 'soon',   label: '23:00まで' },  area: '六本木', title: '会食で失敗しない5軒、2026年版',     price: '¥8,000〜', walk: '徒歩3〜5分', read: '8 min', photo: 'photo-5' }
+];
+
+const GENRES = [
+  { jp: 'ラーメン', en: 'RAMEN',    count: 287, photo: 'photo-1' },
+  { jp: '寿司',     en: 'SUSHI',    count: 192, photo: 'photo-7' },
+  { jp: '焼肉',     en: 'YAKINIKU', count: 168, photo: 'photo-5' },
+  { jp: 'カフェ',   en: 'CAFE',     count: 421, photo: 'photo-6' },
+  { jp: '居酒屋',   en: 'IZAKAYA',  count: 356, photo: 'photo-2' },
+  { jp: 'そば',     en: 'SOBA',     count:  94, photo: 'photo-4' },
+  { jp: 'パン',     en: 'BAKERY',   count: 118, photo: 'photo-3' },
+  { jp: '甘味',     en: 'SWEETS',   count: 203, photo: 'photo-8' }
+];
+
+const POPULAR_SEARCHES = ['代々木上原 カフェ', '築地 朝食', '新宿 深夜 ラーメン', '一人 寿司', '会食 銀座', '京都 朝ごはん'];
+const QUICK_FILTERS = [
+  { label: '今営業中',    icon: 'clock' },
+  { label: '現在地から',  icon: 'pin' },
+  { label: '¥2,000以下',  icon: 'bookmark' },
+  { label: '一人OK',      icon: 'user' }
+];
+
+const AREAS = [
+  { id: 'shibuya',    jp: '渋谷',       en: 'Shibuya',       reading: 'しぶや',      count: 186, photo: 'photo-1' },
+  { id: 'shinjuku',   jp: '新宿',       en: 'Shinjuku',      reading: 'しんじゅく',  count: 243, photo: 'photo-2' },
+  { id: 'ginza',      jp: '銀座',       en: 'Ginza',         reading: 'ぎんざ',      count: 154, photo: 'photo-3' },
+  { id: 'asakusa',    jp: '浅草',       en: 'Asakusa',       reading: 'あさくさ',    count: 98,  photo: 'photo-4' },
+  { id: 'nakameguro', jp: '中目黒',     en: 'Nakameguro',    reading: 'なかめぐろ',  count: 72,  photo: 'photo-5' },
+  { id: 'yoyogiuehara', jp: '代々木上原', en: 'Yoyogi-Uehara', reading: 'よよぎうえはら', count: 38, photo: 'photo-6' },
+  { id: 'kichijoji',  jp: '吉祥寺',     en: 'Kichijoji',     reading: 'きちじょうじ', count: 124, photo: 'photo-7' },
+  { id: 'ebisu',      jp: '恵比寿',     en: 'Ebisu',         reading: 'えびす',      count: 108, photo: 'photo-8' }
+];
+
+/* ========================================
+   State + localStorage
+   ======================================== */
+const LS_AREA = 'knt-area';
+const LS_TWEAKS = 'knt-tweaks';
+
+const state = {
+  area: null,
+  tweaks: { cardLayout: 'A', density: 3 },
+  region: 'kanto',
+  searchFocus: false,
+  quiz: { step: 0, picks: [] }
+};
+
+function loadState() {
+  try {
+    const a = JSON.parse(localStorage.getItem(LS_AREA) || 'null');
+    if (a && a.id) state.area = a;
+    const t = JSON.parse(localStorage.getItem(LS_TWEAKS) || 'null');
+    if (t) state.tweaks = Object.assign(state.tweaks, t);
+  } catch (e) {}
+}
+function saveArea() {
+  if (state.area) localStorage.setItem(LS_AREA, JSON.stringify(state.area));
+  else localStorage.removeItem(LS_AREA);
+}
+function saveTweaks() { localStorage.setItem(LS_TWEAKS, JSON.stringify(state.tweaks)); }
+
+/* ========================================
+   Render — orchestrator
+   ======================================== */
+/* ========================================
+   Render — AreaGateHero
+   ======================================== */
+function renderAreaGate() {
+  const cards = AREAS.map(a => `
+    <button class="area-card" data-area-id="${a.id}" aria-label="${a.jp}を選ぶ">
+      <div class="area-card__photo photo ${a.photo}">
+        <span class="area-card__count">${a.count}件</span>
+      </div>
+      <div class="area-card__body">
+        <div class="area-card__jp">${a.jp}</div>
+        <div class="area-card__en">${a.reading}</div>
+      </div>
+    </button>
+  `).join('');
+
+  return `
+    <section class="area-gate">
+      <div class="area-gate__inner">
+        <div class="gate-hero__top">
+          <div class="gate-cta">
+            <button class="gate-cta__btn" type="button" id="geo-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-7-7.5-7-13a7 7 0 1 1 14 0c0 5.5-7 13-7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              現在地から探す
+            </button>
+            <span class="gate-cta__hint">または ↓ エリアを選ぶ</span>
+          </div>
+        </div>
+
+        <div class="gate-heading">
+          <span class="kicker">人気のエリア</span>
+          <h1>エリアを選んでください</h1>
+        </div>
+
+        <div class="area-grid">
+          ${cards}
+        </div>
+
+        <div class="gate-footer">
+          <a href="#prefecture">全国47都道府県から選ぶ ›</a>
+        </div>
+      </div>
+
+      <div class="gate-placeholder">
+        ↑ エリアを選ぶとこの下にお店・特集・ランキングが表示されます
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — AreaHomeHero
+   ======================================== */
+function renderAreaHome() {
+  const step = state.quiz.step;
+  const q = QUIZ[step];
+  const picks = state.quiz.picks;
+  const ready = picks[step] != null;
+
+  const dots = QUIZ.map((_, i) =>
+    `<span class="${i < step || (i === step && ready) ? 'is-done' : ''}"></span>`).join('');
+
+  const opts = q.options.map((o, i) => `
+    <button class="quiz-opt ${picks[step] === i ? 'is-picked' : ''}" data-quiz-opt="${i}">
+      <span class="quiz-opt__photo photo ${o.photo}"></span>
+      <span class="quiz-opt__text">
+        <span class="quiz-opt__jp">${o.jp}</span>
+        <span class="quiz-opt__en">${o.en}</span>
+      </span>
+    </button>
+  `).join('');
+
+  const nextLabel = step >= QUIZ.length - 1 ? '診断結果を見る' : '次の質問へ';
+
+  return `
+    <section class="area-home">
+      <div class="area-home__inner">
+        <div class="quiz-col">
+          <div class="step-badge step-badge--light">
+            <span>ステップ 02</span><span>·</span><span>30秒で診断</span>
+          </div>
+          <h1><span class="accent">${state.area.jp}</span>で<br>今食べたいのは?</h1>
+          <p class="h-sub">4つの気分から、今営業中のお店を編集部がマッチング。</p>
+
+          <div class="quiz-card">
+            <div class="quiz-card__head">
+              <span class="quiz-card__label">Q ${String(step + 1).padStart(2, '0')} / ${String(QUIZ.length).padStart(2, '0')} · ${q.label}</span>
+              <div class="quiz-card__progress">${dots}</div>
+            </div>
+            <div class="quiz-opts">${opts}</div>
+            <button type="button" class="quiz-next ${ready ? 'is-ready' : ''}" data-quiz-next ${ready ? '' : 'disabled'}>
+              ${nextLabel} ↗
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-col hide-mobile">
+          <div class="preview-card">
+            <div class="preview-card__photo photo ${state.area.photo}">
+              <span class="preview-card__match">マッチ94%</span>
+              <span class="preview-card__tag">プレビュー</span>
+              <div class="preview-card__chips">
+                <span class="preview-chip">#${state.area.jp}</span>
+                <span class="preview-chip">#営業中</span>
+              </div>
+            </div>
+            <div class="preview-card__body">
+              <h3 class="preview-card__title">${state.area.jp}の人気店</h3>
+              <p class="preview-card__sub">編集部おすすめ · <span class="rating">4.6 ★</span></p>
+              <div class="preview-card__meta">
+                <span>¥950〜</span><span class="dot">·</span>
+                <span>徒歩3分</span><span class="dot">·</span>
+                <span class="status status--open">営業中</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — SearchHero
+   ======================================== */
+function icon(name) {
+  const ICONS = {
+    clock: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    pin:   '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-7-7.5-7-13a7 7 0 1 1 14 0c0 5.5-7 13-7 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>',
+    bookmark: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4Z"/></svg>',
+    user:  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 5-6 7-6s6 2 7 6"/></svg>',
+    search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    searchSm:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    arrowUp: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17 17 7M8 7h9v9"/></svg>',
+    chef:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13a4 4 0 1 1 2-7.5 4 4 0 0 1 8 0 4 4 0 1 1 2 7.5v5H6Z"/><path d="M6 18h12"/></svg>'
+  };
+  return ICONS[name] || '';
+}
+
+function renderSearchHero() {
+  const pops = POPULAR_SEARCHES.map(p =>
+    `<button class="quick-chip" type="button">${icon('searchSm')} ${p}</button>`).join('');
+  const quicks = QUICK_FILTERS.map(q =>
+    `<button class="quick-chip quick-chip--outline" type="button">${icon(q.icon)} ${q.label}</button>`).join('');
+
+  return `
+    <section class="search-hero" id="search">
+      <div class="search-hero__inner">
+        <span class="search-count">${icon('searchSm')} 2,463軒 · 2,400記事を検索</span>
+        <h2><span class="accent">${state.area.jp}</span>で何を?</h2>
+        <p class="search-hero__sub">ジャンル・駅名・気分 — ${state.area.jp}エリア内で検索。</p>
+
+        <form class="search-bar" id="search-bar" onsubmit="return false;">
+          <span class="search-bar__icon">${icon('search')}</span>
+          <input type="search" placeholder="寿司、代々木上原、深夜ラーメン…" aria-label="エリア内検索">
+          <button class="search-submit" type="submit">
+            <span class="search-submit-label">検索</span>
+            ${icon('arrowUp')}
+          </button>
+        </form>
+
+        <div class="quick-row">
+          <span class="quick-label">人気の検索</span>
+          ${pops}
+        </div>
+        <div class="quick-row">
+          ${quicks}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — GenreChips
+   ======================================== */
+function renderGenreChips() {
+  const chips = GENRES.map(g => `
+    <a class="genre-chip" href="#">
+      <div class="genre-chip__photo photo ${g.photo}"></div>
+      <div class="genre-chip__jp">${g.jp}</div>
+      <div class="genre-chip__count">${g.count}件の記事</div>
+    </a>
+  `).join('');
+
+  return `
+    <section class="genre-section" id="genre">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">ジャンル別</span>
+            <h2 class="h-section" style="margin-top:6px;">ジャンルから探す</h2>
+          </div>
+          <a class="section-header__more" href="#">すべてのジャンル ↗</a>
+        </div>
+        <div class="genre-list">
+          ${chips}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — FeaturedRow
+   ======================================== */
+function renderFeatured() {
+  const side = FEATURED.side.map(s => `
+    <a class="side-card" href="#">
+      <div class="side-card__photo photo ${s.photo}"></div>
+      <div class="side-card__body">
+        <div class="side-card__meta">
+          <span class="area-dot">${s.area}</span>
+          <span class="status status--${s.status}">${s.hours}</span>
+        </div>
+        <h3 class="side-card__title">${s.title}</h3>
+        <span class="side-card__read">${s.read}</span>
+      </div>
+    </a>
+  `).join('');
+
+  const L = FEATURED.lead;
+  return `
+    <section class="featured-section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">編集部のおすすめ</span>
+            <h2 class="h-section" style="margin-top:6px;">編集部の今週</h2>
+            <p class="h-sub">実際に通って書いた、飾らない一週間の記録。</p>
+          </div>
+          <a class="section-header__more" href="#">すべての特集 ↗</a>
+        </div>
+
+        <div class="featured-grid">
+          <a class="lead-card" href="#">
+            <div class="lead-card__photo photo ${L.photo}"></div>
+            <div class="lead-card__overlay"></div>
+            <span class="lead-card__badge">${L.badge}</span>
+            <div class="lead-card__body">
+              <span class="lead-card__kicker">${L.kicker}</span>
+              <h3 class="lead-card__title">${L.title}</h3>
+              <p class="lead-card__excerpt">${L.excerpt}</p>
+              <span class="lead-card__meta">${L.meta}</span>
+            </div>
+          </a>
+
+          <div class="side-list">${side}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — PopularRow
+   ======================================== */
+function renderPopular() {
+  const layout = state.tweaks.cardLayout || 'A';
+  const density = state.tweaks.density || 3;
+  const cards = POPULAR.map(p => `
+    <a class="pop-card" href="#">
+      <div class="pop-card__photo photo ${p.photo}">
+        <span class="pop-card__rank">${p.rank}</span>
+        <span class="pop-card__status"><span class="status status--${p.status.type}">${p.status.label}</span></span>
+      </div>
+      <div class="pop-card__body">
+        <div class="pop-card__area">${p.area}</div>
+        <h3 class="pop-card__title">${p.title}</h3>
+        <div class="pop-card__meta">
+          <span>${p.price}</span><span class="dot">·</span>
+          <span>${p.walk}</span><span class="dot">·</span>
+          <span>${p.read}</span>
+        </div>
+      </div>
+    </a>
+  `).join('');
+
+  return `
+    <section class="popular-section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">いま話題</span>
+            <h2 class="h-section" style="margin-top:6px;">いま読まれている</h2>
+            <p class="h-sub">過去7日間、最もブックマークされた記事。</p>
+          </div>
+          <div class="popular-tabs" role="tablist">
+            <button class="popular-tab is-active" type="button">今週</button>
+            <button class="popular-tab" type="button">今月</button>
+            <button class="popular-tab" type="button">2026</button>
+          </div>
+        </div>
+
+        <div class="popular-grid layout-${layout}" data-density="${density}">
+          ${cards}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — PrefecturePicker (incl. Japan map SVG)
+   ======================================== */
+const MAP_REGIONS = {
+  hokkaido: 'M 200 22 L 258 32 L 263 78 L 245 96 L 208 92 L 188 66 L 194 38 Z',
+  tohoku:   'M 194 96 L 230 100 L 234 158 L 218 170 L 194 168 L 180 140 L 180 108 Z',
+  kanto:    'M 204 170 L 236 172 L 248 198 L 238 214 L 212 212 L 198 196 Z',
+  chubu:    'M 142 146 L 196 158 L 204 196 L 168 210 L 138 196 L 132 172 Z',
+  kinki:    'M 110 176 L 142 180 L 156 200 L 150 220 L 124 228 L 106 214 L 100 194 Z',
+  chugoku:  'M 58 184 L 104 188 L 108 214 L 82 224 L 58 218 L 48 202 Z',
+  shikoku:  'M 80 232 L 134 236 L 136 252 L 116 262 L 88 258 L 76 246 Z',
+  kyushu:   'M 22 210 L 70 216 L 80 258 L 60 282 L 32 282 L 14 248 Z'
+};
+const OKINAWA_INSET = 'M 14 294 L 52 298 L 54 312 L 16 310 Z';
+
+function renderJapanMap(active) {
+  const shapes = REGIONS.map(r => {
+    const d = MAP_REGIONS[r.id];
+    if (!d) return '';
+    const isActive = r.id === active;
+    const fill = isActive ? r.color : `color-mix(in srgb, ${r.color} 18%, #FFFDF7)`;
+    const stroke = isActive ? r.color : `color-mix(in srgb, ${r.color} 55%, #1B2A4A 20%)`;
+    return `<path class="region-shape ${isActive ? 'is-active' : ''}" data-region="${r.id}" d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="1.2" stroke-linejoin="round" />`;
+  }).join('');
+
+  // inset 沖縄: 九州と同色扱い
+  const okinawaColor = REGIONS.find(r => r.id === 'kyushu').color;
+  const okiFill = active === 'kyushu' ? okinawaColor : `color-mix(in srgb, ${okinawaColor} 18%, #FFFDF7)`;
+
+  // ラベル位置
+  const labels = {
+    hokkaido: [225, 62, '北海道'],
+    tohoku:   [205, 134, '東北'],
+    kanto:    [222, 195, '関東'],
+    chubu:    [168, 182, '中部'],
+    kinki:    [128, 204, '近畿'],
+    chugoku:  [76, 202, '中国'],
+    shikoku:  [108, 248, '四国'],
+    kyushu:   [44, 252, '九州']
+  };
+  const labelsSvg = REGIONS.map(r => {
+    const [x, y, txt] = labels[r.id] || [];
+    if (txt == null) return '';
+    return `<text class="region-label" x="${x}" y="${y}" text-anchor="middle">${txt}</text>`;
+  }).join('');
+
+  // 緯度線
+  const latLines = `
+    <line x1="8" y1="70" x2="268" y2="70" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <line x1="8" y1="140" x2="268" y2="140" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <line x1="8" y1="220" x2="268" y2="220" stroke="#1B2A4A" stroke-opacity="0.28" stroke-dasharray="2 4" stroke-width="0.6"/>
+    <text class="map-lat" x="262" y="68" text-anchor="end">40°N</text>
+    <text class="map-lat" x="262" y="138" text-anchor="end">35°N</text>
+    <text class="map-lat" x="262" y="218" text-anchor="end">30°N</text>
+  `;
+
+  // コンパス
+  const compass = `
+    <g transform="translate(246 22)">
+      <circle r="10" fill="#FFFDF7" stroke="#1B2A4A" stroke-opacity="0.3" stroke-width="0.8"/>
+      <path d="M0 -8 L2 0 L0 8 L-2 0 Z" fill="#E85D4A"/>
+      <text class="map-compass" y="-12" text-anchor="middle">N</text>
+    </g>
+  `;
+
+  // 小島ドット (佐渡, 淡路, 伊豆大島)
+  const dots = `
+    <circle cx="164" cy="168" r="1.2" fill="#1B2A4A" opacity="0.35"/>
+    <circle cx="136" cy="212" r="1.1" fill="#1B2A4A" opacity="0.35"/>
+    <circle cx="238" cy="220" r="0.9" fill="#1B2A4A" opacity="0.35"/>
+  `;
+
+  return `
+    <svg viewBox="0 0 270 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="日本地図 地方セレクタ">
+      ${latLines}
+      ${shapes}
+      <path class="region-shape ${active === 'kyushu' ? 'is-active' : ''}" data-region="kyushu" d="${OKINAWA_INSET}" fill="${okiFill}" stroke="${okinawaColor}" stroke-width="1" stroke-linejoin="round"/>
+      <text class="region-label" x="34" y="308" text-anchor="middle" style="font-size:7px;">沖縄</text>
+      ${dots}
+      ${labelsSvg}
+      ${compass}
+    </svg>
+  `;
+}
+
+function renderPrefecturePicker() {
+  const active = state.region;
+  const query = (state.prefQ || '').trim();
+  const top5 = PREFECTURES.filter(p => p.rank).sort((a, b) => a.rank - b.rank);
+
+  const tabs = REGIONS.map(r => {
+    const isActive = r.id === active;
+    const style = isActive ? `background:${r.color}; color:#fff;` : '';
+    return `<button class="pref-tab ${isActive ? 'is-active' : ''}" data-region="${r.id}" style="${style}">${r.jp}</button>`;
+  }).join('');
+
+  const top5Chips = top5.map(p => `
+    <button class="pref-top5-chip" data-pref="${p.jp}">
+      <span class="pref-top5-chip__rank">${p.rank}</span>
+      <span>${p.jp}</span>
+      <span class="pref-top5-chip__count">${p.count}件</span>
+    </button>
+  `).join('');
+
+  let filtered = PREFECTURES.filter(p => p.region === active);
+  if (query) {
+    filtered = PREFECTURES.filter(p => p.jp.includes(query) || p.dish.includes(query));
+  }
+  const regionColor = REGIONS.find(r => r.id === active).color;
+  const regionColorOfPref = (p) => REGIONS.find(r => r.id === p.region).color;
+
+  const cards = filtered.map(p => `
+    <button class="pref-card" style="--region-color:${regionColorOfPref(p)}" data-pref="${p.jp}">
+      <div class="pref-card__row">
+        <span class="pref-card__jp">${p.jp}</span>
+        ${p.rank ? `<span class="pref-card__rank">${p.rank}位</span>` : ''}
+        <span class="pref-card__count">${p.count}件</span>
+      </div>
+      <span class="pref-card__dish">${icon('chef')} ${p.dish}</span>
+    </button>
+  `).join('');
+
+  return `
+    <section class="pref-section" id="prefecture">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="kicker">全国</span>
+            <h2 class="h-section" style="margin-top:6px;">47都道府県から探す</h2>
+            <p class="h-sub">地方でしぼる、地図で選ぶ、名物で探す。</p>
+          </div>
+          <span class="pref-section__count">2,463軒 · 全47都道府県</span>
+        </div>
+
+        <div class="pref-top5">
+          <span class="pref-top5__label">${icon('bookmark')} 人気グルメ都道府県 TOP 5</span>
+          ${top5Chips}
+        </div>
+
+        <div class="pref-tabs">${tabs}</div>
+
+        <div class="pref-search">
+          ${icon('search')}
+          <input type="search" placeholder="都道府県名・名物で検索" value="${query.replace(/"/g,'&quot;')}" data-pref-search>
+        </div>
+
+        <div class="pref-layout">
+          <div class="pref-map">${renderJapanMap(active)}</div>
+          <div class="pref-grid" style="--region-color:${regionColor}">${cards || `<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:12px;">該当する都道府県が見つかりません</div>`}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — AppPromo
+   ======================================== */
+function renderAppPromo() {
+  return `
+    <section class="app-promo">
+      <div class="app-promo__inner">
+        <div>
+          <span class="kicker app-promo__kicker">アプリでもっと便利に</span>
+          <h2 class="app-promo__title">ルーレットと現在地検索で、<br>迷わず決まる。</h2>
+          <p class="app-promo__desc">GPSで近くのお店を一瞬で。気分・予算・ジャンルで絞り込んで、迷ったらルーレット。無料でダウンロードできます。</p>
+          <div class="app-promo__ctas">
+            <a class="app-store-btn" href="https://kyou-nani-taberu.app">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+              <span>
+                <span class="app-store-btn__small">Download on the</span>
+                <span class="app-store-btn__big">App Store</span>
+              </span>
+            </a>
+            <a class="app-store-btn" href="https://kyou-nani-taberu.app">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 3.3v17.4c0 .3.3.5.6.4l10-9-10.3-9.1c-.2.1-.3.2-.3.3zm11.9 8.2 2.7-1.5-9.9-5.5 7.2 7zm2.7 3-2.7-1.5-7.2 7 9.9-5.5zm2.6-1.5-2 1.1-2.4-1.4 2.4-1.4 2 1.1c.5.3.5 1.3 0 1.6z"/></svg>
+              <span>
+                <span class="app-store-btn__small">GET IT ON</span>
+                <span class="app-store-btn__big">Google Play</span>
+              </span>
+            </a>
+          </div>
+        </div>
+        <div class="app-promo__visual">
+          <div class="app-mini">
+            <div class="app-mini__photo photo photo-1"></div>
+            <span class="app-mini__label">OPEN NOW · 徒歩3分</span>
+            <div class="app-mini__name">${state.area ? state.area.jp : '渋谷'}の人気店</div>
+            <div class="app-mini__meta">¥950〜 · ★4.6</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+/* ========================================
+   Render — orchestrator
+   ======================================== */
+function render() {
+  const app = document.getElementById('app');
+  const bar = document.getElementById('area-bar');
+  if (state.area) {
+    bar.hidden = false;
+    document.getElementById('area-bar-jp').textContent = state.area.jp;
+    document.getElementById('area-bar-count').textContent =
+      `${state.area.count}件の記事 · ${Math.round(state.area.count * 0.7)}軒の店舗`;
+    app.innerHTML = [
+      renderAreaHome(),
+      renderSearchHero(),
+      renderGenreChips(),
+      renderFeatured(),
+      renderPopular(),
+      renderPrefecturePicker(),
+      renderAppPromo()
+    ].join('');
+  } else {
+    bar.hidden = true;
+    app.innerHTML = renderAreaGate();
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const card = e.target.closest('[data-area-id]');
+  if (card) {
+    const a = AREAS.find(x => x.id === card.dataset.areaId);
+    if (a) { state.area = a; saveArea(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    return;
+  }
+  if (e.target.closest('#area-change')) {
+    state.area = null;
+    saveArea();
+    render();
+    return;
+  }
+  if (e.target.closest('#geo-btn')) {
+    // デモ: 現在地取得の代わりに「渋谷」を仮選択
+    const a = AREAS[0];
+    state.area = a; saveArea(); render();
+    return;
+  }
+  const opt = e.target.closest('[data-quiz-opt]');
+  if (opt) {
+    const i = Number(opt.dataset.quizOpt);
+    state.quiz.picks[state.quiz.step] = i;
+    render();
+    return;
+  }
+  if (e.target.closest('.search-bar input')) return; // handled by focus events
+  const tab = e.target.closest('.popular-tab');
+  if (tab) {
+    tab.parentElement.querySelectorAll('.popular-tab').forEach(t => t.classList.remove('is-active'));
+    tab.classList.add('is-active');
+    return;
+  }
+  const prefTab = e.target.closest('[data-region]');
+  if (prefTab) {
+    state.region = prefTab.dataset.region;
+    state.prefQ = '';
+    render();
+    return;
+  }
+  const next = e.target.closest('[data-quiz-next]');
+  if (next && !next.disabled && next.classList.contains('is-ready')) {
+    if (state.quiz.step < QUIZ.length - 1) {
+      state.quiz.step++;
+      render();
+    } else {
+      // 最終質問後は再スタート（デモ）
+      state.quiz = { step: 0, picks: [] };
+      render();
+    }
+    return;
+  }
+});
+
+document.addEventListener('input', (e) => {
+  if (e.target.matches('[data-pref-search]')) {
+    state.prefQ = e.target.value;
+    // セクションのみ差し替え（フォーカス維持）
+    const sec = document.querySelector('.pref-section');
+    if (!sec) return;
+    const pos = e.target.selectionStart;
+    sec.outerHTML = renderPrefecturePicker();
+    const input = document.querySelector('[data-pref-search]');
+    if (input) { input.focus(); try { input.setSelectionRange(pos, pos); } catch(_) {} }
+  }
+});
+
+function syncTweaksUI() {
+  document.querySelectorAll('[data-tweak]').forEach(seg => {
+    const key = seg.dataset.tweak;
+    seg.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('is-active', String(state.tweaks[key]) === b.dataset.v);
+    });
+  });
+}
+
+document.addEventListener('click', (e) => {
+  const seg = e.target.closest('[data-tweak] button');
+  if (seg) {
+    const key = seg.parentElement.dataset.tweak;
+    let v = seg.dataset.v;
+    if (key === 'density') v = Number(v);
+    state.tweaks[key] = v;
+    saveTweaks();
+    syncTweaksUI();
+    render();
+    return;
+  }
+  if (e.target.closest('#tweaks-toggle')) {
+    const t = document.getElementById('tweaks');
+    const collapsed = t.classList.toggle('is-collapsed');
+    document.getElementById('tweaks-toggle').textContent = collapsed ? '+' : '−';
+    return;
+  }
+  if (e.target.closest('#tweaks-reset-area')) {
+    state.area = null; state.quiz = { step: 0, picks: [] };
+    saveArea();
+    render();
+    return;
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    const input = document.querySelector('.header-search input') || document.querySelector('.search-bar input');
+    if (input) input.focus();
+  }
+});
+
+document.addEventListener('focusin', (e) => {
+  if (e.target.matches('.search-bar input')) {
+    e.target.closest('.search-bar').classList.add('is-focus');
+  }
+});
+document.addEventListener('focusout', (e) => {
+  if (e.target.matches('.search-bar input')) {
+    e.target.closest('.search-bar').classList.remove('is-focus');
+  }
+});
+
+loadState();
+render();
+syncTweaksUI();
+</script>
+</body>
+</html>

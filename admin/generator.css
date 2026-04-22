@@ -1,0 +1,22 @@
+.knt-generator {
+    max-width: 800px;
+}
+.knt-generator__form .form-table th {
+    width: 140px;
+    font-weight: 600;
+}
+.knt-generator__form .regular-text {
+    width: 100%;
+    max-width: 400px;
+}
+.knt-generator__form select.regular-text {
+    width: 100%;
+    max-width: 400px;
+}
+#knt-generator-loading {
+    padding: 20px;
+    text-align: center;
+}
+#knt-generator-loading .spinner {
+    margin: 10px auto;
+}

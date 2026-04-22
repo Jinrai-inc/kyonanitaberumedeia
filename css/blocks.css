@@ -1,0 +1,1237 @@
+/* ========================================
+   KNT Media - Custom Gutenberg Blocks
+   Editor + Frontend Styles
+   ======================================== */
+
+/* ----------------------------------------
+   1. knt/section
+   ---------------------------------------- */
+.knt-section {
+    position: relative;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.knt-section__inner {
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+@media (min-width: 768px) {
+    .knt-section__inner {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+/* Editor placeholder */
+.knt-section--editor .knt-section__inner {
+    min-height: 120px;
+    border: 2px dashed var(--color-border, rgba(0,0,0,0.06));
+    border-radius: var(--radius-md, 12px);
+}
+
+/* ----------------------------------------
+   2. knt/button
+   ---------------------------------------- */
+.knt-button-wrap {
+    display: flex;
+    width: 100%;
+}
+
+.knt-button-wrap--left   { justify-content: flex-start; }
+.knt-button-wrap--center { justify-content: center; }
+.knt-button-wrap--right  { justify-content: flex-end; }
+
+.knt-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill, 28px);
+    font-family: var(--font-body, sans-serif);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    line-height: 1.4;
+    border: 2px solid transparent;
+}
+
+/* Sizes */
+.knt-button--small  { padding: 8px 22px;  font-size: 13px; }
+.knt-button--medium { padding: 12px 32px; font-size: 15px; }
+.knt-button--large  { padding: 16px 44px; font-size: 17px; }
+
+/* Styles */
+.knt-button--primary {
+    background-color: var(--color-accent, #C9553E);
+    color: #fff;
+    border-color: var(--color-accent, #C9553E);
+}
+
+.knt-button--primary:hover {
+    opacity: 0.85;
+    color: #fff;
+}
+
+.knt-button--secondary {
+    background-color: transparent;
+    color: var(--color-accent, #C9553E);
+    border-color: var(--color-accent, #C9553E);
+}
+
+.knt-button--secondary:hover {
+    background-color: var(--color-accent, #C9553E);
+    color: #fff;
+}
+
+/* ----------------------------------------
+   3. knt/faq
+   ---------------------------------------- */
+.knt-faq {
+    margin: 1.5em 0;
+}
+
+.knt-faq__item {
+    border: 1px solid var(--color-border, rgba(0,0,0,0.06));
+    border-radius: var(--radius-md, 12px);
+    margin-bottom: 12px;
+    overflow: hidden;
+    background: var(--color-card-bg, rgba(255,255,255,0.68));
+}
+
+.knt-faq__question {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font-body, sans-serif);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-main, #2A2622);
+    text-align: left;
+    gap: 12px;
+    line-height: 1.6;
+}
+
+.knt-faq__question:hover {
+    background: var(--color-bg-secondary, #EDE8E1);
+}
+
+.knt-faq__q-label {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-accent, #C9553E);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.knt-faq__q-text {
+    flex: 1;
+}
+
+.knt-faq__toggle {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.knt-faq__toggle::before,
+.knt-faq__toggle::after {
+    content: '';
+    position: absolute;
+    background: var(--color-text-sub, #5C564E);
+    border-radius: 1px;
+}
+
+.knt-faq__toggle::before {
+    width: 14px;
+    height: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.knt-faq__toggle::after {
+    width: 2px;
+    height: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s ease;
+}
+
+.knt-faq__question[aria-expanded="true"] .knt-faq__toggle::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    opacity: 0;
+}
+
+.knt-faq__answer {
+    padding: 0 20px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    border-top: 1px solid var(--color-border, rgba(0,0,0,0.06));
+    padding-top: 16px;
+}
+
+.knt-faq__answer[hidden] {
+    display: none;
+}
+
+.knt-faq__a-label {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary, #EDE8E1);
+    color: var(--color-text-main, #2A2622);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.knt-faq__a-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--color-text-sub, #5C564E);
+}
+
+/* Editor FAQ */
+.knt-faq--editor .knt-faq__item {
+    margin-bottom: 16px;
+}
+
+.knt-faq--editor .knt-faq__answer {
+    display: flex !important;
+}
+
+.knt-faq--editor input.knt-faq__input {
+    width: 100%;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: var(--font-body, sans-serif);
+    background: #fff;
+}
+
+.knt-faq--editor textarea.knt-faq__textarea {
+    width: 100%;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: var(--font-body, sans-serif);
+    min-height: 60px;
+    resize: vertical;
+    background: #fff;
+}
+
+.knt-faq--editor .knt-faq__remove {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #cc3333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 6px;
+}
+
+/* ----------------------------------------
+   4. knt/callout
+   ---------------------------------------- */
+.knt-callout {
+    border-radius: var(--radius-md, 12px);
+    padding: 20px 24px;
+    margin: 1.5em 0;
+    border-left: 5px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.knt-callout__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.knt-callout__icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.knt-callout__content {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-text-sub, #5C564E);
+}
+
+/* Types */
+.knt-callout--info {
+    background: #EBF5FB;
+    border-color: #3498DB;
+}
+.knt-callout--info .knt-callout__header { color: #2471A3; }
+
+.knt-callout--warning {
+    background: #FEF5E7;
+    border-color: #F39C12;
+}
+.knt-callout--warning .knt-callout__header { color: #B7770A; }
+
+.knt-callout--tip {
+    background: #EAFAF1;
+    border-color: #27AE60;
+}
+.knt-callout--tip .knt-callout__header { color: #1E8449; }
+
+.knt-callout--note {
+    background: var(--color-accent-light, #FAEAE6);
+    border-color: var(--color-accent, #C9553E);
+}
+.knt-callout--note .knt-callout__header { color: var(--color-accent, #C9553E); }
+
+/* ----------------------------------------
+   5. knt/profile
+   ---------------------------------------- */
+.knt-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--color-card-bg, rgba(255,255,255,0.68));
+    border-radius: var(--radius-lg, 16px);
+    padding: 32px 24px;
+    margin: 1.5em 0;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.06));
+}
+
+.knt-profile__image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 16px;
+    border: 3px solid var(--color-bg-secondary, #EDE8E1);
+}
+
+.knt-profile__image-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary, #EDE8E1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: var(--color-text-light, #9B9389);
+    font-size: 32px;
+}
+
+.knt-profile__name {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+    margin-bottom: 4px;
+}
+
+.knt-profile__role {
+    font-size: 13px;
+    color: var(--color-text-light, #9B9389);
+    margin-bottom: 12px;
+}
+
+.knt-profile__description {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-text-sub, #5C564E);
+    margin-bottom: 16px;
+    max-width: 420px;
+}
+
+.knt-profile__socials {
+    display: flex;
+    gap: 12px;
+}
+
+.knt-profile__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary, #EDE8E1);
+    color: var(--color-text-sub, #5C564E);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.knt-profile__social-link:hover {
+    background: var(--color-accent, #C9553E);
+    color: #fff;
+}
+
+/* ----------------------------------------
+   6. knt/rating
+   ---------------------------------------- */
+.knt-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0.5em 0;
+}
+
+.knt-rating__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-main, #2A2622);
+    min-width: 60px;
+}
+
+.knt-rating__stars {
+    display: flex;
+    gap: 3px;
+}
+
+.knt-rating__star {
+    font-size: 18px;
+    line-height: 1;
+    color: var(--color-text-lightest, #C8C0B6);
+}
+
+.knt-rating__star--filled {
+    color: #F5A623;
+}
+
+.knt-rating__value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-sub, #5C564E);
+    margin-left: 4px;
+}
+
+/* ----------------------------------------
+   7. knt/steps
+   ---------------------------------------- */
+.knt-steps {
+    position: relative;
+    margin: 1.5em 0;
+    padding-left: 40px;
+}
+
+.knt-steps::before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--color-bg-secondary, #EDE8E1);
+    border-radius: 2px;
+}
+
+.knt-steps__item {
+    position: relative;
+    padding-bottom: 28px;
+}
+
+.knt-steps__item:last-child {
+    padding-bottom: 0;
+}
+
+.knt-steps__number {
+    position: absolute;
+    left: -40px;
+    top: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-accent, #C9553E);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 1;
+}
+
+.knt-steps__title {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+    margin-bottom: 6px;
+    padding-top: 5px;
+}
+
+.knt-steps__description {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-text-sub, #5C564E);
+}
+
+/* Editor steps */
+.knt-steps--editor .knt-steps__input {
+    width: 100%;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
+    font-family: var(--font-body, sans-serif);
+    margin-bottom: 4px;
+    background: #fff;
+}
+
+.knt-steps--editor .knt-steps__textarea {
+    width: 100%;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: var(--font-body, sans-serif);
+    min-height: 48px;
+    resize: vertical;
+    background: #fff;
+}
+
+.knt-steps--editor .knt-steps__remove {
+    font-size: 11px;
+    color: #cc3333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    margin-top: 4px;
+}
+
+/* ----------------------------------------
+   8. knt/price-table
+   ---------------------------------------- */
+.knt-price-table {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin: 1.5em 0;
+}
+
+@media (min-width: 600px) {
+    .knt-price-table { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 900px) {
+    .knt-price-table { grid-template-columns: repeat(3, 1fr); }
+}
+
+.knt-price-table__plan {
+    background: var(--color-card-bg, rgba(255,255,255,0.68));
+    border: 1px solid var(--color-border, rgba(0,0,0,0.06));
+    border-radius: var(--radius-lg, 16px);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.knt-price-table__plan:hover {
+    transform: translateY(-2px);
+}
+
+.knt-price-table__plan--recommended {
+    border-color: var(--color-accent, #C9553E);
+    border-width: 2px;
+    box-shadow: 0 4px 24px rgba(201,85,62,0.12);
+}
+
+.knt-price-table__badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-accent, #C9553E);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: var(--radius-pill, 28px);
+    white-space: nowrap;
+}
+
+.knt-price-table__name {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+.knt-price-table__price {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-accent, #C9553E);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.knt-price-table__price-unit {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text-light, #9B9389);
+    margin-bottom: 20px;
+}
+
+.knt-price-table__features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    width: 100%;
+    text-align: left;
+}
+
+.knt-price-table__feature {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border, rgba(0,0,0,0.06));
+    font-size: 14px;
+    color: var(--color-text-sub, #5C564E);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.knt-price-table__feature::before {
+    content: '\2713';
+    color: var(--color-success, #5A9E6F);
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.knt-price-table__cta {
+    margin-top: auto;
+}
+
+/* Editor price table */
+.knt-price-table--editor .knt-price-table__plan {
+    min-height: 200px;
+}
+
+.knt-price-table--editor input,
+.knt-price-table--editor textarea {
+    width: 100%;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.1));
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: var(--font-body, sans-serif);
+    margin-bottom: 4px;
+    background: #fff;
+}
+
+.knt-price-table--editor .knt-price-table__remove {
+    font-size: 11px;
+    color: #cc3333;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 2px 4px;
+    margin-top: 4px;
+}
+
+/* ----------------------------------------
+   9. knt/app-cta
+   ---------------------------------------- */
+.knt-app-cta {
+    background: linear-gradient(135deg, var(--color-accent, #C9553E), #E07A5F);
+    border-radius: var(--radius-lg, 16px);
+    padding: 48px 32px;
+    text-align: center;
+    margin: 2em 0;
+    color: #fff;
+}
+
+.knt-app-cta__title {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #fff;
+}
+
+.knt-app-cta__description {
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    opacity: 0.92;
+    color: #fff;
+}
+
+.knt-app-cta__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 40px;
+    background: #fff;
+    color: var(--color-accent, #C9553E);
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: var(--radius-pill, 28px);
+    text-decoration: none;
+    transition: all 0.25s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.knt-app-cta__button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    color: var(--color-accent, #C9553E);
+}
+
+/* ----------------------------------------
+   10. knt/restaurant-card
+   ---------------------------------------- */
+.knt-restaurant-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-card-bg, rgba(255,255,255,0.68));
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.06));
+    margin: 1.5em 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 420px;
+}
+
+.knt-restaurant-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.knt-restaurant-card__image-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+    background: var(--color-bg-secondary, #EDE8E1);
+}
+
+.knt-restaurant-card__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.knt-restaurant-card__genre {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--color-accent, #C9553E);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: var(--radius-pill, 28px);
+}
+
+.knt-restaurant-card__body {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.knt-restaurant-card__name {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+}
+
+.knt-restaurant-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--color-text-light, #9B9389);
+}
+
+.knt-restaurant-card__area::before {
+    content: '\1F4CD';
+    margin-right: 2px;
+}
+
+.knt-restaurant-card__stars {
+    display: flex;
+    gap: 2px;
+}
+
+.knt-restaurant-card__star {
+    font-size: 14px;
+    color: var(--color-text-lightest, #C8C0B6);
+}
+
+.knt-restaurant-card__star--filled {
+    color: #F5A623;
+}
+
+.knt-restaurant-card__description {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-sub, #5C564E);
+    margin-top: 4px;
+}
+
+.knt-restaurant-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-accent, #C9553E);
+    text-decoration: none;
+}
+
+.knt-restaurant-card__link:hover {
+    text-decoration: underline;
+}
+
+.knt-restaurant-card__link::after {
+    content: '\2192';
+}
+
+/* Editor restaurant card placeholder */
+.knt-restaurant-card__image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-secondary, #EDE8E1);
+    color: var(--color-text-light, #9B9389);
+    font-size: 28px;
+}
+
+/* ----------------------------------------
+   Shared Editor Utilities
+   ---------------------------------------- */
+.knt-block-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px dashed var(--color-border, rgba(0,0,0,0.12));
+    border-radius: var(--radius-md, 12px);
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-sub, #5C564E);
+    font-family: var(--font-body, sans-serif);
+    margin-top: 8px;
+    transition: border-color 0.2s;
+}
+
+.knt-block-add-btn:hover {
+    border-color: var(--color-accent, #C9553E);
+    color: var(--color-accent, #C9553E);
+}
+
+/* Editor placeholder text */
+[data-type^="knt/"] .components-placeholder {
+    min-height: 80px;
+}
+
+/* ========================================
+   Generated Article Styles (wp:html blocks)
+   ======================================== */
+
+/* Buttons */
+.knt-btn-wrapper { margin: 10px 0; }
+.knt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none !important;
+    transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+    line-height: 1.4;
+}
+/* グローバルa色を上書き */
+a.knt-btn { color: inherit; }
+a.knt-btn.knt-btn--primary { color: #fff !important; }
+a.knt-btn.knt-btn--primary:hover { color: #fff !important; }
+.knt-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.knt-btn--primary {
+    background: #E60012;
+    color: #fff !important;
+    border-color: #E60012;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-shadow: none;
+}
+.knt-btn--primary:hover { color: #fff !important; background: #cc0010; border-color: #cc0010; }
+.knt-btn--secondary {
+    background: #fff;
+    color: #E60012;
+    border-color: #E60012;
+}
+.knt-btn--secondary:hover { background: #FFF0F0; color: #E60012; }
+.knt-btn--small { min-height: 36px; padding: 6px 18px; font-size: 0.82rem; }
+.knt-btn--medium { min-height: 48px; padding: 10px 28px; }
+.knt-btn--large { min-height: 56px; padding: 14px 40px; font-size: 1.05rem; }
+
+/* Restaurant Card */
+.knt-restaurant-card {
+    display: flex;
+    border: 1.5px solid var(--color-border, #eee);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: #fff;
+}
+.knt-restaurant-card--vertical {
+    flex-direction: column;
+}
+.knt-restaurant-card--vertical .knt-restaurant-card__image {
+    width: 100%;
+    height: 240px;
+}
+.knt-restaurant-card--vertical .knt-restaurant-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.knt-restaurant-card__image {
+    width: 240px;
+    flex-shrink: 0;
+    position: relative;
+}
+.knt-restaurant-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.knt-restaurant-card__credit {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    font-size: 9px;
+    padding: 2px 6px;
+    text-align: right;
+}
+.knt-restaurant-card__body {
+    padding: 18px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.knt-restaurant-card__tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.knt-restaurant-card__area {
+    font-size: 0.75rem;
+    color: var(--color-text-light, #999);
+}
+.knt-restaurant-card__name {
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-main, #2A2622);
+    margin-bottom: 6px;
+}
+.knt-rating__stars {
+    color: #F5A623;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+.knt-restaurant-card__desc {
+    font-size: 0.85rem;
+    color: var(--color-text-sub, #5c564e);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Callout */
+.knt-callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+}
+.knt-callout--note { background: #fef9e7; border-left: 4px solid #F5A623; }
+.knt-callout--info { background: #eaf4fd; border-left: 4px solid #3498db; }
+.knt-callout--tip { background: #eaf6ed; border-left: 4px solid #27ae60; }
+.knt-callout--warning { background: #fdedec; border-left: 4px solid #e74c3c; }
+.knt-callout__header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; font-weight: 700; }
+.knt-callout__icon { font-size: 1.1rem; }
+.knt-callout__content { font-size: 0.88rem; line-height: 1.6; color: var(--color-text-sub, #5c564e); }
+
+/* App CTA */
+.knt-app-cta {
+    background: linear-gradient(135deg, var(--color-accent, #C9553E) 0%, #D4795E 100%);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    color: #fff;
+    margin: 32px 0;
+}
+.knt-app-cta__title { font-family: var(--font-heading, sans-serif); font-size: 1.2rem; color: #fff; margin: 0 0 12px; }
+.knt-app-cta__desc { font-size: 0.88rem; opacity: 0.9; margin: 0 0 24px; line-height: 1.7; }
+
+/* Google Maps embed */
+.article-content iframe { max-width: 100%; }
+
+@media (max-width: 767px) {
+    .knt-restaurant-card { flex-direction: column; }
+    .knt-restaurant-card__image { width: 100%; height: 180px; }
+    .knt-btn-wrapper { text-align: center !important; }
+    .knt-btn { width: 100%; justify-content: center; }
+}
+
+/* Facility Badges */
+.knt-facility-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 12px;
+    font-size: 13px;
+    color: var(--color-text-sub, #5C564E);
+    line-height: 1.8;
+    margin: 12px auto;
+    max-width: 600px;
+}
+.knt-facility-badges strong {
+    color: var(--color-accent, #C9553E);
+}
+
+/* Shop Photo (standalone) */
+.knt-shop-photo {
+    margin: 16px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 300px;
+    text-align: center;
+}
+.knt-shop-photo img {
+    width: 100%;
+    max-width: 238px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.knt-shop-photo figcaption {
+    font-size: 10px;
+    color: var(--color-text-light, #999);
+    text-align: right;
+    padding: 4px 8px;
+    background: var(--color-bg-main, #f4f0eb);
+}
+
+/* Restaurant Card (info only, no image) */
+.knt-restaurant-card--info {
+    flex-direction: column;
+    padding: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.knt-restaurant-card--info .knt-restaurant-card__body {
+    padding: 16px 20px;
+}
+
+/* Phase 5: Shop Photo */
+.knt-shop-photo {
+    margin: 16px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    max-width: 400px;
+    text-align: center;
+}
+.knt-shop-photo img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+.knt-shop-photo__credit {
+    position: absolute;
+    bottom: 0; right: 0;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 8px 0 0 0;
+}
+@media (max-width: 480px) {
+    .knt-shop-photo img { height: 200px; }
+}
+
+/* Shop Info Table */
+.knt-shop-info {
+    margin: 16px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--color-border, #E8E2D9);
+    max-width: 600px;
+}
+.knt-shop-info__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+.knt-shop-info__table th {
+    width: 100px;
+    background: #FFFBF5;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border, #E8E2D9);
+    white-space: nowrap;
+    text-align: left;
+}
+.knt-shop-info__table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border, #E8E2D9);
+}
+.knt-shop-info__table tr:last-child th,
+.knt-shop-info__table tr:last-child td { border-bottom: none; }
+
+/* Map Accordion */
+.knt-map-accordion {
+    margin: 12px 0;
+    border: 1px solid var(--color-border, #E8E2D9);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.knt-map-accordion summary {
+    padding: 10px 16px;
+    background: #FFFBF5;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    list-style: none;
+}
+.knt-map-accordion summary::-webkit-details-marker { display: none; }
+.knt-map-accordion summary::before { content: '\25B6  '; font-size: 10px; }
+.knt-map-accordion[open] summary::before { content: '\25BC  '; }
+.knt-map-accordion__content iframe { display: block; }
+
+/* Shop Sublinks */
+.knt-shop-sublinks {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0 0;
+    flex-wrap: wrap;
+}
+.knt-shop-sublinks a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 20px;
+    border: 1.5px solid var(--color-border, #ddd);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-sub, #5C564E);
+    text-decoration: none;
+    background: #fff;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.knt-shop-sublinks a:hover {
+    border-color: #E60012;
+    color: #E60012;
+    background: #FFF0F0;
+}
+.knt-shop-sublinks span { display: none; }
+
+/* Genre Divider */
+.knt-shop-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 40px 0;
+}
+.knt-shop-divider::before,
+.knt-shop-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-border, #E8E2D9), transparent);
+}
+.knt-shop-divider__icon { margin: 0 16px; font-size: 20px; }
+
+/* Summary Table */
+.knt-summary-table { margin: 24px 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--color-border, #E8E2D9); overflow-x: auto; }
+.knt-summary-table table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 480px; }
+.knt-summary-table thead th { background: var(--color-accent, #C9553E); color: white; padding: 10px 12px; font-size: 12px; text-align: left; }
+.knt-summary-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--color-border, #E8E2D9); }
+.knt-summary-table tbody tr:nth-child(even) { background: #FFFBF5; }
+
+/* Mobile Responsive for Generated Articles */
+@media (max-width: 767px) {
+    .knt-shop-photo { max-width: 100%; margin: 12px 0; }
+    .knt-restaurant-card--info { max-width: 100%; }
+    .knt-shop-info { max-width: 100%; }
+    .knt-facility-badges { max-width: 100%; }
+    .knt-btn--large { font-size: 0.9rem; padding: 12px 20px; }
+    .knt-shop-sublinks { flex-direction: column; align-items: center; }
+    .knt-shop-sublinks a { width: 100%; justify-content: center; }
+    .knt-summary-table { font-size: 12px; }
+    .knt-summary-table table { min-width: 360px; }
+    .knt-map-accordion { margin: 8px 0; }
+    .knt-callout { padding: 12px 14px; }
+}
