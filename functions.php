@@ -92,6 +92,39 @@ function knt_enqueue_assets() {
     $rd_js_ver  = file_exists( $rd_js_path ) ? filemtime( $rd_js_path ) : KNT_VERSION;
     wp_enqueue_script( 'knt-redesign', KNT_URI . '/js/redesign.js', array(), $rd_js_ver, true );
 
+    // Redesign 用エリアデータ（診断・ジャンル絞り込みから使う）
+    $rd_area_prefs  = function_exists( 'knt_get_prefectures' ) ? knt_get_prefectures() : array();
+    $rd_area_cities = array();
+    $rd_json_path   = KNT_DIR . '/data/municipalities-full.json';
+    if ( file_exists( $rd_json_path ) ) {
+        $rd_raw  = file_get_contents( $rd_json_path );
+        $rd_json = json_decode( $rd_raw, true );
+        if ( is_array( $rd_json ) ) {
+            foreach ( $rd_json as $code => $info ) {
+                $rd_area_cities[ $code ] = isset( $info['majorCities'] ) ? $info['majorCities']
+                    : ( isset( $info['municipalities'] ) ? array_slice( $info['municipalities'], 0, 20 ) : array() );
+            }
+        }
+    }
+    $rd_area_stations = array();
+    if ( function_exists( 'knt_get_all_station_data' ) ) {
+        foreach ( knt_get_all_station_data() as $key => $stations ) {
+            // key 例: "area-13-渋谷区" → code: 13, city: 渋谷区
+            if ( preg_match( '/^area-(\d{2})-(.+)$/u', $key, $m ) ) {
+                $rd_area_stations[ $m[1] ][ $m[2] ] = array_map(
+                    function ( $s ) { return isset( $s['name'] ) ? $s['name'] : ''; },
+                    $stations
+                );
+            }
+        }
+    }
+    wp_localize_script( 'knt-redesign', 'kntAreaData', array(
+        'homeUrl'      => home_url(),
+        'prefectures'  => $rd_area_prefs,
+        'cities'       => $rd_area_cities,
+        'stations'     => $rd_area_stations,
+    ) );
+
     // Localize for AJAX if needed
     wp_localize_script( 'knt-script', 'kntData', array(
         'ajaxUrl' => admin_url( 'admin-ajax.php' ),

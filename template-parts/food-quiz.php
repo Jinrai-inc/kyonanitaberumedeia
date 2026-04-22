@@ -107,14 +107,21 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                 }
             ?>
             <div class="food-quiz__area" data-food-quiz-area>
-                <p class="food-quiz__area-label">エリアで絞る（任意）</p>
-                <div class="food-quiz__area-row">
+                <div class="food-quiz__area-head">
+                    <p class="food-quiz__area-label">エリアで絞る（任意）</p>
+                    <button type="button" class="food-quiz__area-use-saved" data-quiz-area-saved hidden>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        保存済みを使う
+                    </button>
+                </div>
+                <div class="food-quiz__area-grid">
                     <select class="food-quiz__area-select" id="quiz-area-select" data-quiz-area-select>
-                        <option value="">全国から探す</option>
+                        <option value="">都道府県：全国</option>
                         <?php foreach ( $rd_q_regions as $rk => $rl ) : if ( empty( $rd_q_by_reg[ $rk ] ) ) continue; ?>
                             <optgroup label="<?php echo esc_attr( $rl ); ?>">
                                 <?php foreach ( $rd_q_by_reg[ $rk ] as $p ) : ?>
                                     <option value="<?php echo esc_attr( $p['name'] ); ?>"
+                                            data-pref-code="<?php echo esc_attr( $p['code'] ); ?>"
                                             data-area-url="<?php echo esc_url( knt_prefecture_url( $p['code'], $p['name'] ) ); ?>">
                                         <?php echo esc_html( $p['name'] ); ?>
                                     </option>
@@ -122,10 +129,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                             </optgroup>
                         <?php endforeach; ?>
                     </select>
-                    <button type="button" class="food-quiz__area-use-saved" data-quiz-area-saved hidden>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                        保存済みを使う
-                    </button>
+                    <select class="food-quiz__area-select" id="quiz-city-select" data-quiz-city-select disabled>
+                        <option value="">市区町村：まず都道府県を選択</option>
+                    </select>
+                    <select class="food-quiz__area-select" id="quiz-station-select" data-quiz-station-select disabled>
+                        <option value="">駅：まず市区町村を選択</option>
+                    </select>
                 </div>
                 <p class="food-quiz__area-hint" data-quiz-area-hint>ジャンル × エリアで検索結果を絞り込めます</p>
             </div>

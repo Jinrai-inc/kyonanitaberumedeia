@@ -195,6 +195,117 @@
     }
 
     /* ==================================================================
+       3.5 Genre Chips Area Filter — エリア指定でチップのリンクを書き換え
+       ================================================================== */
+    function areaData() { return (typeof kntAreaData !== 'undefined') ? kntAreaData : null; }
+
+    function initGenreChipsFilter() {
+        var scope = $('[data-rd-genre-chips]');
+        if (!scope) return;
+        var prefSel = $('[data-rd-gc-pref]', scope);
+        var citySel = $('[data-rd-gc-city]', scope);
+        var stSel   = $('[data-rd-gc-station]', scope);
+        var reset   = $('[data-rd-gc-reset]', scope);
+        var chips   = $$('.rd-genre-chip', scope);
+        if (!prefSel) return;
+
+        var data = areaData();
+        var baseUrl = (data && data.homeUrl) ? data.homeUrl : window.location.origin;
+
+        function populateCities(prefCode) {
+            if (!citySel) return;
+            citySel.innerHTML = '<option value="">' + (prefCode ? '市区町村：絞らない' : '市区町村：まず都道府県を選択') + '</option>';
+            var cities = (data && data.cities && prefCode) ? (data.cities[prefCode] || []) : [];
+            cities.forEach(function (c) {
+                var o = document.createElement('option');
+                o.value = c;
+                o.textContent = c;
+                citySel.appendChild(o);
+            });
+            citySel.disabled = !prefCode || !cities.length;
+            if (stSel) {
+                stSel.innerHTML = '<option value="">駅：まず市区町村を選択</option>';
+                stSel.disabled = true;
+            }
+        }
+        function populateStations(prefCode, cityName) {
+            if (!stSel) return;
+            stSel.innerHTML = '<option value="">' + (cityName ? '駅：絞らない' : '駅：まず市区町村を選択') + '</option>';
+            var byCity = (data && data.stations && data.stations[prefCode]) || {};
+            var stations = cityName ? (byCity[cityName] || []) : [];
+            stations.forEach(function (s) {
+                var o = document.createElement('option');
+                o.value = s;
+                o.textContent = s;
+                stSel.appendChild(o);
+            });
+            stSel.disabled = !cityName || !stations.length;
+        }
+
+        function currentAreaQuery() {
+            var prefOpt = prefSel.options[prefSel.selectedIndex];
+            return {
+                prefName: prefSel.value || '',
+                prefUrl:  prefOpt ? (prefOpt.getAttribute('data-area-url') || '') : '',
+                cityName: citySel ? (citySel.value || '') : '',
+                stationName: stSel ? (stSel.value || '') : ''
+            };
+        }
+
+        function rewriteChips() {
+            var sel = currentAreaQuery();
+            chips.forEach(function (a) {
+                var kw = a.getAttribute('data-genre-keyword') || '';
+                var href;
+                if (sel.stationName) {
+                    href = baseUrl + '/?s=' + encodeURIComponent(kw + ' ' + sel.stationName);
+                } else if (sel.cityName) {
+                    href = baseUrl + '/?s=' + encodeURIComponent(kw + ' ' + sel.cityName);
+                } else if (sel.prefName && sel.prefUrl) {
+                    var joiner = sel.prefUrl.indexOf('?') >= 0 ? '&' : '?';
+                    href = sel.prefUrl + joiner + 's=' + encodeURIComponent(kw);
+                } else if (sel.prefName) {
+                    href = baseUrl + '/?s=' + encodeURIComponent(kw + ' ' + sel.prefName);
+                } else {
+                    href = baseUrl + '/?s=' + encodeURIComponent(kw);
+                }
+                a.href = href;
+            });
+            if (reset) reset.hidden = !(sel.prefName || sel.cityName || sel.stationName);
+        }
+
+        prefSel.addEventListener('change', function () {
+            var opt = prefSel.options[prefSel.selectedIndex];
+            populateCities(opt ? (opt.getAttribute('data-pref-code') || '') : '');
+            rewriteChips();
+        });
+        if (citySel) citySel.addEventListener('change', function () {
+            var opt = prefSel.options[prefSel.selectedIndex];
+            populateStations(opt ? (opt.getAttribute('data-pref-code') || '') : '', citySel.value);
+            rewriteChips();
+        });
+        if (stSel) stSel.addEventListener('change', rewriteChips);
+        if (reset) reset.addEventListener('click', function () {
+            prefSel.selectedIndex = 0;
+            populateCities('');
+            rewriteChips();
+        });
+
+        // 保存済みエリアを初期選択として反映（localStorage: knt-area）
+        var saved = safeParse(lsGet(LS_AREA));
+        if (saved && saved.name) {
+            for (var i = 0; i < prefSel.options.length; i++) {
+                if (prefSel.options[i].value === saved.name) {
+                    prefSel.selectedIndex = i;
+                    populateCities(prefSel.options[i].getAttribute('data-pref-code') || '');
+                    break;
+                }
+            }
+        }
+        rewriteChips();
+    }
+
+    /* ==================================================================
        4. Header Search — 開閉 + ESC
        ================================================================== */
     function initHeaderSearch() {
@@ -246,6 +357,7 @@
         clearLegacyTweaks();
         initPrefPicker();
         initAreaGate();
+        initGenreChipsFilter();
         initHeaderSearch();
     });
 })();

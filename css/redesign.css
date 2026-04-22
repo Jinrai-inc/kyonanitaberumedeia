@@ -792,6 +792,80 @@ body {
   color: var(--rd-ink-mute);
   font-size: 12px;
 }
+.rd-genre-chips__filter {
+  position: relative;
+  margin: 0 0 14px;
+  padding: 12px 14px 10px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed var(--rd-line-strong);
+  border-radius: var(--rd-radius-lg);
+}
+.rd-genre-chips__filter-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--rd-ink-sub);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.rd-genre-chips__filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+@media (max-width: 680px) {
+  .rd-genre-chips__filter-grid { grid-template-columns: 1fr; }
+}
+.rd-genre-chips__select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1px solid var(--rd-line-strong);
+  border-radius: var(--rd-radius-pill);
+  background: #fff;
+  color: var(--rd-ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C9553E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+  transition: border-color 0.16s, box-shadow 0.16s;
+}
+.rd-genre-chips__select:focus {
+  outline: none;
+  border-color: var(--rd-tomato);
+  box-shadow: 0 0 0 3px rgba(201, 85, 62, 0.12);
+}
+.rd-genre-chips__select:disabled {
+  background-color: #faf5ec;
+  color: var(--rd-ink-mute);
+  cursor: not-allowed;
+}
+.rd-genre-chips__filter-reset {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink-sub);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s;
+}
+.rd-genre-chips__filter-reset:hover {
+  border-color: var(--rd-tomato);
+  color: var(--rd-tomato);
+}
 .rd-genre-chips__grid {
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
@@ -1957,33 +2031,43 @@ body {
 }
 
 /* ==========================================================================
-   Food Quiz — 結果画面のエリア絞り込み
+   Food Quiz — 結果画面のエリア絞り込み（都道府県 / 市区町村 / 駅）
    ========================================================================== */
 .food-quiz__area {
   margin: 18px auto 22px;
-  max-width: 460px;
+  max-width: 560px;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.78);
   border: 1px solid var(--rd-line);
   border-radius: var(--rd-radius-lg);
   box-shadow: var(--rd-shadow-xs);
+  text-align: left;
+}
+.food-quiz__area-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 .food-quiz__area-label {
-  margin: 0 0 10px;
+  margin: 0;
   font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--rd-ink-sub);
-  text-align: left;
 }
-.food-quiz__area-row {
-  display: flex;
-  align-items: stretch;
+.food-quiz__area-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
+@media (max-width: 560px) {
+  .food-quiz__area-grid { grid-template-columns: 1fr; }
+}
 .food-quiz__area-select {
-  flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
   min-height: 42px;
   padding: 0 34px 0 14px;
@@ -1992,25 +2076,30 @@ body {
   background: #fff;
   color: var(--rd-ink);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C9553E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
   background-repeat: no-repeat;
   background-position: right 14px center;
   cursor: pointer;
-  transition: border-color 0.16s;
+  transition: border-color 0.16s, box-shadow 0.16s;
 }
 .food-quiz__area-select:focus {
   outline: none;
   border-color: var(--rd-tomato);
   box-shadow: 0 0 0 3px rgba(201, 85, 62, 0.12);
 }
+.food-quiz__area-select:disabled {
+  background-color: #faf5ec;
+  color: var(--rd-ink-mute);
+  cursor: not-allowed;
+}
 .food-quiz__area-use-saved {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 0 12px;
+  padding: 6px 12px;
   border: 1px dashed var(--rd-tomato);
   border-radius: var(--rd-radius-pill);
   background: #fff;
@@ -2031,7 +2120,6 @@ body {
   font-family: var(--font-body);
   font-size: 12px;
   color: var(--rd-ink-mute);
-  text-align: left;
   line-height: 1.5;
 }
 

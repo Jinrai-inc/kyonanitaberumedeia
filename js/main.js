@@ -482,32 +482,122 @@
       } catch (e) { return null; }
     }
 
-    function buildQuizUrl(search, areaName, areaUrl) {
-      var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
-      if (areaName && areaUrl) {
-        var joiner = areaUrl.indexOf('?') >= 0 ? '&' : '?';
-        return areaUrl + joiner + 's=' + encodeURIComponent(search);
+    function quizArea() { return typeof kntAreaData !== 'undefined' ? kntAreaData : null; }
+
+    function getQuizAreaSelection() {
+      var prefSel = document.getElementById('quiz-area-select');
+      var citySel = document.getElementById('quiz-city-select');
+      var stSel   = document.getElementById('quiz-station-select');
+      var prefOpt = prefSel && prefSel.selectedIndex >= 0 ? prefSel.options[prefSel.selectedIndex] : null;
+      return {
+        prefName: prefSel ? (prefSel.value || '') : '',
+        prefCode: prefOpt ? (prefOpt.getAttribute('data-pref-code') || '') : '',
+        prefUrl:  prefOpt ? (prefOpt.getAttribute('data-area-url') || '') : '',
+        cityName: citySel ? (citySel.value || '') : '',
+        stationName: stSel ? (stSel.value || '') : ''
+      };
+    }
+
+    function buildQuizUrl(search, sel) {
+      var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl
+        : (quizArea() && quizArea().homeUrl) ? quizArea().homeUrl
+        : window.location.origin;
+
+      // 駅 > 市区町村 > 都道府県カテゴリ > 都道府県名 > 全国
+      if (sel.stationName) {
+        return base + '/?s=' + encodeURIComponent(search + ' ' + sel.stationName);
       }
-      if (areaName) {
-        return base + '/?s=' + encodeURIComponent(search + ' ' + areaName);
+      if (sel.cityName) {
+        return base + '/?s=' + encodeURIComponent(search + ' ' + sel.cityName);
+      }
+      if (sel.prefName && sel.prefUrl) {
+        var joiner = sel.prefUrl.indexOf('?') >= 0 ? '&' : '?';
+        return sel.prefUrl + joiner + 's=' + encodeURIComponent(search);
+      }
+      if (sel.prefName) {
+        return base + '/?s=' + encodeURIComponent(search + ' ' + sel.prefName);
       }
       return base + '/?s=' + encodeURIComponent(search);
     }
 
+    function populateQuizCities(prefCode) {
+      var citySel = document.getElementById('quiz-city-select');
+      var stSel   = document.getElementById('quiz-station-select');
+      if (!citySel) return;
+      citySel.innerHTML = '';
+      var ph = document.createElement('option');
+      ph.value = '';
+      ph.textContent = prefCode ? '市区町村：絞らない' : '市区町村：まず都道府県を選択';
+      citySel.appendChild(ph);
+
+      var cities = quizArea() && quizArea().cities && prefCode ? (quizArea().cities[prefCode] || []) : [];
+      cities.forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c;
+        o.textContent = c;
+        citySel.appendChild(o);
+      });
+      citySel.disabled = !prefCode || !cities.length;
+
+      // 市区町村がリセットされたら駅も初期化
+      if (stSel) {
+        stSel.innerHTML = '<option value="">駅：まず市区町村を選択</option>';
+        stSel.disabled = true;
+      }
+    }
+
+    function populateQuizStations(prefCode, cityName) {
+      var stSel = document.getElementById('quiz-station-select');
+      if (!stSel) return;
+      stSel.innerHTML = '';
+      var ph = document.createElement('option');
+      ph.value = '';
+      ph.textContent = cityName ? '駅：絞らない' : '駅：まず市区町村を選択';
+      stSel.appendChild(ph);
+
+      var stationsByCity = (quizArea() && quizArea().stations && quizArea().stations[prefCode]) || {};
+      var stations = cityName ? (stationsByCity[cityName] || []) : [];
+      stations.forEach(function (s) {
+        var o = document.createElement('option');
+        o.value = s;
+        o.textContent = s;
+        stSel.appendChild(o);
+      });
+      stSel.disabled = !cityName || !stations.length;
+    }
+
     function syncQuizAreaFromSelect() {
-      var sel = document.getElementById('quiz-area-select');
       var link = document.getElementById('quiz-result-link');
-      if (!sel || !link) return;
-      var opt = sel.options[sel.selectedIndex];
-      var areaName = sel.value || '';
-      var areaUrl  = opt ? (opt.getAttribute('data-area-url') || '') : '';
-      link.href = buildQuizUrl(quizCurrentSearch, areaName, areaUrl);
+      if (!link) return;
+      var sel = getQuizAreaSelection();
+      link.href = buildQuizUrl(quizCurrentSearch, sel);
+
       var hint = document.querySelector('[data-quiz-area-hint]');
       if (hint) {
-        hint.textContent = areaName
-          ? areaName + ' × ' + document.getElementById('quiz-result-genre').textContent + ' の記事を表示します'
+        var parts = [];
+        if (sel.prefName) parts.push(sel.prefName);
+        if (sel.cityName) parts.push(sel.cityName);
+        if (sel.stationName) parts.push(sel.stationName + '周辺');
+        var genreEl = document.getElementById('quiz-result-genre');
+        var genre = genreEl ? genreEl.textContent : '';
+        hint.textContent = parts.length
+          ? parts.join(' · ') + ' × ' + genre + ' を表示します'
           : 'ジャンル × エリアで検索結果を絞り込めます';
       }
+    }
+
+    function applySavedAreaToQuiz() {
+      var prefSel = document.getElementById('quiz-area-select');
+      var saved = readSavedArea();
+      if (!prefSel || !saved || !saved.name) return false;
+      for (var i = 0; i < prefSel.options.length; i++) {
+        if (prefSel.options[i].value === saved.name) {
+          prefSel.selectedIndex = i;
+          populateQuizCities(prefSel.options[i].getAttribute('data-pref-code') || '');
+          return true;
+        }
+      }
+      return false;
     }
 
     function showQuizResult() {
@@ -518,33 +608,41 @@
       document.getElementById('quiz-result-desc').textContent = result.desc;
       quizCurrentSearch = result.search;
 
-      // 保存済みエリアがあれば select を自動選択
-      var sel = document.getElementById('quiz-area-select');
+      var prefSel = document.getElementById('quiz-area-select');
+      var citySel = document.getElementById('quiz-city-select');
+      var stSel   = document.getElementById('quiz-station-select');
       var savedBtn = document.querySelector('[data-quiz-area-saved]');
       var saved = readSavedArea();
-      if (sel && saved && saved.name) {
-        for (var i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].value === saved.name) { sel.selectedIndex = i; break; }
-        }
-      }
-      if (savedBtn) {
-        savedBtn.hidden = !(saved && saved.name);
-        if (saved && saved.name) savedBtn.querySelector('span, *:last-child');
-      }
+
+      applySavedAreaToQuiz();
+      if (savedBtn) savedBtn.hidden = !(saved && saved.name);
 
       syncQuizAreaFromSelect();
 
-      if (sel && !sel._quizBound) {
-        sel.addEventListener('change', syncQuizAreaFromSelect);
-        sel._quizBound = true;
+      if (prefSel && !prefSel._quizBound) {
+        prefSel.addEventListener('change', function () {
+          var opt = prefSel.options[prefSel.selectedIndex];
+          populateQuizCities(opt ? (opt.getAttribute('data-pref-code') || '') : '');
+          syncQuizAreaFromSelect();
+        });
+        prefSel._quizBound = true;
+      }
+      if (citySel && !citySel._quizBound) {
+        citySel.addEventListener('change', function () {
+          var prefOpt = prefSel.options[prefSel.selectedIndex];
+          var prefCode = prefOpt ? (prefOpt.getAttribute('data-pref-code') || '') : '';
+          populateQuizStations(prefCode, citySel.value);
+          syncQuizAreaFromSelect();
+        });
+        citySel._quizBound = true;
+      }
+      if (stSel && !stSel._quizBound) {
+        stSel.addEventListener('change', syncQuizAreaFromSelect);
+        stSel._quizBound = true;
       }
       if (savedBtn && !savedBtn._quizBound) {
         savedBtn.addEventListener('click', function () {
-          var s = readSavedArea();
-          if (!s || !sel) return;
-          for (var i = 0; i < sel.options.length; i++) {
-            if (sel.options[i].value === s.name) { sel.selectedIndex = i; break; }
-          }
+          applySavedAreaToQuiz();
           syncQuizAreaFromSelect();
         });
         savedBtn._quizBound = true;

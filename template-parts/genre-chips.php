@@ -53,15 +53,55 @@ $rd_genres = array(
 );
 
 $rd_genres = apply_filters( 'knt_genre_chips', $rd_genres );
+
+$rd_gc_regions = function_exists( 'knt_get_regions' ) ? knt_get_regions() : array();
+$rd_gc_prefs   = function_exists( 'knt_get_prefectures' ) ? knt_get_prefectures() : array();
+$rd_gc_by_reg  = array();
+foreach ( $rd_gc_regions as $rk => $rl ) $rd_gc_by_reg[ $rk ] = array();
+foreach ( $rd_gc_prefs as $p ) {
+    if ( isset( $rd_gc_by_reg[ $p['region'] ] ) ) $rd_gc_by_reg[ $p['region'] ][] = $p;
+}
 ?>
-<section class="rd-genre-chips fadeup" aria-label="ジャンルで探す">
+<section class="rd-genre-chips fadeup" aria-label="ジャンルで探す" data-rd-genre-chips>
     <div class="rd-genre-chips__header">
         <h2 class="rd-genre-chips__title">ジャンルで探す</h2>
         <span class="rd-genre-chips__hint">タップで関連記事を表示</span>
     </div>
+
+    <?php if ( ! empty( $rd_gc_prefs ) ) : ?>
+    <div class="rd-genre-chips__filter" data-rd-gc-filter>
+        <span class="rd-genre-chips__filter-label">エリアで絞る</span>
+        <div class="rd-genre-chips__filter-grid">
+            <select class="rd-genre-chips__select" data-rd-gc-pref>
+                <option value="">都道府県：全国</option>
+                <?php foreach ( $rd_gc_regions as $rk => $rl ) : if ( empty( $rd_gc_by_reg[ $rk ] ) ) continue; ?>
+                    <optgroup label="<?php echo esc_attr( $rl ); ?>">
+                        <?php foreach ( $rd_gc_by_reg[ $rk ] as $p ) : ?>
+                            <option value="<?php echo esc_attr( $p['name'] ); ?>"
+                                    data-pref-code="<?php echo esc_attr( $p['code'] ); ?>"
+                                    data-area-url="<?php echo esc_url( knt_prefecture_url( $p['code'], $p['name'] ) ); ?>">
+                                <?php echo esc_html( $p['name'] ); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                <?php endforeach; ?>
+            </select>
+            <select class="rd-genre-chips__select" data-rd-gc-city disabled>
+                <option value="">市区町村：まず都道府県を選択</option>
+            </select>
+            <select class="rd-genre-chips__select" data-rd-gc-station disabled>
+                <option value="">駅：まず市区町村を選択</option>
+            </select>
+        </div>
+        <button type="button" class="rd-genre-chips__filter-reset" data-rd-gc-reset hidden>リセット</button>
+    </div>
+    <?php endif; ?>
+
     <div class="rd-genre-chips__grid">
         <?php foreach ( $rd_genres as $g ) : ?>
-            <a class="rd-genre-chip" href="<?php echo esc_url( home_url( '/?s=' . urlencode( $g['keyword'] ) ) ); ?>">
+            <a class="rd-genre-chip"
+               href="<?php echo esc_url( home_url( '/?s=' . urlencode( $g['keyword'] ) ) ); ?>"
+               data-genre-keyword="<?php echo esc_attr( $g['keyword'] ); ?>">
                 <span class="rd-genre-chip__icon" aria-hidden="true"><?php echo $g['svg']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
                 <span class="rd-genre-chip__label"><?php echo esc_html( $g['label'] ); ?></span>
             </a>
