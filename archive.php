@@ -123,10 +123,33 @@ get_header();
     <?php
     $popular_tags = get_tags( array( 'orderby' => 'count', 'order' => 'DESC', 'number' => 12 ) );
     if ( $popular_tags ) :
+        // カテゴリーページではタグクリック時に現在のカテゴリを保持する（?cat=X&tag=Y）
+        $chip_base_cat_id = is_category() ? get_queried_object_id() : 0;
+        $chip_current_tag = isset( $_GET['tag'] ) ? sanitize_title( wp_unslash( $_GET['tag'] ) ) : '';
+        if ( ! $chip_current_tag && is_tag() ) {
+            $tag_obj = get_queried_object();
+            if ( $tag_obj && ! empty( $tag_obj->slug ) ) {
+                $chip_current_tag = $tag_obj->slug;
+            }
+        }
     ?>
     <div class="archive-filters">
-        <?php foreach ( $popular_tags as $ptag ) : ?>
-            <a href="<?php echo esc_url( get_tag_link( $ptag->term_id ) ); ?>" class="archive-filters__chip<?php echo is_tag( $ptag->slug ) ? ' is-active' : ''; ?>">
+        <?php foreach ( $popular_tags as $ptag ) :
+            $is_active = ( $chip_current_tag === $ptag->slug );
+            if ( $chip_base_cat_id ) {
+                // 同じタグを再タップでタグフィルタ解除（カテゴリページに戻す）
+                if ( $is_active ) {
+                    $chip_href = get_category_link( $chip_base_cat_id );
+                } else {
+                    $chip_href = add_query_arg( 'tag', $ptag->slug, get_category_link( $chip_base_cat_id ) );
+                }
+            } else {
+                $chip_href = get_tag_link( $ptag->term_id );
+            }
+        ?>
+            <a href="<?php echo esc_url( $chip_href ); ?>"
+               class="archive-filters__chip<?php echo $is_active ? ' is-active' : ''; ?>"
+               <?php if ( $is_active ) echo 'aria-current="true"'; ?>>
                 #<?php echo esc_html( $ptag->name ); ?>
             </a>
         <?php endforeach; ?>
