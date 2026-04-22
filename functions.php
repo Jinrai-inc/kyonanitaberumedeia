@@ -85,7 +85,9 @@ function knt_enqueue_assets() {
     wp_enqueue_style( 'knt-redesign', KNT_URI . '/css/redesign.css', array( 'knt-style' ), $rd_css_ver );
 
     // Theme script
-    wp_enqueue_script( 'knt-script', KNT_URI . '/js/main.js', array(), KNT_VERSION, true );
+    $rd_main_js_path = KNT_DIR . '/js/main.js';
+    $rd_main_js_ver  = file_exists( $rd_main_js_path ) ? filemtime( $rd_main_js_path ) : KNT_VERSION;
+    wp_enqueue_script( 'knt-script', KNT_URI . '/js/main.js', array(), $rd_main_js_ver, true );
 
     // Redesign script (area gate / prefecture picker / archive tweaks / header search)
     $rd_js_path = KNT_DIR . '/js/redesign.js';
