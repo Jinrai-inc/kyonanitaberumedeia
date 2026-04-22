@@ -2142,6 +2142,294 @@ body.rd-layout-b .card .card__body .card__title {
 }
 
 /* ==========================================================================
+   Food Quiz — 結果画面のエリア絞り込み
+   ========================================================================== */
+.food-quiz__area {
+  margin: 18px auto 22px;
+  max-width: 460px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--rd-line);
+  border-radius: var(--rd-radius-lg);
+  box-shadow: var(--rd-shadow-xs);
+}
+.food-quiz__area-label {
+  margin: 0 0 10px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--rd-ink-sub);
+  text-align: left;
+}
+.food-quiz__area-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.food-quiz__area-select {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0 34px 0 14px;
+  border: 1px solid var(--rd-line-strong);
+  border-radius: var(--rd-radius-pill);
+  background: #fff;
+  color: var(--rd-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C9553E' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+  transition: border-color 0.16s;
+}
+.food-quiz__area-select:focus {
+  outline: none;
+  border-color: var(--rd-tomato);
+  box-shadow: 0 0 0 3px rgba(201, 85, 62, 0.12);
+}
+.food-quiz__area-use-saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+  border: 1px dashed var(--rd-tomato);
+  border-radius: var(--rd-radius-pill);
+  background: #fff;
+  color: var(--rd-tomato-dark);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.16s, color 0.16s;
+}
+.food-quiz__area-use-saved:hover {
+  background: var(--rd-tomato);
+  color: #fff;
+}
+.food-quiz__area-hint {
+  margin: 10px 0 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--rd-ink-mute);
+  text-align: left;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Archive — 現在のエリアヒーローバナー & ランキング
+   ========================================================================== */
+.rd-area-hero {
+  position: relative;
+  margin: 0 0 20px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #2B3A55 0%, #1F2A3F 100%);
+  border-radius: var(--rd-radius-lg);
+  color: #fff;
+  box-shadow: var(--rd-shadow-sm);
+  overflow: hidden;
+}
+.rd-area-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 180px; height: 100%;
+  background: radial-gradient(circle at right top, rgba(242, 179, 62, 0.25), transparent 60%);
+  pointer-events: none;
+}
+.rd-area-hero__inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.rd-area-hero__main {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.rd-area-hero__label {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+.rd-area-hero__name {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.rd-area-hero__stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+}
+.rd-area-hero__stat-num { font-weight: 700; color: #FFD98A; }
+.rd-area-hero__stats span[aria-hidden="true"] {
+  opacity: 0.4;
+  font-size: 10px;
+}
+.rd-area-hero__change {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--rd-radius-pill);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s;
+  text-decoration: none;
+}
+.rd-area-hero__change:hover {
+  background: #fff;
+  color: var(--rd-ink);
+}
+@media (max-width: 640px) {
+  .rd-area-hero { padding: 16px 18px; }
+  .rd-area-hero__name { font-size: 18px; }
+  .rd-area-hero__inner { gap: 12px; }
+}
+
+/* Archive ranked grid — 1〜6番までナンバリング (01, 02...) */
+.grid.grid--3.is-ranked-numbered { counter-reset: rd-rank-counter; }
+.grid.grid--3.is-ranked-numbered > article.card:nth-child(-n+6) {
+  position: relative;
+  counter-increment: rd-rank-counter;
+}
+.grid.grid--3.is-ranked-numbered > article.card:nth-child(-n+6)::before {
+  content: counter(rd-rank-counter, decimal-leading-zero);
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: var(--rd-radius-pill);
+  color: var(--rd-ink);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: var(--rd-shadow-xs);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Japan map — 品質向上
+   ========================================================================== */
+.japan-map-section {
+  padding-top: 56px;
+  padding-bottom: 72px;
+}
+.japan-map-visual {
+  background:
+    radial-gradient(circle at 30% 20%, rgba(242, 179, 62, 0.08), transparent 55%),
+    radial-gradient(circle at 70% 80%, rgba(107, 154, 95, 0.08), transparent 55%),
+    #FFFDF6;
+  border: 1px solid rgba(201, 85, 62, 0.08);
+  box-shadow: var(--rd-shadow-sm), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.knt-japan-map-svg .prefectures {
+  filter: drop-shadow(0 3px 8px rgba(42, 38, 34, 0.08));
+}
+.knt-japan-map-svg .prefecture-shape {
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.2;
+  transition: fill 0.18s ease, filter 0.2s ease, stroke 0.18s ease;
+}
+.knt-japan-map-svg [data-code]:hover .prefecture-shape {
+  filter: brightness(1.1) drop-shadow(0 5px 10px rgba(201, 85, 62, 0.35));
+  stroke: #fff;
+  stroke-width: 1.6;
+}
+.knt-japan-map-svg [data-code].is-active .prefecture-shape,
+.knt-japan-map-svg .prefecture-shape.is-active {
+  fill: var(--rd-tomato, #C9553E) !important;
+  filter: drop-shadow(0 6px 14px rgba(201, 85, 62, 0.45));
+  stroke: #fff;
+  stroke-width: 2;
+}
+.japan-map-tooltip {
+  background: linear-gradient(135deg, var(--rd-ink, #2A2420) 0%, #3a3026 100%);
+  border-radius: var(--rd-radius-md, 10px);
+  font-family: var(--font-heading);
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(42, 38, 34, 0.25);
+}
+.japan-map-controls-card {
+  background: linear-gradient(180deg, #FFFDF8 0%, #FFF9EE 100%);
+  border: 1px solid rgba(201, 85, 62, 0.14);
+  box-shadow: var(--rd-shadow-md);
+}
+.japan-map-controls-card-title {
+  position: relative;
+  padding-left: 16px;
+  font-family: var(--font-heading);
+}
+.japan-map-controls-card-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--rd-tomato), var(--rd-gold));
+  transform: translateY(-50%);
+}
+.japan-map-btn {
+  background: linear-gradient(135deg, var(--rd-tomato) 0%, var(--rd-gold) 100%);
+  box-shadow: 0 10px 20px rgba(201, 85, 62, 0.24);
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+}
+.japan-map-btn:not(.is-disabled):hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(201, 85, 62, 0.3);
+}
+.japan-map-dropdown:focus {
+  outline: none;
+  border-color: var(--rd-tomato);
+  box-shadow: 0 0 0 3px rgba(201, 85, 62, 0.14);
+}
+.japan-map-city-tag {
+  font-family: var(--font-heading);
+  background: var(--rd-tomato-soft, rgba(201, 85, 62, 0.12));
+  transition: all 0.16s;
+}
+.japan-map-city-tag:hover,
+.japan-map-city-tag.is-selected {
+  background: var(--rd-tomato);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(201, 85, 62, 0.28);
+}
+
+/* ==========================================================================
    Sitewide tweaks — スライダーを少しコンパクトに、セクション間を均等に
    ========================================================================== */
 .content-slider { margin-top: 8px; }

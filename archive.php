@@ -14,6 +14,8 @@ get_header();
 
 <div class="container">
 
+    <?php get_template_part( 'template-parts/area-hero' ); ?>
+
     <!-- Search Bar -->
     <div class="archive-search">
         <form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="archive-search__form">
@@ -136,7 +138,7 @@ get_header();
     <?php endif; ?>
 
     <?php if ( have_posts() ) : ?>
-        <div class="grid grid--3">
+        <div class="grid grid--3 is-ranked-numbered">
             <?php while ( have_posts() ) : the_post(); ?>
                 <article class="card fadeup">
                     <?php get_template_part( 'template-parts/card' ); ?>

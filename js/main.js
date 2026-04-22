@@ -471,15 +471,84 @@
       }
     });
 
+    var quizCurrentSearch = '';
+
+    function readSavedArea() {
+      try {
+        var raw = localStorage.getItem('knt-area');
+        if (!raw) return null;
+        var obj = JSON.parse(raw);
+        return obj && obj.name ? obj : null;
+      } catch (e) { return null; }
+    }
+
+    function buildQuizUrl(search, areaName, areaUrl) {
+      var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
+      if (areaName && areaUrl) {
+        var joiner = areaUrl.indexOf('?') >= 0 ? '&' : '?';
+        return areaUrl + joiner + 's=' + encodeURIComponent(search);
+      }
+      if (areaName) {
+        return base + '/?s=' + encodeURIComponent(search + ' ' + areaName);
+      }
+      return base + '/?s=' + encodeURIComponent(search);
+    }
+
+    function syncQuizAreaFromSelect() {
+      var sel = document.getElementById('quiz-area-select');
+      var link = document.getElementById('quiz-result-link');
+      if (!sel || !link) return;
+      var opt = sel.options[sel.selectedIndex];
+      var areaName = sel.value || '';
+      var areaUrl  = opt ? (opt.getAttribute('data-area-url') || '') : '';
+      link.href = buildQuizUrl(quizCurrentSearch, areaName, areaUrl);
+      var hint = document.querySelector('[data-quiz-area-hint]');
+      if (hint) {
+        hint.textContent = areaName
+          ? areaName + ' × ' + document.getElementById('quiz-result-genre').textContent + ' の記事を表示します'
+          : 'ジャンル × エリアで検索結果を絞り込めます';
+      }
+    }
+
     function showQuizResult() {
       var resultKey = answers.mood + '_' + answers.who;
       var result = QUIZ_RESULTS[resultKey] || { genre: 'グルメ', search: 'グルメ', desc: 'あなたにぴったりのお店を探してみましょう！' };
 
       document.getElementById('quiz-result-genre').textContent = result.genre;
       document.getElementById('quiz-result-desc').textContent = result.desc;
+      quizCurrentSearch = result.search;
 
-      var base = (typeof kntMapData !== 'undefined' && kntMapData.homeUrl) ? kntMapData.homeUrl : window.location.origin;
-      document.getElementById('quiz-result-link').href = base + '/?s=' + encodeURIComponent(result.search);
+      // 保存済みエリアがあれば select を自動選択
+      var sel = document.getElementById('quiz-area-select');
+      var savedBtn = document.querySelector('[data-quiz-area-saved]');
+      var saved = readSavedArea();
+      if (sel && saved && saved.name) {
+        for (var i = 0; i < sel.options.length; i++) {
+          if (sel.options[i].value === saved.name) { sel.selectedIndex = i; break; }
+        }
+      }
+      if (savedBtn) {
+        savedBtn.hidden = !(saved && saved.name);
+        if (saved && saved.name) savedBtn.querySelector('span, *:last-child');
+      }
+
+      syncQuizAreaFromSelect();
+
+      if (sel && !sel._quizBound) {
+        sel.addEventListener('change', syncQuizAreaFromSelect);
+        sel._quizBound = true;
+      }
+      if (savedBtn && !savedBtn._quizBound) {
+        savedBtn.addEventListener('click', function () {
+          var s = readSavedArea();
+          if (!s || !sel) return;
+          for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value === s.name) { sel.selectedIndex = i; break; }
+          }
+          syncQuizAreaFromSelect();
+        });
+        savedBtn._quizBound = true;
+      }
 
       quizSteps.style.display = 'none';
       document.getElementById('quiz-result').style.display = 'block';
