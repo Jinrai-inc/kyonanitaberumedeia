@@ -185,71 +185,13 @@
     }
 
     /* ==================================================================
-       3. Archive Tweaks — カード密度 & レイアウト切替
+       3. Archive Tweaks を使っていた残存設定のクリーンアップ
+          過去バージョンで localStorage に残ったカスタム設定と
+          body に付いた rd-density/rd-layout クラスを除去する。
        ================================================================== */
-    function initArchiveTweaks() {
-        var tweaks = $('[data-rd-tweaks]');
-        if (!tweaks) return;
-
-        // アーカイブ系ページでのみ出す（.grid--3 が存在するページ）
-        if (!$('.grid--3')) return;
-
-        tweaks.hidden = false;
-
-        var panel = $('[data-rd-tweaks-panel]', tweaks);
-        var saved = safeParse(lsGet(LS_TWEAKS)) || { density: 3, layout: 'A' };
-
-        apply(saved);
-        sync(saved);
-
-        $$('[data-rd-tweaks-toggle]', tweaks).forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var isOpen = !panel.hidden;
-                panel.hidden = isOpen;
-                tweaks.classList.toggle('is-open', !isOpen);
-            });
-        });
-
-        $$('[data-rd-tweaks-density]', tweaks).forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                saved.density = parseInt(btn.getAttribute('data-rd-tweaks-density'), 10);
-                persist();
-                apply(saved);
-                sync(saved);
-            });
-        });
-        $$('[data-rd-tweaks-layout]', tweaks).forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                saved.layout = btn.getAttribute('data-rd-tweaks-layout');
-                persist();
-                apply(saved);
-                sync(saved);
-            });
-        });
-
-        var reset = $('[data-rd-tweaks-reset]', tweaks);
-        if (reset) reset.addEventListener('click', function () {
-            saved = { density: 3, layout: 'A' };
-            persist();
-            apply(saved);
-            sync(saved);
-        });
-
-        function apply(s) {
-            document.body.classList.toggle('rd-density-4', s.density === 4);
-            document.body.classList.toggle('rd-density-3', s.density !== 4);
-            document.body.classList.toggle('rd-layout-b',  s.layout === 'B');
-            document.body.classList.toggle('rd-layout-a',  s.layout !== 'B');
-        }
-        function sync(s) {
-            $$('[data-rd-tweaks-density]', tweaks).forEach(function (b) {
-                b.classList.toggle('is-active', parseInt(b.getAttribute('data-rd-tweaks-density'), 10) === s.density);
-            });
-            $$('[data-rd-tweaks-layout]', tweaks).forEach(function (b) {
-                b.classList.toggle('is-active', b.getAttribute('data-rd-tweaks-layout') === s.layout);
-            });
-        }
-        function persist() { lsSet(LS_TWEAKS, JSON.stringify(saved)); }
+    function clearLegacyTweaks() {
+        document.body.classList.remove('rd-density-3', 'rd-density-4', 'rd-layout-a', 'rd-layout-b');
+        try { localStorage.removeItem(LS_TWEAKS); } catch (e) { /* ignore */ }
     }
 
     /* ==================================================================
@@ -301,9 +243,9 @@
     }
 
     ready(function () {
+        clearLegacyTweaks();
         initPrefPicker();
         initAreaGate();
-        initArchiveTweaks();
         initHeaderSearch();
     });
 })();

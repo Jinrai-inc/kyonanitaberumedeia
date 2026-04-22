@@ -191,12 +191,6 @@ if ( get_theme_mod( 'knt_area_gate_show', true ) ) {
     get_template_part( 'template-parts/area-gate' );
 }
 
-// ========================================
-// Redesign: アーカイブTweaksパネル（アーカイブ・ホームでのみJSが表示）
-// ========================================
-if ( ! is_singular() && get_theme_mod( 'knt_tweaks_panel_show', true ) ) {
-    get_template_part( 'template-parts/archive-tweaks' );
-}
 ?>
 
 <?php wp_footer(); ?>
